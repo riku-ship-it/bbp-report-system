@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BBP 回報系統</title>
+    <style>
+        body { font-family: "Microsoft JhengHei", sans-serif; max-width: 800px; margin: 20px auto; padding: 20px; line-height: 1.6; background-color: #f4f7f6; }
+        h1 { color: #2c3e50; text-align: center; }
+        .section { background: white; border-radius: 12px; padding: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 30px; }
+        h2 { border-left: 5px solid #3498db; padding-left: 10px; margin-top: 0; color: #34495e; }
+        label { display: block; margin-top: 15px; font-weight: bold; color: #555; }
+        input, select, textarea { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 16px; }
+        button { width: 100%; background: #3498db; color: white; border: none; padding: 12px; border-radius: 6px; cursor: pointer; font-size: 18px; margin-top: 20px; transition: 0.3s; }
+        button:hover { background: #2980b9; }
+        button:disabled { background: #bdc3c7; cursor: not-allowed; }
+        .search-container { display: flex; gap: 10px; }
+        .search-container input { flex: 1; margin-top: 0; }
+        .search-container button { width: auto; margin-top: 0; padding: 10px 20px; }
+        .report-item { background: #fff; border: 1px solid #eee; padding: 15px; border-radius: 8px; margin-top: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .status-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; background: #e67e22; color: white; }
+        .reply-box { margin-top: 10px; padding: 10px; background: #e8f4fd; border-radius: 6px; border-left: 4px solid #3498db; }
+        .reply-title { font-weight: bold; color: #2980b9; display: block; margin-bottom: 5px; }
+        .loading { text-align: center; color: #7f8c8d; display: none; }
+    </style>
+</head>
+<body>
+
+    <h1>🚀 BBP 問題回報中心</h1>
+
+    <div class="section">
+        <h2>我要回報</h2>
+        <form id="reportForm">
+            <label>您的 Email (用於日後查詢回覆內容)</label>
+            <input type="email" id="email" placeholder="example@mail.com" required>
+
+            <label>回報類型</label>
+            <select id="type">
+                <option value="BUG">🐛 BUG 回報</option>
+                <option value="建議">💡 功能建議</option>
+                <option value="問題">❓ 遇到問題</option>
+            </select>
+
+            <label>問題標題</label>
+            <input type="text" id="title" placeholder="請簡述問題" required>
+
+            <label>詳細描述</label>
+            <textarea id="description" rows="5" placeholder="請詳細說明情況..." required></textarea>
+
+            <label>圖片附件 (可選)</label>
+            <input type="file" id="imageFile" accept="image/*">
+
+            <label>影片附件 (可選)</label>
+            <input type="file" id="videoFile" accept="video/*">
+
+            <button type="submit" id="submitBtn">提交我的回報</button>
+        </form>
+    </div>
+
+    <div class="section">
+        <h2>查詢回覆進度</h2>
+        <p style="font-size: 14px; color: #666;">輸入回報時使用的 Email，查看管理者的回饋（僅限本人查看）</p>
+        <div class="search-container">
+            <input type="email" id="searchEmail" placeholder="輸入您的 Email">
+            <button onclick="checkStatus()">查詢</button>
+        </div>
+        <div id="loading" class="loading">查詢中，請稍候...</div>
+        <div id="resultArea"></div>
+    </div>
+
+    <script>
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbz5i3qIe1lZhsbzw0E6kJF85nef6-xi_cajjwWqS-HqVUYsxE_XA7GjQqOxTm7VVVJbpQ/exec";
+
+        // 提交表單處理
+        document.getElementById('reportForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            btn.innerText = "上傳中，請勿關閉視窗...";
+            btn.disabled = true;
+
+            const data = {
+                email: document.getElementById('email').value,
+                type: document.getElementById('type').value,
+                title: document.getElementById('title').value,
+                description: document.getElementById('description').value,
+                imageUrl: "", // 影音功能需搭配後端進階設定，目前先留空
+                videoUrl: ""
+            };
+
+            try {
+                const response = await fetch(GAS_URL, {
+                    method: "POST",
+                    body: JSON.stringify(data)
+                });
+                
+                alert("回報成功！管理者將會盡快處理。");
+                e.target.reset();
+            } catch (error) {
+                alert("提交失敗，請檢查網路連線或聯繫管理員。");
+            } finally {
+                btn.innerText = "提交我的回報";
+                btn.disabled = false;
+            }
+        };
+
+        // 查詢狀態處理
+        async function checkStatus() {
+            const email = document.getElementById('searchEmail').value;
+            const resArea = document.getElementById('resultArea');
+            const loader = document.getElementById('loading');
+            
+            if(!email) { alert("請先輸入 Email"); return; }
+
+            resArea.innerHTML = "";
+            loader.style.display = "block";
+
+            try {
+                const response = await fetch(`${GAS_URL}?email=${email}`);
+                const data = await response.json();
+
+                loader.style.display = "none";
+
+                if (data.length === 0 || (data.length === 1 && data[0][0] === "ID")) {
+                    resArea.innerHTML = "<p style='text-align:center; color:#e74c3c;'>找不到此 Email 的回報記錄。</p>";
+                    return;
+                }
+
+                let html = "";
+                // 過濾標題列並顯示
+                data.forEach((row, index) => {
+                    if(index === 0 && row[0] === "ID") return; // 跳過標題列
+                    
+                    const status = row[9] || "處理中";
+                    const reply = row[8] || "目前尚無回覆，請耐心等候。";
+                    const time = new Date(row[1]).toLocaleString();
+
+                    html += `
+                        <div class="report-item">
+                            <span class="status-badge">${status}</span>
+                            <strong> [${row[3]}] ${row[4]}</strong>
+                            <div style="font-size: 12px; color: #95a5a6; margin-bottom: 8px;">提交時間：${time}</div>
+                            <div style="margin-bottom: 10px;">回報描述：${row[5]}</div>
+                            <div class="reply-box">
+                                <span class="reply-title">管理者回饋：</span>
+                                <div>${reply}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+                resArea.innerHTML = html;
+            } catch (error) {
+                loader.style.display = "none";
+                alert("查詢發生錯誤，請稍後再試。");
+            }
+        }
+    </script>
+</body>
+</html>
