@@ -10,33 +10,44 @@
     <script src="https://www.lactame.com/lib/image-js/0.31.0/image.min.js"></script>
     <style>
         :root { --primary: #6366f1; --secondary: #06b6d4; --bg: #f8fafc; --sidebar: #ffffff; }
-        * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', "Microsoft JhengHei", sans-serif; }
         body { margin: 0; display: flex; height: 100vh; background: var(--bg); color: #1e293b; overflow: hidden; }
+        
         nav { width: 280px; background: var(--sidebar); border-right: 1px solid #f1f5f9; display: flex; flex-direction: column; padding: 30px 20px; flex-shrink: 0; }
         .logo { font-weight: 800; font-size: 1.6rem; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 40px; display: flex; align-items: center; gap: 12px; }
         .nav-item { padding: 14px 18px; border-radius: 16px; cursor: pointer; color: #64748b; margin-bottom: 8px; transition: 0.3s; display: flex; align-items: center; gap: 12px; font-weight: 600; }
         .nav-item:hover, .nav-item.active { background: #eef2ff; color: var(--primary); }
+        
         main { flex: 1; padding: 40px; overflow-y: auto; display: flex; flex-direction: column; align-items: center; }
         .container { width: 100%; max-width: 850px; }
         .card { background: white; border-radius: 24px; padding: 30px; border: 1px solid #f1f5f9; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 25px; }
-        
-        /* 搜尋列橫向布局 */
-        .filter-bar { display: flex; align-items: center; gap: 12px; padding: 20px 25px; }
-        .filter-bar input { flex: 2; }
-        .filter-bar select { flex: 1; }
-        .filter-bar button { flex: 0.5; white-space: nowrap; padding: 12px 20px; }
 
+        /* 搜尋列橫向排列 */
+        .filter-bar { display: flex; align-items: center; gap: 12px; padding: 20px 25px; }
+        .filter-bar input { flex: 2; margin: 0; }
+        .filter-bar select { flex: 1; margin: 0; }
+        .filter-bar button { flex: 0.6; white-space: nowrap; margin: 0; padding: 12px; }
+
+        /* 圖片滿版修正 */
         .ql-editor img, .card img { max-width: 100% !important; height: auto !important; border-radius: 12px; margin: 10px 0; display: block; }
+        
         .editor-box { height: 220px; margin-bottom: 15px; border-radius: 0 0 16px 16px; }
         .ql-toolbar { border-radius: 16px 16px 0 0; border-color: #f1f5f9 !important; background: #fcfdfe; }
         .ql-container { border-color: #f1f5f9 !important; }
-        input, select, textarea { width: 100%; padding: 12px 16px; border: 2px solid #f1f5f9; border-radius: 14px; font-size: 1rem; }
+
+        input, select, textarea { width: 100%; padding: 12px 16px; border: 2px solid #f1f5f9; border-radius: 14px; font-size: 1rem; margin-top: 5px; }
         button { background: var(--primary); color: white; border: none; padding: 14px 30px; border-radius: 14px; font-weight: 700; cursor: pointer; transition: 0.3s; }
+        button:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3); }
+        button:disabled { background: #94a3b8; cursor: not-allowed; }
+
         .status-badge { padding: 6px 16px; border-radius: 50px; font-size: 0.8rem; font-weight: 800; display: inline-block; margin-bottom: 12px; }
         .待處理 { background: #fffbeb; color: #92400e; border: 1px solid #fde68a; }
         .已解決 { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
         .已退回 { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+
+        .reply-box { margin-top: 20px; padding: 20px; background: #f8fafc; border-radius: 16px; border-left: 5px solid var(--primary); }
         #toast { position: fixed; top: 24px; right: 24px; background: #1e293b; color: white; padding: 16px 32px; border-radius: 16px; display: none; z-index: 1000; box-shadow: 0 20px 25px rgba(0,0,0,0.2); }
+
         .view { display: none; width: 100%; }
         .view.active { display: block; }
     </style>
@@ -44,7 +55,7 @@
 <body>
 
     <nav>
-        <div class="logo"><i class="fas fa-comment-alt"></i> BBP 回報系統</div>
+        <div class="logo"><i class="fas fa-comments"></i> BBP 回報系統</div>
         <div class="nav-item active" id="nav-report" onclick="showView('report-view', this)"><i class="fas fa-plus-circle"></i> 新增回報</div>
         <div class="nav-item" id="nav-status" onclick="showView('status-view', this)"><i class="fas fa-search"></i> 案件追蹤</div>
         <div class="nav-item" id="nav-faq" onclick="showView('faq-view', this)"><i class="fas fa-lightbulb"></i> 精選案例</div>
@@ -57,19 +68,20 @@
                 <h1>發送您的想法 🚀</h1>
                 <div class="card">
                     <form id="reportForm">
-                        <div class="form-group"><label>您的聯絡 Email</label><input type="email" id="email" required></div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                            <div class="form-group"><label>案件分類</label><select id="type"><option>BUG 回報</option><option>功能建議</option></select></div>
-                            <div class="form-group"><label>回報標題</label><input type="text" id="title" required></div>
+                        <label>聯絡 Email</label><input type="email" id="email" required>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 15px;">
+                            <div><label>類別</label><select id="type"><option>BUG 回報</option><option>功能建議</option></select></div>
+                            <div><label>標題</label><input type="text" id="title" required></div>
                         </div>
-                        <div class="form-group"><label>詳細內容描述</label><div id="editor-container" class="editor-box"></div></div>
+                        <label style="margin-top: 15px; display: block;">描述</label>
+                        <div id="editor-user" class="editor-box"></div>
                         <button type="submit" id="submitBtn">送出回報</button>
                     </form>
                 </div>
             </div>
 
             <div id="status-view" class="view">
-                <h1>案件追蹤進度</h1>
+                <h1>案件追蹤</h1>
                 <div class="card filter-bar">
                     <input type="email" id="searchEmail" placeholder="輸入 Email">
                     <select id="statusFilter" onchange="renderStatusView()">
@@ -85,16 +97,15 @@
 
             <div id="faq-view" class="view">
                 <h1>精選案例庫</h1>
-                <div class="card"><input type="text" id="faqSearch" placeholder="搜尋關鍵字..." oninput="filterFAQ()"></div>
+                <div class="card"><input type="text" id="faqSearch" placeholder="搜尋解決方案..." oninput="filterFAQ()"></div>
                 <div id="faqContent"></div>
             </div>
 
             <div id="login-view" class="view">
                 <h1>管理者驗證</h1>
-                <div class="card" style="max-width: 450px; margin: 0 auto; text-align: center;">
-                    <i class="fas fa-lock" style="font-size: 3rem; color: var(--primary); margin-bottom: 20px;"></i>
-                    <input type="password" id="adminPassword" placeholder="輸入金鑰">
-                    <button onclick="handleAdminLogin()" style="width: 100%; margin-top: 15px;">進入管理後台</button>
+                <div class="card" style="max-width: 400px; margin: 0 auto;">
+                    <input type="password" id="adminPassword" placeholder="輸入密碼">
+                    <button onclick="handleAdminLogin()" style="width: 100%; margin-top: 15px;">進入後台</button>
                 </div>
             </div>
 
@@ -111,39 +122,40 @@
     <script>
         const GAS_URL = "https://script.google.com/macros/s/AKfycbz5i3qIe1lZhsbzw0E6kJF85nef6-xi_cajjwWqS-HqVUYsxE_XA7GjQqOxTm7VVVJbpQ/exec";
         const ADMIN_PASS = "admin123";
+        const qlModules = { toolbar: [['bold', 'italic'], [{list:'bullet'}], ['image']] };
+        
+        var userQuill = new Quill('#editor-user', { theme: 'snow', modules: qlModules });
         let userReportsCache = [];
         let appendQuills = {};
-        const qlModules = { toolbar: [['bold', 'italic'], [{list:'bullet'}], ['image']] };
-
-        var userQuill = new Quill('#editor-container', { theme: 'snow', modules: qlModules });
 
         function showView(id, el) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
             if(el) el.classList.add('active');
+            if(id === 'faq-view') refreshFAQ();
         }
 
         function showToast(msg) {
             const t = document.getElementById('toast'); t.innerText = msg; t.style.display = 'block';
-            setTimeout(() => t.style.display = 'none', 3500);
+            setTimeout(() => t.style.display = 'none', 3000);
         }
 
-        // --- 強化的壓縮邏輯 ---
+        // --- 超激進壓縮邏輯 ---
         async function compressHTML(html) {
             const div = document.createElement('div');
             div.innerHTML = html;
             const imgs = div.querySelectorAll('img');
             for (let img of imgs) {
                 const src = img.getAttribute('src');
-                if (src && src.startsWith('data:image/')) {
+                if (src && src.startsWith('data:image/') && src.length > 5000) {
                     try {
                         const image = await Image.load(src);
-                        if (image.width > 800) {
-                            const resized = image.resize({ width: 800 });
-                            img.setAttribute('src', resized.toDataURL('image/jpeg', 0.7));
-                        }
-                    } catch (e) { console.warn("壓縮跳過", e); }
+                        let resized = image;
+                        // 強制縮小寬度到 500px 確保體積極小
+                        if (image.width > 500) resized = image.resize({ width: 500 });
+                        img.setAttribute('src', resized.toDataURL('image/jpeg', 0.5)); // 品質 0.5
+                    } catch (e) { console.warn("跳過壓縮", e); }
                 }
             }
             return div.innerHTML;
@@ -154,16 +166,15 @@
             const btn = document.getElementById('submitBtn'); btn.disabled = true; btn.innerText = "處理中...";
             const content = await compressHTML(userQuill.root.innerHTML);
             await fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action: "newReport", email: document.getElementById('email').value, type: document.getElementById('type').value, title: document.getElementById('title').value, description: content }) });
-            showToast("✅ 提交成功");
+            showToast("提交成功！");
             e.target.reset(); userQuill.setContents([]); btn.disabled = false; btn.innerText = "送出回報";
         };
 
         async function checkStatus() {
             const email = document.getElementById('searchEmail').value;
             if(!email) return showToast("請輸入 Email");
-            document.getElementById('resultArea').innerHTML = "<p style='text-align:center'>搜尋中...</p>";
-            const res = await fetch(GAS_URL); 
-            const data = await res.json();
+            document.getElementById('resultArea').innerHTML = "搜尋中...";
+            const res = await fetch(GAS_URL); const data = await res.json();
             userReportsCache = data.slice(1).filter(row => row[2].toLowerCase() === email.toLowerCase());
             const statusOrder = { "已退回": 0, "待處理": 1, "已解決": 2 };
             userReportsCache.sort((a, b) => statusOrder[a[9]] - statusOrder[b[9]]);
@@ -179,7 +190,7 @@
                 const id = row[0];
                 const card = document.createElement('div');
                 card.className = "card";
-                card.innerHTML = `<span class="status-badge ${row[9]}">${row[9]}</span><h3>${row[4]}</h3><div>${row[5]}</div><div class="reply-box"><b>回饋：</b><br>${row[8]||'處理中...'}</div>
+                card.innerHTML = `<span class="status-badge ${row[9]}">${row[9]}</span><h3>${row[4]}</h3><div>${row[5]}</div><div class="reply-box"><b>回饋：</b><br>${row[8] || '處理中...'}</div>
                     ${row[9] === '已退回' ? `<div style="margin-top:20px; border-top:1px dashed #ddd; padding-top:20px"><label>📝 補充說明</label><div id="app-ed-${id}" style="height:150px; margin-bottom:10px"></div><button id="btn-app-${id}" onclick="submitAppend('${id}')" style="background:var(--secondary)">再次提交</button></div>` : ''}`;
                 resArea.appendChild(card);
                 if(row[9] === '已退回') appendQuills[id] = new Quill(`#app-ed-${id}`, { theme: 'snow', modules: qlModules });
@@ -191,8 +202,7 @@
             btn.disabled = true; btn.innerText = "處理中...";
             const content = await compressHTML(appendQuills[id].root.innerHTML);
             await fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action: "appendInfo", id: id, description: content }) });
-            showToast("🚀 補充已送出");
-            checkStatus();
+            showToast("補充已送出！"); checkStatus();
         }
 
         function handleAdminLogin() {
@@ -208,7 +218,7 @@
                 const id = row[0];
                 const card = document.createElement('div');
                 card.className = "card";
-                card.innerHTML = `<div style="display:flex; justify-content:space-between"><small>ID: ${id}</small><select id="st-${id}" style="width:auto"><option value="待處理" ${row[9]=='待處理'?'selected':''}>待處理</option><option value="已解決" ${row[9]=='已解決'?'selected':''}>已解決</option><option value="已退回" ${row[9]=='已退回'?'selected':''}>已退回</option></select></div><h3>${row[4]} (${row[2]})</h3><div style="background:#f8fafc; padding:20px; border-radius:16px; margin-bottom:20px">${row[5]}</div><label>精選類別</label><input type="text" id="cat-${id}" value="${row[3]}" style="margin-bottom:15px"><label>回饋內容</label><div id="adm-ed-${id}" style="height:150px"></div><button id="btn-adm-${id}" onclick="saveAdminReply('${id}')" style="width:100%; margin-top:15px; background:var(--secondary)">更新案件</button>`;
+                card.innerHTML = `<div style="display:flex; justify-content:space-between"><small>ID: ${id}</small><select id="st-${id}"><option value="待處理" ${row[9]=='待處理'?'selected':''}>待處理</option><option value="已解決" ${row[9]=='已解決'?'selected':''}>已解決</option><option value="已退回" ${row[9]=='已退回'?'selected':''}>已退回</option></select></div><h3>${row[4]} (${row[2]})</h3><div style="background:#f8fafc; padding:15px; border-radius:12px">${row[5]}</div><label>類別</label><input type="text" id="cat-${id}" value="${row[3]}"><label>回覆內容</label><div id="adm-ed-${id}" style="height:150px"></div><button id="btn-adm-${id}" onclick="saveAdminReply('${id}')" style="width:100%; margin-top:15px; background:var(--secondary)">更新案件</button>`;
                 area.appendChild(card);
                 const ed = new Quill(`#adm-ed-${id}`, { theme: 'snow', modules: qlModules });
                 ed.root.innerHTML = row[8] || '';
@@ -218,11 +228,11 @@
         async function saveAdminReply(id) {
             const btn = document.getElementById(`btn-adm-${id}`);
             btn.disabled = true; btn.innerText = "處理中...";
-            const editor = document.querySelector(`#adm-ed-${id} .ql-editor`);
-            const content = await compressHTML(editor.innerHTML);
-            await fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action: "updateReply", id: id, category: document.getElementById(`cat-${id}`).value, reply: content, status: document.getElementById(`st-${id}`).value }) });
-            showToast("✨ 更新成功");
-            loadAdminData();
+            const content = await compressHTML(document.querySelector(`#adm-ed-${id} .ql-editor`).innerHTML);
+            const status = document.getElementById(`st-${id}`).value;
+            const cat = document.getElementById(`cat-${id}`).value;
+            await fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action: "updateReply", id: id, category: cat, reply: content, status: status }) });
+            showToast("更新成功！"); loadAdminData();
         }
 
         let faqCache = [];
@@ -233,7 +243,7 @@
             faqCache.slice(1).forEach(row => {
                 if(row[9] !== '已解決') return;
                 if(row[4].toLowerCase().includes(kw) || row[3].toLowerCase().includes(kw)) {
-                    html += `<div class="card"><small style="color:var(--primary)"># ${row[3]}</small><h3>${row[4]}</h3><div>${row[5]}</div><hr><b>解決：</b><div>${row[8]}</div></div>`;
+                    html += `<div class="card"><small># ${row[3]}</small><h3>${row[4]}</h3><div>${row[5]}</div><hr><b>解決：</b><div>${row[8]}</div></div>`;
                 }
             });
             document.getElementById('faqContent').innerHTML = html;
