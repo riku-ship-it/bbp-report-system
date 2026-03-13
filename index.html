@@ -18,25 +18,87 @@
             --text-main: #1e293b;
             --text-sub: #64748b;
             --border: #f1f5f9;
+            --sidebar-width: 260px;
+            --sidebar-collapsed-width: 85px;
         }
         
         * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', "Microsoft JhengHei", sans-serif; }
         body { margin: 0; display: flex; height: 100vh; background: var(--bg); color: var(--text-main); overflow: hidden; }
         
-        /* 側邊欄 */
-        nav { width: 260px; background: var(--sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 30px 20px; flex-shrink: 0; }
-        .logo { font-weight: 800; font-size: 1.5rem; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 40px; display: flex; align-items: center; gap: 12px; }
+        /* 側邊欄收合動畫 */
+        nav { 
+            width: var(--sidebar-width); 
+            background: var(--sidebar); 
+            border-right: 1px solid var(--border); 
+            display: flex; 
+            flex-direction: column; 
+            padding: 30px 20px; 
+            flex-shrink: 0; 
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), padding 0.3s;
+            position: relative;
+        }
+        body.collapsed nav { 
+            width: var(--sidebar-collapsed-width); 
+            padding: 30px 15px;
+        }
+
+        .logo { 
+            font-weight: 800; 
+            font-size: 1.5rem; 
+            background: linear-gradient(135deg, var(--primary), var(--secondary)); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+            margin-bottom: 40px; 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            white-space: nowrap;
+            overflow: hidden;
+        }
+        
+        /* 收合按鈕 */
+        .toggle-sidebar {
+            cursor: pointer;
+            color: var(--text-sub);
+            font-size: 1.2rem;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .toggle-sidebar:hover { color: var(--primary); }
+        
         .nav-group { display: flex; flex-direction: column; gap: 8px; }
-        .nav-item { padding: 14px 18px; border-radius: 12px; cursor: pointer; color: var(--text-sub); transition: 0.2s all; display: flex; align-items: center; gap: 12px; font-weight: 600; text-decoration: none; }
+        .nav-item { 
+            padding: 14px 18px; 
+            border-radius: 12px; 
+            cursor: pointer; 
+            color: var(--text-sub); 
+            transition: 0.2s all; 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            font-weight: 600; 
+            text-decoration: none;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        .nav-item i { width: 20px; text-align: center; flex-shrink: 0; font-size: 1.1rem; }
+        .nav-item span { transition: opacity 0.2s; opacity: 1; }
+        
+        body.collapsed .nav-item span, 
+        body.collapsed .logo span { opacity: 0; pointer-events: none; }
+        body.collapsed .logo { justify-content: center; }
+
         .nav-item:hover { background: var(--bg); color: var(--primary); }
         .nav-item.active { background: var(--primary-light); color: var(--primary); }
         .admin-footer { margin-top: auto; border-top: 1px solid var(--border); padding-top: 20px; }
 
         /* 主區域 */
-        main { flex: 1; padding: 40px; overflow-y: auto; display: flex; flex-direction: column; align-items: center; }
+        main { flex: 1; padding: 40px; overflow-y: auto; display: flex; flex-direction: column; align-items: center; transition: padding 0.3s; }
         .container { width: 100%; max-width: 900px; }
         
-        /* 數據卡片 */
+        /* 數據與標題 */
         .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
         .section-title { font-size: 1.5rem; font-weight: 800; margin: 0; display: flex; align-items: center; gap: 10px; }
         .cycle-tag { font-size: 0.8rem; font-weight: 700; color: var(--text-sub); background: white; padding: 8px 16px; border-radius: 50px; box-shadow: 0 2px 10px rgba(0,0,0,0.02); border: 1px solid var(--border); }
@@ -46,11 +108,13 @@
         .stat-card h3 { margin: 0; font-size: 0.85rem; color: var(--text-sub); text-transform: uppercase; letter-spacing: 1px; }
         .stat-card .value { font-size: 2.2rem; font-weight: 800; margin-top: 12px; display: block; }
 
-        /* 卡片與列表 */
+        /* 管理者篩選列 */
+        .admin-filter-bar { display: flex; gap: 12px; margin-bottom: 20px; align-items: center; background: white; padding: 12px 20px; border-radius: 18px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
+        .filter-select { padding: 10px 14px; border-radius: 10px; border: 1.5px solid var(--border); font-size: 0.9rem; font-weight: 600; color: var(--text-main); outline: none; background: #fff; cursor: pointer; }
+
         .card { background: white; border-radius: 24px; padding: 30px; border: none; box-shadow: 0 4px 20px rgba(0,0,0,0.03); margin-bottom: 15px; }
         .priority-badge { font-weight: 800; color: var(--primary); margin-right: 12px; }
 
-        /* 內容顯示 */
         .collapsible-header { cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
         .collapsible-content { display: none; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border); }
         .card.expanded .collapsible-content { display: block; }
@@ -59,9 +123,8 @@
         .bubble-user { background: var(--bg); border-bottom-left-radius: 4px; }
         .bubble-admin { background: var(--primary-light); border-color: transparent; border-bottom-right-radius: 4px; }
 
-        /* 表單與編輯器 */
         label { font-size: 0.9rem; font-weight: 700; color: var(--text-sub); margin-bottom: 8px; display: block; }
-        input, select { width: 100%; padding: 14px; border: 1.5px solid var(--border); border-radius: 14px; font-size: 1rem; background: #fff; transition: 0.2s; outline: none; }
+        input, select { width: 100%; padding: 14px; border: 1.5px solid var(--border); border-radius: 14px; font-size: 1rem; background: #fff; outline: none; transition: 0.2s; }
         input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-light); }
         .editor-wrapper { border: 1.5px solid var(--border); border-radius: 16px; overflow: hidden; margin-top: 5px; }
         .ql-toolbar { border: none !important; border-bottom: 1.5px solid var(--border) !important; background: #fcfdfe; }
@@ -81,21 +144,23 @@
 </head>
 <body>
 
-    <nav>
-        <div class="logo"><i class="fas fa-paper-plane"></i> BBP 回報中心</div>
+    <nav id="sidebar">
+        <div class="logo">
+            <div class="toggle-sidebar" onclick="toggleSidebar()"><i class="fas fa-bars"></i></div>
+            <span style="margin-left: 10px;">BBP 回報中心</span>
+        </div>
         <div class="nav-group">
-            <div class="nav-item active" onclick="showView('dash-view', this)"><i class="fas fa-th-large"></i> 總覽儀表板</div>
-            <div class="nav-item" onclick="showView('report-view', this)"><i class="fas fa-plus-circle"></i> 新增案件回報</div>
-            <div class="nav-item" onclick="showView('status-view', this)"><i class="fas fa-search"></i> 案件進度查詢</div>
+            <div class="nav-item active" onclick="showView('dash-view', this)"><i class="fas fa-th-large"></i><span>總覽儀表板</span></div>
+            <div class="nav-item" onclick="showView('report-view', this)"><i class="fas fa-plus-circle"></i><span>新增案件回報</span></div>
+            <div class="nav-item" onclick="showView('status-view', this)"><i class="fas fa-search"></i><span>案件進度查詢</span></div>
         </div>
         <div class="admin-footer">
-            <div class="nav-item" onclick="showView('login-view', this)"><i class="fas fa-user-shield"></i> 管理者後台</div>
+            <div class="nav-item" onclick="showView('login-view', this)"><i class="fas fa-user-shield"></i><span>管理者後台</span></div>
         </div>
     </nav>
 
     <main>
         <div class="container">
-            
             <div id="dash-view" class="view active">
                 <div class="header-row">
                     <div class="section-title">營運數據概況</div>
@@ -145,9 +210,23 @@
 
             <div id="admin-view" class="view">
                 <div class="section-title">管理者後台</div>
+                <div class="admin-filter-bar">
+                    <span style="font-weight: 700; color: var(--text-sub); font-size: 0.85rem;"><i class="fas fa-filter"></i> 快速篩選:</span>
+                    <select class="filter-select" id="filter-status" onchange="renderAdmin()">
+                        <option value="全部">所有狀態</option>
+                        <option value="待處理">待處理</option>
+                        <option value="已解決">已解決</option>
+                        <option value="已退回">已退回</option>
+                    </select>
+                    <select class="filter-select" id="filter-priority" onchange="renderAdmin()">
+                        <option value="全部">所有優先序</option>
+                        <option value="1-緊急">1-緊急</option>
+                        <option value="2-優先">2-優先</option>
+                        <option value="3-一般">3-一般</option>
+                    </select>
+                </div>
                 <div id="admin-list"></div>
             </div>
-
         </div>
     </main>
 
@@ -160,6 +239,11 @@
         let allData = [];
 
         var userQuill = new Quill('#editor-user', { theme: 'snow', modules: qlModules });
+
+        // 收合側邊欄功能
+        function toggleSidebar() {
+            document.body.classList.toggle('collapsed');
+        }
 
         function showView(id, el) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
@@ -275,7 +359,10 @@
         }
 
         function renderAdmin() {
-            const area = document.getElementById('admin-list'); area.innerHTML = "";
+            const area = document.getElementById('admin-list'); 
+            const statusFilter = document.getElementById('filter-status').value;
+            const priorityFilter = document.getElementById('filter-priority').value;
+            area.innerHTML = "";
             let tickets = {};
             allData.slice(1).forEach(row => {
                 const id = row[0];
@@ -286,20 +373,24 @@
             });
 
             Object.values(tickets).reverse().forEach(t => {
-                const card = document.createElement('div'); card.className = "card";
-                card.innerHTML = `<div class="collapsible-header" onclick="this.parentElement.classList.toggle('expanded')">
-                    <b>${t.title} (${t.email})</b> <b class="priority-badge">${t.priority || '2-優先'}</b></div>
-                    <div class="collapsible-content">
-                        <div style="margin-bottom:20px;">${t.msgs.map(m=>`<div class="bubble bubble-${m.sender==='管理者'?'admin':'user'}"><b>${m.sender}:</b> <div>${m.content}</div></div>`).join('')}</div>
-                        <div style="display:flex; gap:12px; margin-bottom:15px">
-                            <select id="st-${t.id}"><option value="待處理" ${t.status=='待處理'?'selected':''}>待處理</option><option value="已解決" ${t.status=='已解決'?'selected':''}>已解決</option><option value="已退回" ${t.status=='已退回'?'selected':''}>已退回</option></select>
-                            <select id="pr-${t.id}"><option value="1-緊急" ${t.priority=='1-緊急'?'selected':''}>1-緊急</option><option value="2-優先" ${t.priority=='2-優先'?'selected':''}>2-優先</option><option value="3-一般" ${t.priority=='3-一般'?'selected':''}>3-一般</option></select>
-                        </div>
-                        <div class="editor-wrapper"><div id="ed-${t.id}"></div></div>
-                        <button id="btn-${t.id}" onclick="adminReply('${t.id}','${t.email}','${t.title}')" style="width:100%; margin-top:15px">送出回覆並更新</button>
-                    </div>`;
-                area.appendChild(card);
-                new Quill(`#ed-${t.id}`, { theme: 'snow', modules: qlModules });
+                const matchStatus = (statusFilter === "全部" || t.status === statusFilter);
+                const matchPriority = (priorityFilter === "全部" || t.priority === priorityFilter);
+                if (matchStatus && matchPriority) {
+                    const card = document.createElement('div'); card.className = "card";
+                    card.innerHTML = `<div class="collapsible-header" onclick="this.parentElement.classList.toggle('expanded')">
+                        <b>${t.title} (${t.email})</b> <b class="priority-badge">${t.priority || '2-優先'}</b></div>
+                        <div class="collapsible-content">
+                            <div style="margin-bottom:20px;">${t.msgs.map(m=>`<div class="bubble bubble-${m.sender==='管理者'?'admin':'user'}"><b>${m.sender}:</b> <div>${m.content}</div></div>`).join('')}</div>
+                            <div style="display:flex; gap:12px; margin-bottom:15px">
+                                <select id="st-${t.id}"><option value="待處理" ${t.status=='待處理'?'selected':''}>待處理</option><option value="已解決" ${t.status=='已解決'?'selected':''}>已解決</option><option value="已退回" ${t.status=='已退回'?'selected':''}>已退回</option></select>
+                                <select id="pr-${t.id}"><option value="1-緊急" ${t.priority=='1-緊急'?'selected':''}>1-緊急</option><option value="2-優先" ${t.priority=='2-優先'?'selected':''}>2-優先</option><option value="3-一般" ${t.priority=='3-一般'?'selected':''}>3-一般</option></select>
+                            </div>
+                            <div class="editor-wrapper"><div id="ed-${t.id}"></div></div>
+                            <button id="btn-${t.id}" onclick="adminReply('${t.id}','${t.email}','${t.title}')" style="width:100%; margin-top:15px">送出回覆並更新</button>
+                        </div>`;
+                    area.appendChild(card);
+                    new Quill(`#ed-${t.id}`, { theme: 'snow', modules: qlModules });
+                }
             });
         }
 
