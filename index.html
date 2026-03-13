@@ -20,7 +20,6 @@
             --border: #f1f5f9;
             --sidebar-width: 260px;
             --sidebar-collapsed-width: 85px;
-            /* 鮮豔數據顏色 */
             --stat-amber: #f59e0b;
             --stat-emerald: #10b981;
         }
@@ -78,7 +77,6 @@
         .container { width: 100%; max-width: 900px; }
         .card { background: white; border-radius: 24px; padding: 30px; border: none; box-shadow: 0 4px 20px rgba(0,0,0,0.03); margin-bottom: 15px; }
 
-        /* 數據與標題 */
         .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
         .section-title { font-size: 1.5rem; font-weight: 800; margin: 0; display: flex; align-items: center; gap: 10px; }
         .cycle-tag { font-size: 0.8rem; font-weight: 700; color: var(--text-sub); background: white; padding: 8px 16px; border-radius: 50px; border: 1px solid var(--border); }
@@ -93,10 +91,11 @@
         #stat-resolved { color: var(--stat-emerald); }
         #stat-rate { color: var(--primary); }
 
-        /* 👑 優化：急件關注列表標籤空格 👑 */
+        /* 👑 優化：標籤間距 👑 */
         .priority-badge { font-weight: 800; color: var(--primary); margin-right: 20px; }
+        .resolved-badge { font-weight: 800; color: var(--stat-emerald); margin-right: 20px; }
 
-        /* 👑 優化：去線條、圓弧化輸入框 👑 */
+        /* --- 輸入框設定 --- */
         label { font-size: 0.9rem; font-weight: 700; color: var(--text-sub); margin-bottom: 8px; display: block; }
         input, select { 
             width: 100%; padding: 14px; border: none; border-radius: 14px; 
@@ -105,22 +104,15 @@
         }
         input:focus, select:focus { background: #fff; box-shadow: 0 0 0 3px var(--primary-light); }
         
-        /* 👑 優化：Quill 編輯器圓潤化 👑 */
         .editor-wrapper { border: none; border-radius: 16px; overflow: hidden; margin-top: 5px; background: #f1f5f9; }
         .ql-toolbar.ql-snow { border: none !important; border-bottom: 1px solid #e2e8f0 !important; background: #fcfdfe; }
         .ql-container.ql-snow { border: none !important; min-height: 200px; }
 
-        /* 👑 優化：現代化管理員驗證介面 👑 */
         .login-card { max-width: 420px; margin: 100px auto; text-align: center; padding: 45px; border-radius: 32px; box-shadow: 0 20px 40px rgba(0,0,0,0.04); }
         .login-card input[type="password"] { 
             background: #f1f5f9; border-radius: 18px; padding: 18px; 
             text-align: center; letter-spacing: 0.3em; font-size: 1.2rem; margin-bottom: 25px;
         }
-        .login-card input[type="password"]:focus { background: #fff; border: none; box-shadow: 0 0 0 4px var(--primary-light); }
-
-        /* 其他元素 */
-        .admin-filter-bar { display: flex; gap: 12px; margin-bottom: 20px; align-items: center; background: white; padding: 12px 20px; border-radius: 18px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
-        .filter-select { padding: 10px 14px; border-radius: 10px; border: 1.5px solid var(--border); font-size: 0.9rem; font-weight: 600; color: var(--text-main); outline: none; background: #fff; cursor: pointer; }
 
         button { background: var(--primary); color: white; border: none; padding: 16px 28px; border-radius: 16px; font-weight: 700; cursor: pointer; transition: 0.3s; display: inline-flex; align-items: center; gap: 10px; justify-content: center; }
         button:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(99,102,241,0.2); }
@@ -167,8 +159,12 @@
                     <div class="stat-card"><h3>本週進度</h3><span class="value" id="stat-resolved">0</span></div>
                     <div class="stat-card"><h3>結案率</h3><span class="value" id="stat-rate">0%</span></div>
                 </div>
+                
                 <div class="section-title" style="margin-bottom:20px">🔥 急件關注</div>
                 <div id="priority-list"></div>
+
+                <div class="section-title" style="margin-top:40px; margin-bottom:20px; color: var(--stat-emerald);">✅ 本週已解決</div>
+                <div id="resolved-list"></div>
             </div>
 
             <div id="admin-view" class="view">
@@ -288,6 +284,7 @@
                 if(!tickets[id]) tickets[id] = { id, title:row[4], status:row[7], priority:row[9], cycle:row[10] };
                 tickets[id].status = row[7];
                 tickets[id].cycle = row[10];
+                tickets[id].priority = row[9];
             });
 
             const ticketList = Object.values(tickets);
@@ -296,6 +293,7 @@
             const totalThisCycle = ticketList.filter(t => t.cycle === latestCycle).length;
             document.getElementById('stat-rate').innerText = totalThisCycle > 0 ? Math.round((ticketList.filter(t => t.status === '已解決' && t.cycle === latestCycle).length / totalThisCycle) * 100) + "%" : "0%";
 
+            // 渲染：急件關注
             const listArea = document.getElementById('priority-list');
             listArea.innerHTML = "";
             ticketList.filter(t => t.status === '待處理').sort((a,b) => String(a.priority).localeCompare(String(b.priority))).slice(0, 5).forEach(t => {
@@ -304,6 +302,21 @@
                     <i class="fas fa-chevron-right" style="color:#cbd5e1"></i>
                 </div>`;
             });
+
+            // 👑 渲染：本週已解決 👑
+            const resolvedArea = document.getElementById('resolved-list');
+            resolvedArea.innerHTML = "";
+            const weekResolved = ticketList.filter(t => t.status === '已解決' && t.cycle === latestCycle);
+            
+            if(weekResolved.length > 0) {
+                weekResolved.forEach(t => {
+                    resolvedArea.innerHTML += `<div class="card" style="display:flex; justify-content:space-between; align-items:center; padding:20px; opacity: 0.7; background: #fafdfb;">
+                        <div><b class="resolved-badge"><i class="fas fa-check-circle"></i> 已解決</b><span style="text-decoration: line-through; color: var(--text-sub);">${t.title}</span></div>
+                    </div>`;
+                });
+            } else {
+                resolvedArea.innerHTML = `<div style="text-align:center; padding:20px; color:var(--text-sub); font-size:0.9rem;">本週期尚無已解決案件</div>`;
+            }
         }
 
         document.getElementById('reportForm').onsubmit = async (e) => {
@@ -326,7 +339,6 @@
             const btn = document.getElementById('searchBtn'); btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
             await fetchData();
             btn.innerHTML = '<i class="fas fa-search"></i> 搜尋';
-
             const area = document.getElementById('user-result-list'); area.innerHTML = "";
             let tickets = {};
             allData.slice(1).forEach(row => {
@@ -336,10 +348,8 @@
                 tickets[id].msgs.push({ sender: row[6], content: row[5] });
                 tickets[id].status = row[7];
             });
-
             Object.values(tickets).reverse().forEach(t => {
-                const card = document.createElement('div');
-                card.className = "card";
+                const card = document.createElement('div'); card.className = "card";
                 card.innerHTML = `<div class="collapsible-header" onclick="this.parentElement.classList.toggle('expanded')">
                     <b>${t.title} <small style="margin-left:10px; color:var(--primary)">[${t.status}]</small></b><i class="fas fa-chevron-down"></i></div>
                     <div class="collapsible-content">${t.msgs.map(m=>`<div class="bubble bubble-${m.sender==='管理者'?'admin':'user'}"><b>${m.sender}:</b> <div>${m.content}</div></div>`).join('')}</div>`;
@@ -365,7 +375,6 @@
                 tickets[id].status = row[7];
                 tickets[id].priority = row[9];
             });
-
             Object.values(tickets).reverse().forEach(t => {
                 const matchStatus = (statusFilter === "全部" || t.status === statusFilter);
                 const matchPriority = (priorityFilter === "全部" || t.priority === priorityFilter);
