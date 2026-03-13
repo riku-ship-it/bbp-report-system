@@ -3,43 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BBP Agent 反饋系統</title>
+    <title>BBP Agent 專業回饋系統</title>
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        :root { --primary: #4f46e5; --primary-hover: #4338ca; --bg: #f8fafc; --sidebar: #ffffff; --text-main: #1e293b; --text-sub: #64748b; --success: #10b981; }
+        :root { --primary: #4f46e5; --bg: #f8fafc; --sidebar: #ffffff; --text-main: #1e293b; --text-sub: #64748b; }
         * { box-sizing: border-box; font-family: 'Inter', "Microsoft JhengHei", sans-serif; }
         body { margin: 0; display: flex; height: 100vh; background-color: var(--bg); color: var(--text-main); overflow: hidden; }
         
-        /* 側邊欄 */
         nav { width: 260px; background: var(--sidebar); border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; padding: 24px; flex-shrink: 0; }
         .logo { font-weight: 700; font-size: 1.4rem; color: var(--primary); margin-bottom: 40px; display: flex; align-items: center; gap: 12px; }
         .nav-item { padding: 12px 16px; border-radius: 10px; cursor: pointer; color: var(--text-sub); margin-bottom: 8px; transition: 0.2s; display: flex; align-items: center; gap: 12px; font-weight: 500; }
         .nav-item:hover, .nav-item.active { background: #eef2ff; color: var(--primary); font-weight: 600; }
         
-        /* 主區域 */
         main { flex: 1; padding: 40px; overflow-y: auto; display: flex; flex-direction: column; align-items: center; }
         .container { width: 100%; max-width: 850px; }
         .card { background: white; border-radius: 20px; padding: 32px; border: 1px solid #f1f5f9; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); margin-bottom: 24px; }
         
-        /* 表單 */
+        /* 編輯器容器高度 */
+        #editor-container { height: 200px; margin-bottom: 20px; border-radius: 0 0 12px 12px; }
+        .ql-toolbar { border-radius: 12px 12px 0 0; }
+
         .form-group { margin-bottom: 20px; }
         label { display: block; font-size: 0.9rem; margin-bottom: 8px; font-weight: 600; }
-        input, select, textarea { width: 100%; padding: 12px; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 1rem; }
+        input, select { width: 100%; padding: 12px; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 1rem; }
         button { background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 600; cursor: pointer; transition: 0.2s; }
-        button:hover { opacity: 0.9; }
-
-        /* 提示條 (Toast) */
-        #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #333; color: white; padding: 12px 24px; border-radius: 50px; display: none; z-index: 1000; animation: fadeInUp 0.3s; }
-        @keyframes fadeInUp { from { opacity: 0; transform: translate(-50%, 20px); } to { opacity: 1; transform: translate(-50%, 0); } }
-
-        /* 視圖切換 */
-        .view { display: none; width: 100%; }
-        .view.active { display: block; }
         
-        /* 回報卡片樣式 */
         .report-card { background: white; border-radius: 16px; padding: 20px; border: 1px solid #e2e8f0; margin-bottom: 15px; }
         .reply-box { margin-top: 15px; padding: 15px; background: #f8fafc; border-radius: 10px; border-left: 4px solid var(--primary); }
+        #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #333; color: white; padding: 12px 24px; border-radius: 50px; display: none; z-index: 1000; }
+
+        .view { display: none; width: 100%; }
+        .view.active { display: block; }
     </style>
 </head>
 <body>
@@ -48,9 +44,7 @@
         <div class="logo"><i class="fas fa-shield-alt"></i> BBP Agent</div>
         <div class="nav-item active" id="nav-report" onclick="showView('report-view')"><i class="fas fa-edit"></i> 提交新回報</div>
         <div class="nav-item" id="nav-status" onclick="showView('status-view')"><i class="fas fa-history"></i> 追蹤我的反饋</div>
-        <div style="margin-top: auto;">
-            <div class="nav-item" id="nav-login" onclick="showView('login-view')"><i class="fas fa-user-shield"></i> 管理者登入</div>
-        </div>
+        <div style="margin-top: auto;"><div class="nav-item" id="nav-login" onclick="showView('login-view')"><i class="fas fa-user-shield"></i> 管理者登入</div></div>
     </nav>
 
     <main>
@@ -62,7 +56,10 @@
                         <div class="form-group"><label>聯絡 Email</label><input type="email" id="email" required></div>
                         <div class="form-group"><label>類型</label><select id="type"><option>BUG 回報</option><option>功能建議</option></select></div>
                         <div class="form-group"><label>標題</label><input type="text" id="title" required></div>
-                        <div class="form-group"><label>描述</label><textarea id="description" rows="4"></textarea></div>
+                        <div class="form-group">
+                            <label>回饋內容</label>
+                            <div id="editor-container"></div>
+                        </div>
                         <button type="submit" id="submitBtn">確認提交</button>
                     </form>
                 </div>
@@ -71,19 +68,15 @@
             <div id="login-view" class="view">
                 <h1>管理者驗證</h1>
                 <div class="card" style="max-width: 400px; margin: 0 auto;">
-                    <div class="form-group">
-                        <label>請輸入管理密碼</label>
-                        <input type="password" id="adminPassword" placeholder="••••••••">
-                    </div>
-                    <button onclick="handleAdminLogin()" style="width: 100%;">登入後台</button>
+                    <div class="form-group"><label>密碼</label><input type="password" id="adminPassword"></div>
+                    <button onclick="handleAdminLogin()" style="width:100%">登入</button>
                 </div>
             </div>
 
             <div id="status-view" class="view">
                 <h1>我的案件</h1>
-                <div class="card" style="display: flex; gap: 10px; padding: 20px;">
-                    <input type="email" id="searchEmail" placeholder="輸入 Email">
-                    <button onclick="checkStatus()">搜尋</button>
+                <div class="card" style="display:flex; gap:10px; padding:20px;">
+                    <input type="email" id="searchEmail" placeholder="Email"><button onclick="checkStatus()">搜尋</button>
                 </div>
                 <div id="resultArea"></div>
             </div>
@@ -97,18 +90,31 @@
 
     <div id="toast">提示訊息</div>
 
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
     <script>
         const GAS_URL = "https://script.google.com/macros/s/AKfycbz5i3qIe1lZhsbzw0E6kJF85nef6-xi_cajjwWqS-HqVUYsxE_XA7GjQqOxTm7VVVJbpQ/exec";
         const ADMIN_PASS = "admin123";
 
-        function showView(viewId) {
+        // 初始化編輯器
+        var quill = new Quill('#editor-container', {
+            theme: 'snow',
+            modules: {
+                toolbar: [
+                    ['bold', 'italic'],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                    ['image', 'clean']
+                ]
+            },
+            placeholder: '請輸入回饋內容...'
+        });
+
+        function showView(id) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.getElementById(viewId).classList.add('active');
+            document.getElementById(id).classList.add('active');
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-            // 更新選單狀態
-            if(viewId === 'report-view') document.getElementById('nav-report').classList.add('active');
-            if(viewId === 'status-view') document.getElementById('nav-status').classList.add('active');
-            if(viewId === 'login-view') document.getElementById('nav-login').classList.add('active');
+            if(id === 'report-view') document.getElementById('nav-report').classList.add('active');
+            if(id === 'status-view') document.getElementById('nav-status').classList.add('active');
+            if(id === 'login-view') document.getElementById('nav-login').classList.add('active');
         }
 
         function showToast(msg) {
@@ -117,61 +123,51 @@
             setTimeout(() => { t.style.display = 'none'; }, 3000);
         }
 
-        // 登入邏輯
-        function handleAdminLogin() {
-            const p = document.getElementById('adminPassword').value;
-            if(p === ADMIN_PASS) {
-                showToast("登入成功！");
-                showView('admin-view');
-                loadAdminData();
-            } else {
-                showToast("密碼錯誤，請重試");
-            }
-        }
-
-        // 提交回報
         document.getElementById('reportForm').onsubmit = async (e) => {
             e.preventDefault();
             const btn = document.getElementById('submitBtn'); btn.disabled = true;
+            // 獲取 HTML 內容
+            const richContent = quill.root.innerHTML;
+
             const data = {
                 action: "newReport",
                 email: document.getElementById('email').value,
                 type: document.getElementById('type').value,
                 title: document.getElementById('title').value,
-                description: document.getElementById('description').value
+                description: richContent // 這裡傳送 HTML
             };
-            try {
-                await fetch(GAS_URL, { method: "POST", body: JSON.stringify(data) });
-                showToast("回報已成功送出！");
-                e.target.reset();
-            } catch(e) { showToast("提交失敗"); }
-            btn.disabled = false;
+
+            await fetch(GAS_URL, { method: "POST", body: JSON.stringify(data) });
+            showToast("回報已成功送出！");
+            e.target.reset(); quill.setContents([]); btn.disabled = false;
         };
 
-        // 查詢功能 (與之前相同，僅加上 Toast)
         async function checkStatus() {
             const email = document.getElementById('searchEmail').value;
             const resArea = document.getElementById('resultArea');
-            if(!email) return showToast("請輸入 Email");
             resArea.innerHTML = "搜尋中...";
-            const response = await fetch(`${GAS_URL}?email=${email}`);
-            const data = await response.json();
+            const res = await fetch(`${GAS_URL}?email=${email}`);
+            const data = await res.json();
             let html = "";
             data.forEach(row => {
-                html += `<div class="report-card"><h3>${row[4]}</h3><p>${row[5]}</p><div class="reply-box"><b>管理者回饋：</b><br>${row[8]||'待處理'}</div></div>`;
+                html += `<div class="report-card"><h3>${row[4]}</h3><div>${row[5]}</div><div class="reply-box"><b>管理者回饋：</b><br>${row[8]||'待處理'}</div></div>`;
             });
             resArea.innerHTML = html || "找不到資料";
         }
 
-        // 管理員加載 (與之前相同)
+        function handleAdminLogin() {
+            if(document.getElementById('adminPassword').value === ADMIN_PASS) {
+                showView('admin-view'); loadAdminData();
+            } else { showToast("密碼錯誤"); }
+        }
+
         async function loadAdminData() {
-            const area = document.getElementById('adminContent');
-            area.innerHTML = "載入中...";
+            const area = document.getElementById('adminContent'); area.innerHTML = "載入中...";
             const res = await fetch(`${GAS_URL}?admin=true`);
             const data = await res.json();
             let html = "";
             data.slice(1).forEach(row => {
-                html += `<div class="report-card"><b>${row[2]}</b><h4>${row[4]}</h4><p>${row[5]}</p><textarea id="re-${row[0]}" style="height:80px; margin-bottom:10px">${row[8]||''}</textarea><button onclick="saveReply('${row[0]}')">儲存回覆</button></div>`;
+                html += `<div class="report-card"><b>${row[2]}</b><h4>${row[4]}</h4><div style="background:#eee;padding:10px">${row[5]}</div><textarea id="re-${row[0]}" style="margin-top:10px">${row[8]||''}</textarea><button onclick="saveReply('${row[0]}')">儲存回覆</button></div>`;
             });
             area.innerHTML = html;
         }
@@ -179,8 +175,7 @@
         async function saveReply(id) {
             const data = { action: "updateReply", id: id, reply: document.getElementById(`re-${id}`).value, status: "已解決" };
             await fetch(GAS_URL, { method: "POST", body: JSON.stringify(data) });
-            showToast("回覆已儲存！");
-            loadAdminData();
+            showToast("已儲存"); loadAdminData();
         }
     </script>
 </body>
