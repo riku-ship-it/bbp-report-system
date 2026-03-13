@@ -12,7 +12,7 @@
         :root { 
             --primary: #6366f1; /* 活力紫 */
             --secondary: #06b6d4; /* 極光青 */
-            --accent: #f43f5e; /* 退回紅 */
+            --accent: #ef4444; /* 退回紅 */
             --bg: #f8fafc; 
             --sidebar: #ffffff; 
             --card-shadow: 0 10px 30px -5px rgba(99, 102, 241, 0.1);
@@ -36,11 +36,20 @@
         /* 卡片設計 */
         .card { background: white; border-radius: 24px; padding: 30px; border: 1px solid #f1f5f9; box-shadow: var(--card-shadow); margin-bottom: 25px; }
         
-        /* 編輯器樣式優化 */
-        #editor-container, .admin-editor { height: 220px; margin-bottom: 15px; border-radius: 0 0 16px 16px; }
+        /* 圖片滿版修正：關鍵 CSS */
+        .ql-editor img, .report-card img, .card img {
+            max-width: 100% !important;
+            height: auto !important;
+            border-radius: 12px;
+            margin: 10px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: block;
+        }
+
+        /* 編輯器樣式 */
+        .editor-box { height: 220px; margin-bottom: 15px; border-radius: 0 0 16px 16px; }
         .ql-toolbar { border-radius: 16px 16px 0 0; border-color: #f1f5f9 !important; background: #fcfdfe; }
         .ql-container { border-color: #f1f5f9 !important; font-size: 1rem; }
-        .ql-editor img { max-width: 100%; height: auto; border-radius: 12px; margin: 10px 0; border: 1px solid #f1f5f9; }
 
         /* 表單元素 */
         .form-group { margin-bottom: 20px; }
@@ -52,11 +61,11 @@
         button:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3); }
         button:disabled { opacity: 0.6; cursor: not-allowed; }
 
-        /* 狀態標籤 */
+        /* 狀態標籤顏色強化 */
         .status-badge { padding: 6px 16px; border-radius: 50px; font-size: 0.8rem; font-weight: 800; display: inline-block; margin-bottom: 12px; }
-        .待處理 { background: #fef3c7; color: #b45309; }
-        .已解決 { background: #d1fae5; color: #065f46; }
-        .待補件 { background: #fee2e2; color: #b91c1c; }
+        .待處理 { background: #fffbeb; color: #92400e; border: 1px solid #fde68a; } /* 黃色 */
+        .已解決 { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; } /* 綠色 */
+        .已退回 { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; } /* 紅色 */
 
         .reply-box { margin-top: 20px; padding: 20px; background: #f8fafc; border-radius: 16px; border-left: 5px solid var(--primary); }
         #toast { position: fixed; top: 24px; right: 24px; background: #1e293b; color: white; padding: 16px 32px; border-radius: 16px; display: none; z-index: 1000; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2); animation: slideIn 0.3s ease; }
@@ -70,11 +79,11 @@
 
     <nav>
         <div class="logo"><i class="fas fa-comment-alt"></i> BBP 回報系統</div>
-        <div class="nav-item active" onclick="showView('report-view', this)"><i class="fas fa-plus-circle"></i> 新增回報</div>
-        <div class="nav-item" onclick="showView('status-view', this)"><i class="fas fa-search"></i> 案件追蹤</div>
-        <div class="nav-item" onclick="showView('faq-view', this)"><i class="fas fa-lightbulb"></i> 精選案例</div>
+        <div class="nav-item active" id="nav-report" onclick="showView('report-view', this)"><i class="fas fa-plus-circle"></i> 新增回報</div>
+        <div class="nav-item" id="nav-status" onclick="showView('status-view', this)"><i class="fas fa-search"></i> 案件追蹤</div>
+        <div class="nav-item" id="nav-faq" onclick="showView('faq-view', this)"><i class="fas fa-lightbulb"></i> 精選案例</div>
         <div class="nav-footer">
-            <div class="nav-item" onclick="showView('login-view', this)"><i class="fas fa-user-shield"></i> 管理登入</div>
+            <div class="nav-item" id="nav-login" onclick="showView('login-view', this)"><i class="fas fa-user-shield"></i> 管理登入</div>
         </div>
     </nav>
 
@@ -101,7 +110,7 @@
                         </div>
                         <div class="form-group">
                             <label>詳細內容描述</label>
-                            <div id="editor-container"></div>
+                            <div id="editor-container" class="editor-box"></div>
                         </div>
                         <button type="submit" id="submitBtn">送出回報</button>
                     </form>
@@ -153,9 +162,12 @@
         const GAS_URL = "https://script.google.com/macros/s/AKfycbz5i3qIe1lZhsbzw0E6kJF85nef6-xi_cajjwWqS-HqVUYsxE_XA7GjQqOxTm7VVVJbpQ/exec";
         const ADMIN_PASS = "admin123";
         let allDataCache = [];
+        let appendQuills = {}; // 存放動態生成的補充框實例
 
-        // 初始化編輯器
+        // 編輯器工具列設定
         const qlModules = { toolbar: [['bold', 'italic'], [{list:'bullet'}], ['image']] };
+
+        // 初始化首頁回報編輯器
         var userQuill = new Quill('#editor-container', { theme: 'snow', modules: qlModules, placeholder: '請詳細描述您的問題...' });
 
         function showView(id, el) {
@@ -181,7 +193,7 @@
             e.target.reset(); userQuill.setContents([]); btn.disabled = false; btn.innerText = "送出回報";
         };
 
-        // --- 使用者追蹤與補充 ---
+        // --- 使用者追蹤功能 ---
         async function checkStatus() {
             const email = document.getElementById('searchEmail').value;
             const resArea = document.getElementById('resultArea');
@@ -189,10 +201,15 @@
             resArea.innerHTML = "<p style='text-align:center'>正在撈取資料...</p>";
             
             const res = await fetch(GAS_URL); const data = await res.json();
-            let html = "";
+            resArea.innerHTML = "";
+            appendQuills = {}; // 重置
+            
             data.slice(1).forEach(row => {
                 if(row[2].toLowerCase() !== email.toLowerCase()) return;
-                html += `<div class="card">
+                const id = row[0];
+                const card = document.createElement('div');
+                card.className = "card";
+                card.innerHTML = `
                     <span class="status-badge ${row[9]}">${row[9]}</span>
                     <h3>${row[4]}</h3>
                     <div style="font-size:0.95rem; line-height:1.6">${row[5]}</div>
@@ -201,19 +218,27 @@
                     </div>
                     ${row[9] === '已退回' ? `
                     <div style="margin-top:20px; border-top:1px dashed #ddd; padding-top:20px">
-                        <label>📝 補充說明</label>
-                        <textarea id="append-${row[0]}" rows="3" placeholder="根據管理者的回饋補充更多資訊..."></textarea>
-                        <button onclick="submitAppend('${row[0]}')" style="margin-top:10px; background:var(--secondary)">再次提交案件</button>
+                        <label>📝 補充說明 (支援圖片與格式)</label>
+                        <div id="append-editor-${id}" style="height:150px; margin-bottom:10px"></div>
+                        <button onclick="submitAppend('${id}')" style="margin-top:10px; background:var(--secondary)">再次提交補充</button>
                     </div>` : ''}
-                </div>`;
+                `;
+                resArea.appendChild(card);
+                
+                // 如果是退回狀態，初始化補充框的 Quill
+                if(row[9] === '已退回') {
+                    appendQuills[id] = new Quill(`#append-editor-${id}`, { theme: 'snow', modules: qlModules, placeholder: '請輸入補充說明...' });
+                }
             });
-            resArea.innerHTML = html || "<p style='text-align:center'>找不到與此 Email 相關的案件紀錄。</p>";
+            if(resArea.innerHTML === "") resArea.innerHTML = "<p style='text-align:center'>找不到與此 Email 相關的案件紀錄。</p>";
         }
 
         async function submitAppend(id) {
-            const desc = document.getElementById(`append-${id}`).value;
-            if(!desc) return showToast("請輸入補充內容");
-            await fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action: "appendInfo", id: id, description: desc }) });
+            const content = appendQuills[id].root.innerHTML;
+            if(appendQuills[id].getText().trim().length === 0 && !content.includes('img')) {
+                return showToast("請輸入補充內容");
+            }
+            await fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action: "appendInfo", id: id, description: content }) });
             showToast("🚀 補充內容已送出，案件狀態已回到：待處理");
             checkStatus();
         }
@@ -234,7 +259,7 @@
                         <small style="color:var(--primary); font-weight:700"># ${row[3]}</small>
                         <h3 style="margin:5px 0 15px 0">${row[4]}</h3>
                         <div style="font-size:0.9rem; background:#fcfdfe; padding:15px; border-radius:12px; border:1px solid #f1f5f9">${row[5]}</div>
-                        <div style="margin-top:15px; color:var(--success); font-weight:600">💡 解決方案：</div>
+                        <div style="margin-top:15px; color:var(--green); font-weight:600">💡 解決方案：</div>
                         <div style="font-size:0.95rem">${row[8]}</div>
                     </div>`;
                 }
@@ -242,7 +267,7 @@
             document.getElementById('faqContent').innerHTML = html;
         }
 
-        // --- 管理者後台 ---
+        // --- 管理者中心 ---
         function handleAdminLogin() {
             if(document.getElementById('adminPassword').value === ADMIN_PASS) {
                 showView('admin-view'); loadAdminData();
@@ -252,12 +277,16 @@
         async function loadAdminData() {
             const area = document.getElementById('adminContent'); area.innerHTML = "正在載入後台數據...";
             const res = await fetch(GAS_URL); const data = await res.json();
-            let html = "";
+            area.innerHTML = "";
+            
             data.slice(1).reverse().forEach(row => {
-                html += `<div class="card">
+                const id = row[0];
+                const card = document.createElement('div');
+                card.className = "card";
+                card.innerHTML = `
                     <div style="display:flex; justify-content:space-between; align-items:start">
-                        <small>ID: ${row[0]} | 來自: ${row[2]}</small>
-                        <select id="st-${row[0]}" style="width:auto">
+                        <small>ID: ${id} | 來自: ${row[2]}</small>
+                        <select id="st-${id}" style="width:auto">
                             <option value="待處理" ${row[9]=='待處理'?'selected':''}>待處理</option>
                             <option value="已解決" ${row[9]=='已解決'?'selected':''}>已解決</option>
                             <option value="已退回" ${row[9]=='已退回'?'selected':''}>已退回</option>
@@ -266,29 +295,30 @@
                     <h3>${row[4]}</h3>
                     <div style="background:#f8fafc; padding:20px; border-radius:16px; margin-bottom:20px">${row[5]}</div>
                     <label>精選案例類別 (例如：介面操作、BUG 修復)</label>
-                    <input type="text" id="cat-${row[0]}" value="${row[3]}" style="margin-bottom:15px">
+                    <input type="text" id="cat-${id}" value="${row[3]}" style="margin-bottom:15px">
                     <label>管理者回饋內容</label>
-                    <div id="admin-editor-${row[0]}" class="admin-editor"></div>
-                    <button onclick="saveAdminReply('${row[0]}')" style="margin-top:15px; width:100%; background:var(--secondary)">儲存變更並更新狀態</button>
+                    <div id="admin-editor-${id}" style="height:150px"></div>
+                    <button onclick="saveAdminReply('${id}')" style="margin-top:15px; width:100%; background:var(--secondary)">儲存變更並更新狀態</button>
                 </div>`;
-            });
-            area.innerHTML = html;
-            data.slice(1).forEach(row => {
-                const ed = new Quill(`#admin-editor-${row[0]}`, { theme: 'snow', modules: qlModules });
+                area.appendChild(card);
+                
+                // 初始化管理員編輯器
+                const ed = new Quill(`#admin-editor-${id}`, { theme: 'snow', modules: qlModules });
                 ed.root.innerHTML = row[8] || '';
             });
         }
 
         async function saveAdminReply(id) {
-            const reply = document.querySelector(`#admin-editor-${id} .ql-editor`).innerHTML;
+            const replyHtml = document.querySelector(`#admin-editor-${id} .ql-editor`).innerHTML;
             const data = {
                 action: "updateReply", id: id,
                 category: document.getElementById(`cat-${id}`).value,
-                reply: reply,
+                reply: replyHtml,
                 status: document.getElementById(`st-${id}`).value
             };
             await fetch(GAS_URL, { method: "POST", body: JSON.stringify(data) });
             showToast("✨ 案件已成功更新並存檔！");
+            loadAdminData();
         }
     </script>
 </body>
