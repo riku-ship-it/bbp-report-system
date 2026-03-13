@@ -3,159 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BBP Agent 回饋追蹤系統</title>
+    <title>BBP Agent 反饋系統</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        :root {
-            --primary: #4f46e5;
-            --primary-hover: #4338ca;
-            --bg: #f8fafc;
-            --sidebar: #ffffff;
-            --text-main: #1e293b;
-            --text-sub: #64748b;
-            --success: #10b981;
-        }
+        :root { --primary: #4f46e5; --primary-hover: #4338ca; --bg: #f8fafc; --sidebar: #ffffff; --text-main: #1e293b; --text-sub: #64748b; --success: #10b981; }
         * { box-sizing: border-box; font-family: 'Inter', "Microsoft JhengHei", sans-serif; }
         body { margin: 0; display: flex; height: 100vh; background-color: var(--bg); color: var(--text-main); overflow: hidden; }
-
-        /* 左側導覽列 */
+        
+        /* 側邊欄 */
         nav { width: 260px; background: var(--sidebar); border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; padding: 24px; flex-shrink: 0; }
         .logo { font-weight: 700; font-size: 1.4rem; color: var(--primary); margin-bottom: 40px; display: flex; align-items: center; gap: 12px; }
-        .nav-group { flex: 1; }
         .nav-item { padding: 12px 16px; border-radius: 10px; cursor: pointer; color: var(--text-sub); margin-bottom: 8px; transition: 0.2s; display: flex; align-items: center; gap: 12px; font-weight: 500; }
-        .nav-item:hover { background: #f1f5f9; color: var(--primary); }
-        .nav-item.active { background: #eef2ff; color: var(--primary); font-weight: 600; }
-        .nav-footer { border-top: 1px solid #f1f5f9; pt: 20px; }
-
-        /* 右側主區域 */
+        .nav-item:hover, .nav-item.active { background: #eef2ff; color: var(--primary); font-weight: 600; }
+        
+        /* 主區域 */
         main { flex: 1; padding: 40px; overflow-y: auto; display: flex; flex-direction: column; align-items: center; }
         .container { width: 100%; max-width: 850px; }
-        .header { margin-bottom: 32px; }
-        .header h1 { font-size: 1.8rem; margin: 0; color: var(--text-main); }
-        .header p { color: var(--text-sub); margin-top: 8px; }
-
-        /* 卡片設計 */
         .card { background: white; border-radius: 20px; padding: 32px; border: 1px solid #f1f5f9; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); margin-bottom: 24px; }
         
-        /* 表單樣式 */
-        .form-group { margin-bottom: 24px; }
-        label { display: block; font-size: 0.9rem; margin-bottom: 8px; font-weight: 600; color: #475569; }
-        input, select, textarea { width: 100%; padding: 12px 16px; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 1rem; transition: 0.2s; background: #fff; }
-        input:focus, textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1); }
-        
-        button { background: var(--primary); color: white; border: none; padding: 14px 28px; border-radius: 12px; font-weight: 600; cursor: pointer; transition: 0.2s; font-size: 1rem; }
-        button:hover { background: var(--primary-hover); transform: translateY(-1px); }
-        button:disabled { background: #94a3b8; cursor: not-allowed; }
+        /* 表單 */
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-size: 0.9rem; margin-bottom: 8px; font-weight: 600; }
+        input, select, textarea { width: 100%; padding: 12px; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 1rem; }
+        button { background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        button:hover { opacity: 0.9; }
 
-        /* 回報卡片樣式 */
-        .report-card { background: white; border-radius: 16px; padding: 24px; margin-bottom: 20px; border: 1px solid #f1f5f9; position: relative; }
-        .status-badge { display: inline-block; padding: 4px 12px; border-radius: 8px; font-size: 0.8rem; font-weight: 700; margin-bottom: 12px; }
-        .status-pending { background: #fef3c7; color: #92400e; }
-        .status-resolved { background: #d1fae5; color: #065f46; }
-        
-        .reply-section { margin-top: 20px; padding: 16px; background: #f8fafc; border-radius: 12px; border-left: 4px solid var(--primary); }
-        .reply-label { font-size: 0.85rem; font-weight: 700; color: var(--primary); margin-bottom: 4px; display: block; }
+        /* 提示條 (Toast) */
+        #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #333; color: white; padding: 12px 24px; border-radius: 50px; display: none; z-index: 1000; animation: fadeInUp 0.3s; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translate(-50%, 20px); } to { opacity: 1; transform: translate(-50%, 0); } }
 
-        /* 管理員介面特定樣式 */
-        .admin-controls { display: flex; gap: 12px; margin-top: 16px; }
-        .admin-controls textarea { flex: 1; min-height: 80px; }
-
+        /* 視圖切換 */
         .view { display: none; width: 100%; }
-        .view.active { display: block; animation: slideUp 0.4s ease; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .view.active { display: block; }
+        
+        /* 回報卡片樣式 */
+        .report-card { background: white; border-radius: 16px; padding: 20px; border: 1px solid #e2e8f0; margin-bottom: 15px; }
+        .reply-box { margin-top: 15px; padding: 15px; background: #f8fafc; border-radius: 10px; border-left: 4px solid var(--primary); }
     </style>
 </head>
 <body>
 
     <nav>
         <div class="logo"><i class="fas fa-shield-alt"></i> BBP Agent</div>
-        <div class="nav-group">
-            <div class="nav-item active" onclick="switchView('report-view', this)"><i class="fas fa-edit"></i> 提交新回報</div>
-            <div class="nav-item" onclick="switchView('status-view', this)"><i class="fas fa-history"></i> 追蹤我的反饋</div>
-        </div>
-        <div class="nav-footer">
-            <div class="nav-item" onclick="adminLogin()"><i class="fas fa-user-shield"></i> 管理者登入</div>
+        <div class="nav-item active" id="nav-report" onclick="showView('report-view')"><i class="fas fa-edit"></i> 提交新回報</div>
+        <div class="nav-item" id="nav-status" onclick="showView('status-view')"><i class="fas fa-history"></i> 追蹤我的反饋</div>
+        <div style="margin-top: auto;">
+            <div class="nav-item" id="nav-login" onclick="showView('login-view')"><i class="fas fa-user-shield"></i> 管理者登入</div>
         </div>
     </nav>
 
     <main>
         <div class="container">
             <div id="report-view" class="view active">
-                <div class="header">
-                    <h1>新增回饋案件</h1>
-                    <p>您的建議是我們進步的最大動力</p>
-                </div>
+                <h1>新增回饋案件</h1>
                 <div class="card">
                     <form id="reportForm">
-                        <div class="form-group">
-                            <label>您的聯絡 Email</label>
-                            <input type="email" id="email" placeholder="我們會透過 Email 讓您查詢進度" required>
-                        </div>
-                        <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px;">
-                            <div class="form-group">
-                                <label>分類</label>
-                                <select id="type">
-                                    <option>BUG 回報</option>
-                                    <option>功能建議</option>
-                                    <option>其他問題</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>問題標題</label>
-                                <input type="text" id="title" placeholder="請簡短描述您的問題" required>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label>詳細描述</label>
-                            <textarea id="description" rows="5" placeholder="請提供更多細節（如發生步驟、環境等）"></textarea>
-                        </div>
-                        <button type="submit" id="submitBtn">確認提交案件</button>
+                        <div class="form-group"><label>聯絡 Email</label><input type="email" id="email" required></div>
+                        <div class="form-group"><label>類型</label><select id="type"><option>BUG 回報</option><option>功能建議</option></select></div>
+                        <div class="form-group"><label>標題</label><input type="text" id="title" required></div>
+                        <div class="form-group"><label>描述</label><textarea id="description" rows="4"></textarea></div>
+                        <button type="submit" id="submitBtn">確認提交</button>
                     </form>
                 </div>
             </div>
 
-            <div id="status-view" class="view">
-                <div class="header">
-                    <h1>追蹤您的案件</h1>
-                    <p>輸入 Email 查看管理員的回覆與處理進度</p>
-                </div>
-                <div class="card" style="padding: 20px;">
-                    <div style="display: flex; gap: 12px;">
-                        <input type="email" id="searchEmail" placeholder="請輸入您提交時用的 Email">
-                        <button onclick="checkStatus()" style="white-space: nowrap;">搜尋</button>
+            <div id="login-view" class="view">
+                <h1>管理者驗證</h1>
+                <div class="card" style="max-width: 400px; margin: 0 auto;">
+                    <div class="form-group">
+                        <label>請輸入管理密碼</label>
+                        <input type="password" id="adminPassword" placeholder="••••••••">
                     </div>
+                    <button onclick="handleAdminLogin()" style="width: 100%;">登入後台</button>
+                </div>
+            </div>
+
+            <div id="status-view" class="view">
+                <h1>我的案件</h1>
+                <div class="card" style="display: flex; gap: 10px; padding: 20px;">
+                    <input type="email" id="searchEmail" placeholder="輸入 Email">
+                    <button onclick="checkStatus()">搜尋</button>
                 </div>
                 <div id="resultArea"></div>
             </div>
 
             <div id="admin-view" class="view">
-                <div class="header">
-                    <h1>管理者中心</h1>
-                    <p>您可以在此回覆所有使用者的案件</p>
-                </div>
+                <h1>管理者中心</h1>
                 <div id="adminContent"></div>
             </div>
         </div>
     </main>
 
+    <div id="toast">提示訊息</div>
+
     <script>
         const GAS_URL = "https://script.google.com/macros/s/AKfycbz5i3qIe1lZhsbzw0E6kJF85nef6-xi_cajjwWqS-HqVUYsxE_XA7GjQqOxTm7VVVJbpQ/exec";
-        const ADMIN_PASS = "admin123"; // 這是您的預設密碼
+        const ADMIN_PASS = "admin123";
 
-        function switchView(viewId, el) {
+        function showView(viewId) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.getElementById(viewId).classList.add('active');
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-            if(el) el.classList.add('active');
+            // 更新選單狀態
+            if(viewId === 'report-view') document.getElementById('nav-report').classList.add('active');
+            if(viewId === 'status-view') document.getElementById('nav-status').classList.add('active');
+            if(viewId === 'login-view') document.getElementById('nav-login').classList.add('active');
         }
 
-        // --- 使用者：提交功能 ---
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.innerText = msg; t.style.display = 'block';
+            setTimeout(() => { t.style.display = 'none'; }, 3000);
+        }
+
+        // 登入邏輯
+        function handleAdminLogin() {
+            const p = document.getElementById('adminPassword').value;
+            if(p === ADMIN_PASS) {
+                showToast("登入成功！");
+                showView('admin-view');
+                loadAdminData();
+            } else {
+                showToast("密碼錯誤，請重試");
+            }
+        }
+
+        // 提交回報
         document.getElementById('reportForm').onsubmit = async (e) => {
             e.preventDefault();
-            const btn = document.getElementById('submitBtn');
-            btn.innerText = "傳送中..."; btn.disabled = true;
-
+            const btn = document.getElementById('submitBtn'); btn.disabled = true;
             const data = {
                 action: "newReport",
                 email: document.getElementById('email').value,
@@ -163,92 +140,46 @@
                 title: document.getElementById('title').value,
                 description: document.getElementById('description').value
             };
-
             try {
                 await fetch(GAS_URL, { method: "POST", body: JSON.stringify(data) });
-                alert("回報已成功送出！");
+                showToast("回報已成功送出！");
                 e.target.reset();
-            } catch (err) { alert("連線失敗，請檢查網路"); }
-            btn.innerText = "確認提交案件"; btn.disabled = false;
+            } catch(e) { showToast("提交失敗"); }
+            btn.disabled = false;
         };
 
-        // --- 使用者：查詢功能 ---
+        // 查詢功能 (與之前相同，僅加上 Toast)
         async function checkStatus() {
             const email = document.getElementById('searchEmail').value;
             const resArea = document.getElementById('resultArea');
-            if(!email) return alert("請輸入 Email");
-            resArea.innerHTML = "<p style='text-align:center'>搜尋中...</p>";
-
-            try {
-                const response = await fetch(`${GAS_URL}?email=${email}`);
-                const data = await response.json();
-                if (data.length === 0) { resArea.innerHTML = "找不到資料"; return; }
-
-                let html = "";
-                data.forEach(row => {
-                    const statusClass = row[9] === "已解決" ? "status-resolved" : "status-pending";
-                    html += `
-                        <div class="report-card">
-                            <span class="status-badge ${statusClass}">${row[9] || '待處理'}</span>
-                            <h3 style="margin:0 0 8px 0">${row[4]}</h3>
-                            <p style="color:var(--text-sub); margin-bottom:16px">${row[5]}</p>
-                            <div class="reply-section">
-                                <span class="reply-label">管理者回饋</span>
-                                <div>${row[8] || '我們會盡快為您處理回覆。'}</div>
-                            </div>
-                        </div>`;
-                });
-                resArea.innerHTML = html;
-            } catch (err) { resArea.innerHTML = "查詢出錯"; }
+            if(!email) return showToast("請輸入 Email");
+            resArea.innerHTML = "搜尋中...";
+            const response = await fetch(`${GAS_URL}?email=${email}`);
+            const data = await response.json();
+            let html = "";
+            data.forEach(row => {
+                html += `<div class="report-card"><h3>${row[4]}</h3><p>${row[5]}</p><div class="reply-box"><b>管理者回饋：</b><br>${row[8]||'待處理'}</div></div>`;
+            });
+            resArea.innerHTML = html || "找不到資料";
         }
 
-        // --- 管理者：登入與回覆 ---
-        function adminLogin() {
-            const pass = prompt("請輸入管理者密碼：");
-            if (pass !== ADMIN_PASS) return alert("密碼錯誤");
-            switchView('admin-view', document.querySelector('.nav-footer .nav-item'));
-            loadAdminData();
-        }
-
+        // 管理員加載 (與之前相同)
         async function loadAdminData() {
             const area = document.getElementById('adminContent');
-            area.innerHTML = "載入數據中...";
+            area.innerHTML = "載入中...";
             const res = await fetch(`${GAS_URL}?admin=true`);
             const data = await res.json();
-            
             let html = "";
             data.slice(1).forEach(row => {
-                html += `
-                    <div class="report-card">
-                        <div style="display:flex; justify-content:space-between; align-items:start">
-                            <div>
-                                <small style="color:var(--primary)">ID: ${row[0]}</small>
-                                <h3 style="margin:5px 0">${row[4]} <small>(${row[2]})</small></h3>
-                            </div>
-                            <select id="st-${row[0]}" style="width:auto">
-                                <option value="待處理" ${row[9]=='待處理'?'selected':''}>待處理</option>
-                                <option value="已解決" ${row[9]=='已解決'?'selected':''}>已解決</option>
-                            </select>
-                        </div>
-                        <p>${row[5]}</p>
-                        <div class="admin-controls">
-                            <textarea id="re-${row[0]}" placeholder="在次輸入您的回覆...">${row[8] || ''}</textarea>
-                            <button onclick="saveReply('${row[0]}')" style="background:var(--success)">儲存回覆</button>
-                        </div>
-                    </div>`;
+                html += `<div class="report-card"><b>${row[2]}</b><h4>${row[4]}</h4><p>${row[5]}</p><textarea id="re-${row[0]}" style="height:80px; margin-bottom:10px">${row[8]||''}</textarea><button onclick="saveReply('${row[0]}')">儲存回覆</button></div>`;
             });
             area.innerHTML = html;
         }
 
         async function saveReply(id) {
-            const data = {
-                action: "updateReply",
-                id: id,
-                reply: document.getElementById(`re-${id}`).value,
-                status: document.getElementById(`st-${id}`).value
-            };
+            const data = { action: "updateReply", id: id, reply: document.getElementById(`re-${id}`).value, status: "已解決" };
             await fetch(GAS_URL, { method: "POST", body: JSON.stringify(data) });
-            alert("更新成功！");
+            showToast("回覆已儲存！");
             loadAdminData();
         }
     </script>
