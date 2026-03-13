@@ -13,37 +13,48 @@
         * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', "Microsoft JhengHei", sans-serif; }
         body { margin: 0; display: flex; height: 100vh; background: var(--bg); color: #1e293b; overflow: hidden; }
         
+        /* 導覽列 */
         nav { width: 280px; background: var(--sidebar); border-right: 1px solid #f1f5f9; display: flex; flex-direction: column; padding: 30px 20px; flex-shrink: 0; }
         .logo { font-weight: 800; font-size: 1.6rem; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 40px; display: flex; align-items: center; gap: 12px; }
         .nav-item { padding: 14px 18px; border-radius: 16px; cursor: pointer; color: #64748b; margin-bottom: 8px; transition: 0.3s; display: flex; align-items: center; gap: 12px; font-weight: 600; }
         .nav-item:hover, .nav-item.active { background: #eef2ff; color: var(--primary); }
         .nav-footer { margin-top: auto; border-top: 1px solid #f1f5f9; padding-top: 20px; }
 
+        /* 主區域 */
         main { flex: 1; padding: 40px; overflow-y: auto; display: flex; flex-direction: column; align-items: center; }
         .container { width: 100%; max-width: 850px; }
-        .card { background: white; border-radius: 24px; padding: 30px; border: 1px solid #f1f5f9; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 25px; }
+        .card { background: white; border-radius: 24px; padding: 30px; border: 1px solid #f1f5f9; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 25px; transition: 0.3s; }
+        
+        /* 收合組件樣式 */
+        .collapsible-header { cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        .collapsible-content { display: none; margin-top: 20px; border-top: 1px solid #f1f5f9; padding-top: 20px; }
+        .card.expanded .collapsible-content { display: block; }
+        .chevron { transition: 0.3s; color: #94a3b8; }
+        .card.expanded .chevron { transform: rotate(180deg); }
 
-        /* 橫向搜尋列 */
+        /* 搜尋列 */
         .filter-bar { display: flex; align-items: center; gap: 12px; padding: 20px 25px; }
         .filter-bar input, .filter-bar select { margin: 0; }
 
-        /* 對話泡泡樣式 */
-        .thread-container { margin: 20px 0; border-top: 1px dashed #eee; padding-top: 20px; }
-        .bubble { padding: 15px; border-radius: 16px; margin-bottom: 12px; position: relative; max-width: 90%; line-height: 1.6; }
-        .bubble-user { background: #f1f5f9; align-self: flex-start; border-bottom-left-radius: 4px; }
-        .bubble-admin { background: #eef2ff; align-self: flex-end; border-left: 5px solid var(--primary); margin-left: auto; border-bottom-right-radius: 4px; }
-        .bubble-time { font-size: 0.75rem; color: #94a3b8; margin-top: 5px; display: block; }
+        /* 對話內容 */
+        .thread-container { margin: 20px 0; }
+        .bubble { padding: 15px; border-radius: 16px; margin-bottom: 12px; max-width: 90%; line-height: 1.6; font-size: 0.95rem; }
+        .bubble-user { background: #f1f5f9; border-bottom-left-radius: 4px; }
+        .bubble-admin { background: #eef2ff; border-left: 5px solid var(--primary); margin-left: auto; border-bottom-right-radius: 4px; }
+        .bubble-time { font-size: 0.7rem; color: #94a3b8; margin-top: 5px; display: block; }
         .bubble-name { font-weight: 700; font-size: 0.8rem; margin-bottom: 5px; display: block; }
 
         .ql-editor img, .card img { max-width: 100% !important; height: auto !important; border-radius: 12px; margin: 10px 0; display: block; }
         .editor-box { height: 200px; margin-bottom: 10px; border-radius: 0 0 16px 16px; }
-        .ql-toolbar { border-radius: 16px 16px 0 0; border-color: #f1f5f9 !important; background: #fcfdfe; }
         
         input, select, textarea { width: 100%; padding: 12px 16px; border: 2px solid #f1f5f9; border-radius: 14px; font-size: 1rem; }
-        button { background: var(--primary); color: white; border: none; padding: 14px 30px; border-radius: 14px; font-weight: 700; cursor: pointer; transition: 0.3s; }
-        button:disabled { opacity: 0.6; cursor: wait; }
+        button { background: var(--primary); color: white; border: none; padding: 14px 30px; border-radius: 14px; font-weight: 700; cursor: pointer; transition: 0.3s; display: inline-flex; align-items: center; gap: 8px; justify-content: center; }
+        button .spinner { display: none; animation: spin 1s linear infinite; }
+        button.loading .spinner { display: inline-block; }
+        button.loading { opacity: 0.7; pointer-events: none; }
+        @keyframes spin { from {transform:rotate(0deg);} to {transform:rotate(360deg);} }
 
-        .status-badge { padding: 6px 16px; border-radius: 50px; font-size: 0.8rem; font-weight: 800; display: inline-block; margin-bottom: 15px; }
+        .status-badge { padding: 6px 16px; border-radius: 50px; font-size: 0.8rem; font-weight: 800; }
         .待處理 { background: #fffbeb; color: #92400e; border: 1px solid #fde68a; }
         .已解決 { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
         .已退回 { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
@@ -57,11 +68,11 @@
 
     <nav>
         <div class="logo"><i class="fas fa-comment-dots"></i> BBP 回報系統</div>
-        <div class="nav-item active" id="nav-report" onclick="showView('report-view', this)"><i class="fas fa-plus-circle"></i> 新增回報</div>
-        <div class="nav-item" id="nav-status" onclick="showView('status-view', this)"><i class="fas fa-history"></i> 案件追蹤</div>
-        <div class="nav-item" id="nav-faq" onclick="showView('faq-view', this)"><i class="fas fa-lightbulb"></i> 精選案例</div>
+        <div class="nav-item active" onclick="showView('report-view', this)"><i class="fas fa-plus-circle"></i> 新增回報</div>
+        <div class="nav-item" onclick="showView('status-view', this)"><i class="fas fa-history"></i> 案件追蹤</div>
+        <div class="nav-item" onclick="showView('faq-view', this)"><i class="fas fa-lightbulb"></i> 精選案例</div>
         <div class="nav-footer">
-            <div class="nav-item" id="nav-login" onclick="showView('login-view', this)"><i class="fas fa-user-shield"></i> 管理登入</div>
+            <div class="nav-item" onclick="showView('login-view', this)"><i class="fas fa-user-shield"></i> 管理登入</div>
         </div>
     </nav>
 
@@ -78,13 +89,13 @@
                         </div>
                         <label style="margin-top:15px; display:block">詳細描述</label>
                         <div id="editor-user" class="editor-box"></div>
-                        <button type="submit" id="submitBtn">送出案件</button>
+                        <button type="submit" id="submitBtn"><i class="fas fa-spinner spinner"></i>送出案件</button>
                     </form>
                 </div>
             </div>
 
             <div id="status-view" class="view">
-                <h1>對話式案件追蹤</h1>
+                <h1>案件追蹤</h1>
                 <div class="card filter-bar">
                     <input type="email" id="searchEmail" placeholder="輸入 Email">
                     <select id="statusFilter" onchange="renderStatusView()">
@@ -93,14 +104,13 @@
                         <option value="待處理">待處理</option>
                         <option value="已解決">已解決</option>
                     </select>
-                    <button onclick="checkStatus()">搜尋</button>
+                    <button id="searchBtn" onclick="checkStatus()"><i class="fas fa-spinner spinner"></i>搜尋</button>
                 </div>
                 <div id="resultArea"></div>
             </div>
 
             <div id="faq-view" class="view">
                 <h1>精選案例庫</h1>
-                <div class="card"><input type="text" id="faqSearch" placeholder="搜尋解決方案..." oninput="filterFAQ()"></div>
                 <div id="faqContent"></div>
             </div>
 
@@ -129,14 +139,12 @@
         
         var userQuill = new Quill('#editor-user', { theme: 'snow', modules: qlModules });
         let cacheData = [];
-        let appendQuills = {};
 
         function showView(id, el) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
             if(el) el.classList.add('active');
-            if(id === 'faq-view') refreshFAQ();
         }
 
         function showToast(msg) {
@@ -161,31 +169,25 @@
             return div.innerHTML;
         }
 
-        // 提交新回報
+        // 提交回報
         document.getElementById('reportForm').onsubmit = async (e) => {
             e.preventDefault();
-            const btn = document.getElementById('submitBtn'); btn.disabled = true; btn.innerText = "處理中...";
+            const btn = document.getElementById('submitBtn'); btn.classList.add('loading');
             const content = await compressHTML(userQuill.root.innerHTML);
-            const data = { 
-                action: "newReport", 
-                email: document.getElementById('email').value, 
-                type: document.getElementById('type').value, 
-                title: document.getElementById('title').value, 
-                description: content,
-                sender: "使用者",
-                status: "待處理"
-            };
+            const data = { action: "newReport", email: document.getElementById('email').value, type: document.getElementById('type').value, title: document.getElementById('title').value, description: content, sender: "使用者", status: "待處理" };
             await fetch(GAS_URL, { method: "POST", body: JSON.stringify(data) });
-            showToast("案件已建立！");
-            e.target.reset(); userQuill.setContents([]); btn.disabled = false; btn.innerText = "送出案件";
+            showToast("案件已送出！");
+            e.target.reset(); userQuill.setContents([]); btn.classList.remove('loading');
         };
 
-        // 搜尋進度
+        // 使用者搜尋
         async function checkStatus() {
             const email = document.getElementById('searchEmail').value;
+            const btn = document.getElementById('searchBtn');
             if(!email) return showToast("請輸入 Email");
-            document.getElementById('resultArea').innerHTML = "搜尋中...";
+            btn.classList.add('loading');
             const res = await fetch(GAS_URL); cacheData = await res.json();
+            btn.classList.remove('loading');
             renderStatusView();
         }
 
@@ -194,60 +196,59 @@
             const filter = document.getElementById('statusFilter').value;
             const resArea = document.getElementById('resultArea');
             resArea.innerHTML = "";
-            appendQuills = {};
 
-            // 1. 根據 ID 組合對話
             let tickets = {};
             cacheData.slice(1).forEach(row => {
                 if(row[2].toLowerCase() !== email) return;
                 const id = row[0];
                 if(!tickets[id]) tickets[id] = { id: id, email: row[2], type: row[3], title: row[4], status: row[7], messages: [] };
                 tickets[id].messages.push({ time: row[1], content: row[5], sender: row[6] });
-                // 狀態以該 ID 最後一筆紀錄為準
                 tickets[id].status = row[7];
             });
 
-            // 2. 轉換成陣列並排序 (已退回(0) > 待處理(1) > 已解決(2))
             const statusOrder = { "已退回": 0, "待處理": 1, "已解決": 2 };
-            let ticketList = Object.values(tickets).sort((a, b) => statusOrder[a.status] - statusOrder[b.status]);
-
-            // 3. 渲染
-            ticketList.forEach(ticket => {
+            Object.values(tickets).sort((a,b)=>statusOrder[a.status]-statusOrder[b.status]).forEach(ticket => {
                 if(filter !== "全部" && ticket.status !== filter) return;
                 const card = document.createElement('div');
                 card.className = "card";
-                let threadHtml = ticket.messages.map(m => `
-                    <div class="bubble bubble-${m.sender === '管理者' ? 'admin' : 'user'}">
-                        <span class="bubble-name">${m.sender}</span>
-                        <div>${m.content}</div>
-                        <span class="bubble-time">${new Date(m.time).toLocaleString()}</span>
-                    </div>
-                `).join('');
-
                 card.innerHTML = `
-                    <span class="status-badge ${ticket.status}">${ticket.status}</span>
-                    <h3 style="margin-top:0">${ticket.title}</h3>
-                    <div class="thread-container">${threadHtml}</div>
-                    ${ticket.status === '已退回' ? `
-                    <div style="margin-top:20px; border-top:1px dashed #ddd; padding-top:20px">
-                        <label>📝 補充說明</label>
-                        <div id="app-ed-${ticket.id}" class="editor-box"></div>
-                        <button onclick="submitAppend('${ticket.id}', '${ticket.email}', '${ticket.type}', '${ticket.title}')">再次提交補充</button>
-                    </div>` : ''}`;
+                    <div class="collapsible-header" onclick="this.parentElement.classList.toggle('expanded')">
+                        <div style="display:flex; align-items:center; gap:12px">
+                            <span class="status-badge ${ticket.status}">${ticket.status}</span>
+                            <span style="font-weight:700">${ticket.title}</span>
+                        </div>
+                        <i class="fas fa-chevron-down chevron"></i>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="thread-container">${ticket.messages.map(m=>`
+                            <div class="bubble bubble-${m.sender==='管理者'?'admin':'user'}">
+                                <span class="bubble-name">${m.sender}</span>
+                                <div>${m.content}</div>
+                                <span class="bubble-time">${new Date(m.time).toLocaleString()}</span>
+                            </div>`).join('')}
+                        </div>
+                        ${ticket.status === '已退回' ? `
+                            <div style="margin-top:20px; border-top:1px dashed #ddd; padding-top:20px">
+                                <label>📝 補充說明</label><div id="app-ed-${ticket.id}" class="editor-box"></div>
+                                <button id="btn-app-${ticket.id}" onclick="submitAppend('${ticket.id}','${ticket.email}','${ticket.type}','${ticket.title}')"><i class="fas fa-spinner spinner"></i>送出補充</button>
+                            </div>` : ''}
+                    </div>`;
                 resArea.appendChild(card);
-                if(ticket.status === '已退回') appendQuills[ticket.id] = new Quill(`#app-ed-${ticket.id}`, { theme: 'snow', modules: qlModules });
+                if(ticket.status==='已退回') new Quill(`#app-ed-${ticket.id}`, { theme: 'snow', modules: qlModules });
             });
         }
 
         async function submitAppend(id, email, type, title) {
-            const content = await compressHTML(appendQuills[id].root.innerHTML);
+            const btn = document.getElementById(`btn-app-${id}`); btn.classList.add('loading');
+            const editorHTML = document.querySelector(`#app-ed-${id} .ql-editor`).innerHTML;
+            const content = await compressHTML(editorHTML);
             const data = { action: "appendInfo", id: id, email: email, type: type, title: title, description: content, sender: "使用者", status: "待處理" };
             await fetch(GAS_URL, { method: "POST", body: JSON.stringify(data) });
-            showToast("補充已成功送出！");
-            checkStatus();
+            showToast("補充已送出！");
+            checkStatus(); // 刷新並重整 UI
         }
 
-        // 管理員後台
+        // 管理員邏輯
         function handleAdminLogin() {
             if(document.getElementById('adminPassword').value === ADMIN_PASS) { showView('admin-view'); loadAdminData(); }
             else showToast("密碼錯誤");
@@ -256,7 +257,6 @@
         async function loadAdminData() {
             const area = document.getElementById('adminContent'); area.innerHTML = "載入中...";
             const res = await fetch(GAS_URL); const data = await res.json();
-            
             let tickets = {};
             data.slice(1).forEach(row => {
                 const id = row[0];
@@ -268,66 +268,37 @@
             area.innerHTML = "";
             Object.values(tickets).reverse().forEach(ticket => {
                 const card = document.createElement('div'); card.className = "card";
-                let threadHtml = ticket.messages.map(m => `
-                    <div class="bubble bubble-${m.sender === '管理者' ? 'admin' : 'user'}">
-                        <span class="bubble-name">${m.sender} (${m.sender === '使用者' ? ticket.email : '我'})</span>
-                        <div>${m.content}</div>
-                    </div>`).join('');
-                
                 card.innerHTML = `
-                    <div style="display:flex; justify-content:space-between">
-                        <small>案件 ID: ${ticket.id}</small>
-                        <select id="st-${ticket.id}" style="width:auto">
-                            <option value="待處理" ${ticket.status=='待處理'?'selected':''}>待處理</option>
-                            <option value="已解決" ${ticket.status=='已解決'?'selected':''}>已解決</option>
-                            <option value="已退回" ${ticket.status=='已退回'?'selected':''}>已退回</option>
-                        </select>
+                    <div class="collapsible-header" onclick="this.parentElement.classList.toggle('expanded')">
+                        <div style="display:flex; align-items:center; gap:12px">
+                            <span class="status-badge ${ticket.status}">${ticket.status}</span>
+                            <span style="font-weight:700">${ticket.title} (${ticket.email})</span>
+                        </div>
+                        <i class="fas fa-chevron-down chevron"></i>
                     </div>
-                    <h3>${ticket.title}</h3>
-                    <div class="thread-container">${threadHtml}</div>
-                    <label>精選分類</label><input type="text" id="cat-${ticket.id}" value="${ticket.type}">
-                    <label>回覆訊息</label><div id="adm-ed-${ticket.id}" class="editor-box"></div>
-                    <button onclick="saveAdminReply('${ticket.id}', '${ticket.email}', '${ticket.title}')" style="width:100%; margin-top:15px; background:var(--secondary)">送出回覆</button>`;
+                    <div class="collapsible-content">
+                        <div class="thread-container">${ticket.messages.map(m=>`<div class="bubble bubble-${m.sender==='管理者'?'admin':'user'}"><b>${m.sender}:</b><div>${m.content}</div></div>`).join('')}</div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-bottom:15px">
+                            <div><label>案件狀態</label><select id="st-${ticket.id}"><option value="待處理" ${ticket.status=='待處理'?'selected':''}>待處理</option><option value="已解決" ${ticket.status=='已解決'?'selected':''}>已解決</option><option value="已退回" ${ticket.status=='已退回'?'selected':''}>已退回</option></select></div>
+                            <div><label>精選分類</label><input type="text" id="cat-${ticket.id}" value="${ticket.type}"></div>
+                        </div>
+                        <label>回覆內容</label><div id="adm-ed-${ticket.id}" class="editor-box"></div>
+                        <button id="btn-adm-${ticket.id}" onclick="saveAdminReply('${ticket.id}','${ticket.email}','${ticket.title}')" style="width:100%"><i class="fas fa-spinner spinner"></i>送出回覆</button>
+                    </div>`;
                 area.appendChild(card);
-                const ed = new Quill(`#adm-ed-${ticket.id}`, { theme: 'snow', modules: qlModules });
-                card.dataset.quill = ed;
+                new Quill(`#adm-ed-${ticket.id}`, { theme: 'snow', modules: qlModules });
             });
         }
 
         async function saveAdminReply(id, email, title) {
-            const editor = document.querySelector(`#adm-ed-${id} .ql-editor`);
-            const content = await compressHTML(editor.innerHTML);
+            const btn = document.getElementById(`btn-adm-${id}`); btn.classList.add('loading');
+            const content = await compressHTML(document.querySelector(`#adm-ed-${id} .ql-editor`).innerHTML);
             const status = document.getElementById(`st-${id}`).value;
             const cat = document.getElementById(`cat-${id}`).value;
-            const data = { 
-                action: "updateReply", 
-                id: id, email: email, type: cat, title: title, 
-                description: content, sender: "管理者", status: status 
-            };
+            const data = { action: "updateReply", id: id, email: email, type: cat, title: title, description: content, sender: "管理者", status: status };
             await fetch(GAS_URL, { method: "POST", body: JSON.stringify(data) });
-            showToast("回覆已送出！"); loadAdminData();
-        }
-
-        let faqCache = [];
-        async function refreshFAQ() { const res = await fetch(GAS_URL); faqCache = await res.json(); filterFAQ(); }
-        function filterFAQ() {
-            const kw = document.getElementById('faqSearch').value.toLowerCase();
-            let html = "";
-            let tickets = {};
-            faqCache.slice(1).forEach(row => {
-                const id = row[0];
-                if(!tickets[id]) tickets[id] = { id: id, type: row[3], title: row[4], status: row[7], messages: [] };
-                tickets[id].messages.push({ content: row[5], sender: row[6] });
-                tickets[id].status = row[7];
-            });
-            Object.values(tickets).forEach(t => {
-                if(t.status !== '已解決') return;
-                if(t.title.toLowerCase().includes(kw) || t.type.toLowerCase().includes(kw)) {
-                    let lastAdminMsg = t.messages.reverse().find(m => m.sender === '管理者');
-                    html += `<div class="card"><small># ${t.type}</small><h3>${t.title}</h3><div>${t.messages[t.messages.length-1].content}</div><hr><b>解決方案：</b><div>${lastAdminMsg ? lastAdminMsg.content : '見對話'}</div></div>`;
-                }
-            });
-            document.getElementById('faqContent').innerHTML = html;
+            showToast("回覆已成功！");
+            loadAdminData();
         }
     </script>
 </body>
