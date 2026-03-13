@@ -7,9 +7,9 @@
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/image-js@0.31.0/dist/image.min.js"></script>
+    <script src="https://www.lactame.com/lib/image-js/0.31.0/image.min.js"></script>
     <style>
-        :root { --primary: #6366f1; --secondary: #06b6d4; --accent: #ef4444; --bg: #f8fafc; --sidebar: #ffffff; }
+        :root { --primary: #6366f1; --secondary: #06b6d4; --bg: #f8fafc; --sidebar: #ffffff; }
         * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
         body { margin: 0; display: flex; height: 100vh; background: var(--bg); color: #1e293b; overflow: hidden; }
         nav { width: 280px; background: var(--sidebar); border-right: 1px solid #f1f5f9; display: flex; flex-direction: column; padding: 30px 20px; flex-shrink: 0; }
@@ -19,7 +19,14 @@
         main { flex: 1; padding: 40px; overflow-y: auto; display: flex; flex-direction: column; align-items: center; }
         .container { width: 100%; max-width: 850px; }
         .card { background: white; border-radius: 24px; padding: 30px; border: 1px solid #f1f5f9; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 25px; }
-        .ql-editor img { max-width: 100% !important; height: auto !important; border-radius: 12px; margin: 10px 0; display: block; }
+        
+        /* 搜尋列橫向布局 */
+        .filter-bar { display: flex; align-items: center; gap: 12px; padding: 20px 25px; }
+        .filter-bar input { flex: 2; }
+        .filter-bar select { flex: 1; }
+        .filter-bar button { flex: 0.5; white-space: nowrap; padding: 12px 20px; }
+
+        .ql-editor img, .card img { max-width: 100% !important; height: auto !important; border-radius: 12px; margin: 10px 0; display: block; }
         .editor-box { height: 220px; margin-bottom: 15px; border-radius: 0 0 16px 16px; }
         .ql-toolbar { border-radius: 16px 16px 0 0; border-color: #f1f5f9 !important; background: #fcfdfe; }
         .ql-container { border-color: #f1f5f9 !important; }
@@ -29,7 +36,6 @@
         .待處理 { background: #fffbeb; color: #92400e; border: 1px solid #fde68a; }
         .已解決 { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
         .已退回 { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
-        .reply-box { margin-top: 20px; padding: 20px; background: #f8fafc; border-radius: 16px; border-left: 5px solid var(--primary); }
         #toast { position: fixed; top: 24px; right: 24px; background: #1e293b; color: white; padding: 16px 32px; border-radius: 16px; display: none; z-index: 1000; box-shadow: 0 20px 25px rgba(0,0,0,0.2); }
         .view { display: none; width: 100%; }
         .view.active { display: block; }
@@ -64,9 +70,14 @@
 
             <div id="status-view" class="view">
                 <h1>案件追蹤進度</h1>
-                <div class="card" style="display: flex; gap: 12px; padding: 20px;">
-                    <input type="email" id="searchEmail" placeholder="輸入您的 Email">
-                    <select id="statusFilter" onchange="renderStatusView()"><option value="全部">全部狀態</option><option value="已退回">已退回</option><option value="待處理">待處理</option><option value="已解決">已解決</option></select>
+                <div class="card filter-bar">
+                    <input type="email" id="searchEmail" placeholder="輸入 Email">
+                    <select id="statusFilter" onchange="renderStatusView()">
+                        <option value="全部">全部狀態</option>
+                        <option value="已退回">已退回</option>
+                        <option value="待處理">待處理</option>
+                        <option value="已解決">已解決</option>
+                    </select>
                     <button onclick="checkStatus()">搜尋</button>
                 </div>
                 <div id="resultArea"></div>
@@ -111,7 +122,6 @@
             document.getElementById(id).classList.add('active');
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
             if(el) el.classList.add('active');
-            if(id === 'faq-view') refreshFAQ();
         }
 
         function showToast(msg) {
@@ -119,31 +129,31 @@
             setTimeout(() => t.style.display = 'none', 3500);
         }
 
-        // --- 萬用壓縮邏輯 ---
-        async function compressHTML(htmlContent) {
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = htmlContent;
-            const imgs = tempDiv.querySelectorAll('img');
+        // --- 強化的壓縮邏輯 ---
+        async function compressHTML(html) {
+            const div = document.createElement('div');
+            div.innerHTML = html;
+            const imgs = div.querySelectorAll('img');
             for (let img of imgs) {
                 const src = img.getAttribute('src');
                 if (src && src.startsWith('data:image/')) {
-                    const image = await Image.load(src);
-                    if (image.width > 800) { // 壓縮到寬度 800px 以內
-                        const resized = image.resize({ width: 800 });
-                        img.setAttribute('src', resized.toDataURL('image/jpeg', 0.7)); // 品質 0.7
-                    }
+                    try {
+                        const image = await Image.load(src);
+                        if (image.width > 800) {
+                            const resized = image.resize({ width: 800 });
+                            img.setAttribute('src', resized.toDataURL('image/jpeg', 0.7));
+                        }
+                    } catch (e) { console.warn("壓縮跳過", e); }
                 }
             }
-            return tempDiv.innerHTML;
+            return div.innerHTML;
         }
 
-        // 提交新回報
         document.getElementById('reportForm').onsubmit = async (e) => {
             e.preventDefault();
             const btn = document.getElementById('submitBtn'); btn.disabled = true; btn.innerText = "處理中...";
-            const compressedContent = await compressHTML(userQuill.root.innerHTML);
-            const data = { action: "newReport", email: document.getElementById('email').value, type: document.getElementById('type').value, title: document.getElementById('title').value, description: compressedContent };
-            await fetch(GAS_URL, { method: "POST", body: JSON.stringify(data) });
+            const content = await compressHTML(userQuill.root.innerHTML);
+            await fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action: "newReport", email: document.getElementById('email').value, type: document.getElementById('type').value, title: document.getElementById('title').value, description: content }) });
             showToast("✅ 提交成功");
             e.target.reset(); userQuill.setContents([]); btn.disabled = false; btn.innerText = "送出回報";
         };
@@ -151,7 +161,7 @@
         async function checkStatus() {
             const email = document.getElementById('searchEmail').value;
             if(!email) return showToast("請輸入 Email");
-            document.getElementById('resultArea').innerHTML = "搜尋中...";
+            document.getElementById('resultArea').innerHTML = "<p style='text-align:center'>搜尋中...</p>";
             const res = await fetch(GAS_URL); 
             const data = await res.json();
             userReportsCache = data.slice(1).filter(row => row[2].toLowerCase() === email.toLowerCase());
@@ -169,35 +179,25 @@
                 const id = row[0];
                 const card = document.createElement('div');
                 card.className = "card";
-                card.innerHTML = `
-                    <span class="status-badge ${row[9]}">${row[9]}</span>
-                    <h3>${row[4]}</h3>
-                    <div>${row[5]}</div>
-                    <div class="reply-box"><strong>管理者回饋：</strong><br>${row[8] || '處理中...'}</div>
-                    ${row[9] === '已退回' ? `
-                    <div style="margin-top:20px; border-top:1px dashed #ddd; padding-top:20px">
-                        <label>📝 補充說明</label>
-                        <div id="append-editor-${id}" style="height:150px; margin-bottom:10px"></div>
-                        <button id="btn-append-${id}" onclick="submitAppend('${id}')" style="background:var(--secondary)">再次提交</button>
-                    </div>` : ''}`;
+                card.innerHTML = `<span class="status-badge ${row[9]}">${row[9]}</span><h3>${row[4]}</h3><div>${row[5]}</div><div class="reply-box"><b>回饋：</b><br>${row[8]||'處理中...'}</div>
+                    ${row[9] === '已退回' ? `<div style="margin-top:20px; border-top:1px dashed #ddd; padding-top:20px"><label>📝 補充說明</label><div id="app-ed-${id}" style="height:150px; margin-bottom:10px"></div><button id="btn-app-${id}" onclick="submitAppend('${id}')" style="background:var(--secondary)">再次提交</button></div>` : ''}`;
                 resArea.appendChild(card);
-                if(row[9] === '已退回') appendQuills[id] = new Quill(`#append-editor-${id}`, { theme: 'snow', modules: qlModules });
+                if(row[9] === '已退回') appendQuills[id] = new Quill(`#app-ed-${id}`, { theme: 'snow', modules: qlModules });
             });
         }
 
         async function submitAppend(id) {
-            const btn = document.getElementById(`btn-append-${id}`);
+            const btn = document.getElementById(`btn-app-${id}`);
             btn.disabled = true; btn.innerText = "處理中...";
-            const compressedContent = await compressHTML(appendQuills[id].root.innerHTML);
-            await fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action: "appendInfo", id: id, description: compressedContent }) });
-            showToast("🚀 補充內容已送出");
+            const content = await compressHTML(appendQuills[id].root.innerHTML);
+            await fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action: "appendInfo", id: id, description: content }) });
+            showToast("🚀 補充已送出");
             checkStatus();
         }
 
         function handleAdminLogin() {
-            if(document.getElementById('adminPassword').value === ADMIN_PASS) {
-                showView('admin-view'); loadAdminData();
-            } else { showToast("密碼錯誤"); }
+            if(document.getElementById('adminPassword').value === ADMIN_PASS) { showView('admin-view'); loadAdminData(); }
+            else showToast("密碼錯誤");
         }
 
         async function loadAdminData() {
@@ -208,34 +208,23 @@
                 const id = row[0];
                 const card = document.createElement('div');
                 card.className = "card";
-                card.innerHTML = `
-                    <div style="display:flex; justify-content:space-between"><small>ID: ${id}</small>
-                        <select id="st-${id}" style="width:auto"><option value="待處理" ${row[9]=='待處理'?'selected':''}>待處理</option><option value="已解決" ${row[9]=='已解決'?'selected':''}>已解決</option><option value="已退回" ${row[9]=='已退回'?'selected':''}>已退回</option></select>
-                    </div>
-                    <h3>${row[4]} (${row[2]})</h3>
-                    <div style="background:#f8fafc; padding:20px; border-radius:16px; margin-bottom:20px">${row[5]}</div>
-                    <label>精選類別</label><input type="text" id="cat-${id}" value="${row[3]}" style="margin-bottom:15px">
-                    <label>回饋內容</label><div id="admin-editor-${id}" style="height:150px"></div>
-                    <button id="btn-admin-${id}" onclick="saveAdminReply('${id}')" style="width:100%; margin-top:15px; background:var(--secondary)">更新案件</button>`;
+                card.innerHTML = `<div style="display:flex; justify-content:space-between"><small>ID: ${id}</small><select id="st-${id}" style="width:auto"><option value="待處理" ${row[9]=='待處理'?'selected':''}>待處理</option><option value="已解決" ${row[9]=='已解決'?'selected':''}>已解決</option><option value="已退回" ${row[9]=='已退回'?'selected':''}>已退回</option></select></div><h3>${row[4]} (${row[2]})</h3><div style="background:#f8fafc; padding:20px; border-radius:16px; margin-bottom:20px">${row[5]}</div><label>精選類別</label><input type="text" id="cat-${id}" value="${row[3]}" style="margin-bottom:15px"><label>回饋內容</label><div id="adm-ed-${id}" style="height:150px"></div><button id="btn-adm-${id}" onclick="saveAdminReply('${id}')" style="width:100%; margin-top:15px; background:var(--secondary)">更新案件</button>`;
                 area.appendChild(card);
-                const ed = new Quill(`#admin-editor-${id}`, { theme: 'snow', modules: qlModules });
+                const ed = new Quill(`#adm-ed-${id}`, { theme: 'snow', modules: qlModules });
                 ed.root.innerHTML = row[8] || '';
-                card.dataset.quill = ed;
             });
         }
 
         async function saveAdminReply(id) {
-            const btn = document.getElementById(`btn-admin-${id}`);
+            const btn = document.getElementById(`btn-adm-${id}`);
             btn.disabled = true; btn.innerText = "處理中...";
-            const editor = document.querySelector(`#admin-editor-${id} .ql-editor`);
-            const compressedReply = await compressHTML(editor.innerHTML);
-            const data = { action: "updateReply", id: id, category: document.getElementById(`cat-${id}`).value, reply: compressedReply, status: document.getElementById(`st-${id}`).value };
-            await fetch(GAS_URL, { method: "POST", body: JSON.stringify(data) });
+            const editor = document.querySelector(`#adm-ed-${id} .ql-editor`);
+            const content = await compressHTML(editor.innerHTML);
+            await fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action: "updateReply", id: id, category: document.getElementById(`cat-${id}`).value, reply: content, status: document.getElementById(`st-${id}`).value }) });
             showToast("✨ 更新成功");
             loadAdminData();
         }
 
-        // FAQ 維持不變
         let faqCache = [];
         async function refreshFAQ() { const res = await fetch(GAS_URL); faqCache = await res.json(); filterFAQ(); }
         function filterFAQ() {
@@ -244,7 +233,7 @@
             faqCache.slice(1).forEach(row => {
                 if(row[9] !== '已解決') return;
                 if(row[4].toLowerCase().includes(kw) || row[3].toLowerCase().includes(kw)) {
-                    html += `<div class="card"><small style="color:var(--primary)"># ${row[3]}</small><h3>${row[4]}</h3><div>${row[5]}</div><hr><b>解決方案：</b><div>${row[8]}</div></div>`;
+                    html += `<div class="card"><small style="color:var(--primary)"># ${row[3]}</small><h3>${row[4]}</h3><div>${row[5]}</div><hr><b>解決：</b><div>${row[8]}</div></div>`;
                 }
             });
             document.getElementById('faqContent').innerHTML = html;
