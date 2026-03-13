@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BBP 系統儀表板</title>
+    <title>BBP 系統儀表板 - 穩定版</title>
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -17,25 +17,22 @@
         .logo { font-weight: 800; font-size: 1.5rem; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 40px; display: flex; align-items: center; gap: 10px; }
         .nav-item { padding: 12px 16px; border-radius: 12px; cursor: pointer; color: #64748b; margin-bottom: 5px; transition: 0.3s; display: flex; align-items: center; gap: 12px; font-weight: 600; }
         .nav-item:hover, .nav-item.active { background: #f1f5f9; color: var(--primary); }
+        .nav-footer { margin-top: auto; border-top: 1px solid #f1f5f9; padding-top: 20px; }
 
         main { flex: 1; padding: 40px; overflow-y: auto; display: flex; flex-direction: column; align-items: center; }
         .container { width: 100%; max-width: 900px; }
         
-        /* Dashboard 數據卡片 */
         .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 30px; }
         .stat-card { background: white; padding: 25px; border-radius: 24px; border: 1px solid #f1f5f9; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
-        .stat-card h3 { margin: 0; font-size: 0.85rem; color: #64748b; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        .stat-card h3 { margin: 0; font-size: 0.85rem; color: #64748b; font-weight: 700; text-transform: uppercase; }
         .stat-card .value { font-size: 2.5rem; font-weight: 800; margin-top: 10px; display: block; color: #1e293b; }
 
         .card { background: white; border-radius: 20px; padding: 20px; border: 1px solid #f1f5f9; box-shadow: 0 10px 15px rgba(0,0,0,0.03); margin-bottom: 15px; }
-        
-        /* 優先序標籤 */
         .priority-badge { padding: 4px 10px; border-radius: 8px; font-size: 0.75rem; font-weight: 800; }
         .p-1 { background: #fee2e2; color: #ef4444; } 
         .p-2 { background: #fef3c7; color: #f59e0b; } 
         .p-3 { background: #dcfce7; color: #10b981; } 
 
-        /* 內容樣式 */
         .collapsible-header { cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
         .collapsible-content { display: none; margin-top: 15px; padding-top: 15px; border-top: 1px solid #f8fafc; }
         .card.expanded .collapsible-content { display: block; }
@@ -46,12 +43,12 @@
         .editor-box { height: 180px; margin-bottom: 10px; background: #fff; }
         input, select { width: 100%; padding: 12px; border: 1px solid #f1f5f9; border-radius: 10px; margin-top: 5px; }
         button { background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 10px; font-weight: 700; cursor: pointer; transition: 0.3s; display: inline-flex; align-items: center; gap: 8px; justify-content: center; }
-        button:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(99,102,241,0.2); }
+        button.loading { opacity: 0.5; pointer-events: none; }
         .spinner { display: none; animation: spin 1s linear infinite; }
         .loading .spinner { display: inline-block; }
         @keyframes spin { from {transform:rotate(0deg);} to {transform:rotate(360deg);} }
 
-        #toast { position: fixed; bottom: 30px; right: 30px; background: #1e293b; color: white; padding: 16px 24px; border-radius: 12px; display: none; z-index: 1000; }
+        #toast { position: fixed; bottom: 30px; right: 30px; background: #1e293b; color: white; padding: 16px 24px; border-radius: 12px; display: none; z-index: 1000; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .view { display: none; width: 100%; }
         .view.active { display: block; }
     </style>
@@ -60,7 +57,7 @@
 
     <nav>
         <div class="logo"><i class="fas fa-rocket"></i> BBP Dashboard</div>
-        <div class="nav-item active" onclick="showView('dash-view', this)"><i class="fas fa-chart-pie"></i> 總覽儀表板</div>
+        <div class="nav-item active" id="nav-dash" onclick="showView('dash-view', this)"><i class="fas fa-chart-pie"></i> 總覽儀表板</div>
         <div class="nav-item" onclick="showView('report-view', this)"><i class="fas fa-plus-circle"></i> 新增案件回報</div>
         <div class="nav-item" onclick="showView('status-view', this)"><i class="fas fa-search"></i> 案件進度查詢</div>
         <div class="nav-footer">
@@ -70,19 +67,16 @@
 
     <main>
         <div class="container">
-            
             <div id="dash-view" class="view active">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px;">
                     <h2 style="margin:0">營運數據概況</h2>
                     <span id="cycle-display" style="font-size:0.8rem; font-weight:700; color:#64748b; background:#fff; padding:6px 14px; border-radius:50px; border:1px solid #f1f5f9;">載入中...</span>
                 </div>
-                
                 <div class="stats-grid">
                     <div class="stat-card"><h3>當前負載 (待處理)</h3><span class="value" id="stat-pending">0</span></div>
                     <div class="stat-card"><h3>本週進度 (已解決)</h3><span class="value" id="stat-resolved" style="color:#10b981;">0</span></div>
                     <div class="stat-card"><h3>本週結案率</h3><span class="value" id="stat-rate" style="color:var(--primary);">0%</span></div>
                 </div>
-
                 <h2 style="margin-bottom:20px; font-size:1.1rem;">🔥 急件關注列表</h2>
                 <div id="priority-list"></div>
             </div>
@@ -91,12 +85,12 @@
                 <h2>建立新案件</h2>
                 <div class="card">
                     <form id="reportForm">
-                        <label>聯絡 Email</label><input type="email" id="email" required>
+                        <label>聯絡 Email</label><input type="email" id="email" required placeholder="example@mail.com">
                         <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin: 15px 0;">
                             <div><label>案件分類</label><select id="type"><option>BUG 回報</option><option>功能建議</option></select></div>
-                            <div><label>案件標題</label><input type="text" id="title" required></div>
+                            <div><label>案件標題</label><input type="text" id="title" required placeholder="簡短描述問題"></div>
                         </div>
-                        <label>詳細描述</label><div id="editor-user" class="editor-box"></div>
+                        <label>詳細描述與圖片</label><div id="editor-user" class="editor-box"></div>
                         <button type="submit" id="submitBtn" style="width:100%; margin-top:10px;"><i class="fas fa-spinner spinner"></i> 提交案件</button>
                     </form>
                 </div>
@@ -104,7 +98,7 @@
 
             <div id="status-view" class="view">
                 <h2>案件進度查詢</h2>
-                <div class="card" style="display:flex; gap:10px;">
+                <div class="card" style="display:flex; gap:10px; align-items:center;">
                     <input type="email" id="searchEmail" placeholder="請輸入回報時的 Email" style="flex:1; margin:0">
                     <button id="searchBtn" onclick="searchUserTickets()"><i class="fas fa-spinner spinner"></i> 搜尋</button>
                 </div>
@@ -114,7 +108,7 @@
             <div id="login-view" class="view">
                 <div class="card" style="max-width:400px; margin: 80px auto; text-align:center;">
                     <h2 style="margin-top:0">管理者登入</h2>
-                    <input type="password" id="adminPassword" placeholder="請輸入金鑰" style="margin-bottom:20px">
+                    <input type="password" id="adminPassword" placeholder="請輸入金鑰" style="margin-bottom:20px;">
                     <button onclick="checkAdminLogin()" style="width:100%">進入後台</button>
                 </div>
             </div>
@@ -123,7 +117,6 @@
                 <h2>管理者中心</h2>
                 <div id="admin-list"></div>
             </div>
-
         </div>
     </main>
 
@@ -147,7 +140,30 @@
 
         function showToast(msg) {
             const t = document.getElementById('toast'); t.innerText = msg; t.style.display = 'block';
-            setTimeout(() => t.style.display = 'none', 3000);
+            setTimeout(() => t.style.display = 'none', 3500);
+        }
+
+        // --- 強力壓縮圖片函數 ---
+        async function compressHTML(html) {
+            const div = document.createElement('div');
+            div.innerHTML = html;
+            const imgs = div.querySelectorAll('img');
+            for (let img of imgs) {
+                const src = img.getAttribute('src');
+                if (src && src.startsWith('data:image/') && src.length > 5000) {
+                    try {
+                        const image = await Image.load(src);
+                        let resized = image;
+                        if (image.width > 500) resized = image.resize({ width: 500 });
+                        // 激進壓縮品質 0.4 確保體積極小
+                        img.setAttribute('src', resized.toDataURL('image/jpeg', 0.4));
+                    } catch (e) { 
+                        console.error("壓縮失敗", e);
+                        img.remove(); // 失敗則移除該圖，確保資料能送出
+                    }
+                }
+            }
+            return div.innerHTML;
         }
 
         async function fetchData() {
@@ -155,14 +171,13 @@
                 const res = await fetch(GAS_URL);
                 allData = await res.json();
                 renderDashboard();
-            } catch (e) { showToast("連線失敗，請檢查 GAS 權限"); }
+            } catch (e) { showToast("連線失敗，請檢查 GAS 權限或網路"); }
         }
 
         function renderDashboard() {
             if (allData.length < 2) return;
-            
             let tickets = {};
-            let latestCycle = allData[allData.length-1][10]; // 取得最新週期編號
+            let latestCycle = allData[allData.length-1][10];
             document.getElementById('cycle-display').innerText = "本報表週期: " + latestCycle;
 
             allData.slice(1).forEach(row => {
@@ -194,38 +209,32 @@
             });
         }
 
-        async function compressHTML(html) {
-            const div = document.createElement('div'); div.innerHTML = html;
-            const imgs = div.querySelectorAll('img');
-            for (let img of imgs) {
-                const src = img.getAttribute('src');
-                if (src && src.startsWith('data:image/') && src.length > 5000) {
-                    try {
-                        const image = await Image.load(src);
-                        let resized = image;
-                        if (image.width > 600) resized = image.resize({ width: 600 });
-                        img.setAttribute('src', resized.toDataURL('image/jpeg', 0.6));
-                    } catch (e) { console.warn(e); }
-                }
-            }
-            return div.innerHTML;
-        }
-
         document.getElementById('reportForm').onsubmit = async (e) => {
             e.preventDefault();
-            const btn = document.getElementById('submitBtn'); btn.classList.add('loading');
-            const content = await compressHTML(userQuill.root.innerHTML);
-            const data = { 
-                email: document.getElementById('email').value.trim(), 
-                type: document.getElementById('type').value, 
-                title: document.getElementById('title').value.trim(), 
-                description: content
-            };
-            await fetch(GAS_URL, { method: "POST", body: JSON.stringify(data) });
-            showToast("提交成功！");
-            btn.classList.remove('loading');
-            e.target.reset(); userQuill.setContents([]);
-            fetchData(); showView('dash-view', document.getElementById('nav-dash'));
+            const btn = document.getElementById('submitBtn');
+            btn.classList.add('loading');
+            try {
+                const content = await compressHTML(userQuill.root.innerHTML);
+                if (content.length > 250000) {
+                    showToast("❌ 圖片過多或過大，請減少圖片後再試一次");
+                    btn.classList.remove('loading');
+                    return;
+                }
+                const data = { 
+                    email: document.getElementById('email').value.trim(), 
+                    type: document.getElementById('type').value, 
+                    title: document.getElementById('title').value.trim(), 
+                    description: content
+                };
+                await fetch(GAS_URL, { method: "POST", body: JSON.stringify(data) });
+                showToast("✅ 案件已成功建立！");
+                e.target.reset(); userQuill.setContents([]);
+                fetchData(); showView('dash-view', document.getElementById('nav-dash'));
+            } catch (e) {
+                showToast("❌ 傳輸失敗，請檢查網路");
+            } finally {
+                btn.classList.remove('loading');
+            }
         };
 
         async function searchUserTickets() {
@@ -298,12 +307,19 @@
         }
 
         async function adminReply(id, email, title) {
-            const btn = document.getElementById('btn-'+id); btn.classList.add('loading');
-            const content = await compressHTML(document.querySelector(`#ed-${id} .ql-editor`).innerHTML);
-            const data = { id, email, title, description: content, status: document.getElementById('st-'+id).value, priority: document.getElementById('pr-'+id).value, sender: "管理者" };
-            await fetch(GAS_URL, { method: "POST", body: JSON.stringify(data) });
-            showToast("更新成功！");
-            await fetchData(); renderAdmin();
+            const btn = document.getElementById('btn-'+id);
+            btn.classList.add('loading');
+            try {
+                const content = await compressHTML(document.querySelector(`#ed-${id} .ql-editor`).innerHTML);
+                const data = { id, email, title, description: content, status: document.getElementById('st-'+id).value, priority: document.getElementById('pr-'+id).value, sender: "管理者" };
+                await fetch(GAS_URL, { method: "POST", body: JSON.stringify(data) });
+                showToast("✅ 更新成功！");
+                await fetchData(); renderAdmin();
+            } catch (e) {
+                showToast("❌ 更新失敗，圖片可能過大");
+            } finally {
+                btn.classList.remove('loading');
+            }
         }
 
         window.onload = fetchData;
