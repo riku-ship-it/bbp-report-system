@@ -20,6 +20,7 @@
             --border: #f1f5f9;
             --sidebar-width: 260px;
             --sidebar-collapsed-width: 85px;
+            /* 鮮豔數據顏色 */
             --stat-amber: #f59e0b;
             --stat-emerald: #10b981;
         }
@@ -85,17 +86,17 @@
         .stat-card { background: white; padding: 25px; border-radius: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.02); }
         .stat-card h3 { margin: 0; font-size: 0.85rem; color: var(--text-sub); text-transform: uppercase; letter-spacing: 1px; }
 
-        /* 👑 優化：數據數字鮮豔化 👑 */
+        /* 數據數字顏色鮮豔化 */
         .stat-card .value { font-size: 2.2rem; font-weight: 800; margin-top: 12px; display: block; }
         #stat-pending { color: var(--stat-amber); }
         #stat-resolved { color: var(--stat-emerald); }
         #stat-rate { color: var(--primary); }
 
-        /* 👑 優化：標籤間距 👑 */
+        /* 標籤間距 */
         .priority-badge { font-weight: 800; color: var(--primary); margin-right: 20px; }
         .resolved-badge { font-weight: 800; color: var(--stat-emerald); margin-right: 20px; }
 
-        /* --- 輸入框設定 --- */
+        /* --- 全面去線條、圓弧化輸入框 --- */
         label { font-size: 0.9rem; font-weight: 700; color: var(--text-sub); margin-bottom: 8px; display: block; }
         input, select { 
             width: 100%; padding: 14px; border: none; border-radius: 14px; 
@@ -123,6 +124,9 @@
         .bubble { padding: 16px; border-radius: 18px; margin-bottom: 12px; border: 1.5px solid var(--border); }
         .bubble img { max-width: 100%; border-radius: 12px; margin-top: 10px; display: block; }
         .bubble-admin { background: var(--primary-light); border-color: transparent; }
+
+        .admin-filter-bar { display: flex; gap: 12px; margin-bottom: 20px; align-items: center; background: white; padding: 12px 20px; border-radius: 18px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
+        .filter-select { padding: 10px 14px; border-radius: 10px; border: 1.5px solid var(--border); font-size: 0.9rem; font-weight: 600; color: var(--text-main); outline: none; background: #fff; cursor: pointer; }
 
         #toast { position: fixed; bottom: 30px; right: 30px; background: var(--text-main); color: white; padding: 16px 28px; border-radius: 16px; display: none; z-index: 1000; }
         .view { display: none; width: 100%; animation: fadeIn 0.4s ease-out; }
@@ -163,7 +167,7 @@
                 <div class="section-title" style="margin-bottom:20px">🔥 急件關注</div>
                 <div id="priority-list"></div>
 
-                <div class="section-title" style="margin-top:40px; margin-bottom:20px; color: var(--stat-emerald);">✅ 本週已解決</div>
+                <div class="section-title" style="margin-top:40px; margin-bottom:20px; color: var(--stat-emerald);">✅ 本週已解決成果</div>
                 <div id="resolved-list"></div>
             </div>
 
@@ -174,12 +178,13 @@
                     <select class="filter-select" id="filter-status" onchange="renderAdmin()">
                         <option value="全部">所有狀態</option>
                         <option value="待處理">待處理</option>
+                        <option value="進行中">進行中</option>
                         <option value="已解決">已解決</option>
                         <option value="已退回">已退回</option>
                     </select>
                     <select class="filter-select" id="filter-priority" onchange="renderAdmin()">
                         <option value="全部">所有優先序</option>
-                        <option value="1-緊急">1-緊急</option>
+                        <option value="1-嚴重">1-嚴重</option>
                         <option value="2-優先">2-優先</option>
                         <option value="3-一般">3-一般</option>
                     </select>
@@ -288,29 +293,31 @@
             });
 
             const ticketList = Object.values(tickets);
-            document.getElementById('stat-pending').innerText = ticketList.filter(t => t.status === '待處理').length;
+            // 負載 = 待處理 + 進行中
+            document.getElementById('stat-pending').innerText = ticketList.filter(t => t.status === '待處理' || t.status === '進行中').length;
             document.getElementById('stat-resolved').innerText = ticketList.filter(t => t.status === '已解決' && t.cycle === latestCycle).length;
             const totalThisCycle = ticketList.filter(t => t.cycle === latestCycle).length;
             document.getElementById('stat-rate').innerText = totalThisCycle > 0 ? Math.round((ticketList.filter(t => t.status === '已解決' && t.cycle === latestCycle).length / totalThisCycle) * 100) + "%" : "0%";
 
-            // 渲染：急件關注
+            // 急件關注 (只顯示待處理與進行中)
             const listArea = document.getElementById('priority-list');
             listArea.innerHTML = "";
-            ticketList.filter(t => t.status === '待處理').sort((a,b) => String(a.priority).localeCompare(String(b.priority))).slice(0, 5).forEach(t => {
+            ticketList.filter(t => t.status === '待處理' || t.status === '進行中')
+                .sort((a,b) => String(a.priority).localeCompare(String(b.priority)))
+                .slice(0, 5).forEach(t => {
                 listArea.innerHTML += `<div class="card" style="display:flex; justify-content:space-between; align-items:center; padding:20px;">
-                    <div><b class="priority-badge">${t.priority || '2-優先'}</b><b>${t.title}</b></div>
+                    <div><b class="priority-badge">${t.priority}</b><b>[${t.status}] ${t.title}</b></div>
                     <i class="fas fa-chevron-right" style="color:#cbd5e1"></i>
                 </div>`;
             });
 
-            // 👑 渲染：本週已解決 👑
+            // 本週已解決 (連動週期)
             const resolvedArea = document.getElementById('resolved-list');
             resolvedArea.innerHTML = "";
             const weekResolved = ticketList.filter(t => t.status === '已解決' && t.cycle === latestCycle);
-            
             if(weekResolved.length > 0) {
                 weekResolved.forEach(t => {
-                    resolvedArea.innerHTML += `<div class="card" style="display:flex; justify-content:space-between; align-items:center; padding:20px; opacity: 0.7; background: #fafdfb;">
+                    resolvedArea.innerHTML += `<div class="card" style="display:flex; justify-content:space-between; align-items:center; padding:20px; opacity: 0.75; background: #fcfdfc;">
                         <div><b class="resolved-badge"><i class="fas fa-check-circle"></i> 已解決</b><span style="text-decoration: line-through; color: var(--text-sub);">${t.title}</span></div>
                     </div>`;
                 });
@@ -381,12 +388,21 @@
                 if (matchStatus && matchPriority) {
                     const card = document.createElement('div'); card.className = "card";
                     card.innerHTML = `<div class="collapsible-header" onclick="this.parentElement.classList.toggle('expanded')">
-                        <b>${t.title} (${t.email})</b> <b class="priority-badge">${t.priority || '2-優先'}</b></div>
+                        <b>${t.title} (${t.email})</b> <b class="priority-badge">${t.priority}</b></div>
                         <div class="collapsible-content">
                             <div style="margin-bottom:20px;">${t.msgs.map(m=>`<div class="bubble bubble-${m.sender==='管理者'?'admin':'user'}"><b>${m.sender}:</b> <div>${m.content}</div></div>`).join('')}</div>
                             <div style="display:flex; gap:12px; margin-bottom:15px">
-                                <select id="st-${t.id}"><option value="待處理" ${t.status=='待處理'?'selected':''}>待處理</option><option value="已解決" ${t.status=='已解決'?'selected':''}>已解決</option><option value="已退回" ${t.status=='已退回'?'selected':''}>已退回</option></select>
-                                <select id="pr-${t.id}"><option value="1-緊急" ${t.priority=='1-緊急'?'selected':''}>1-緊急</option><option value="2-優先" ${t.priority=='2-優先'?'selected':''}>2-優先</option><option value="3-一般" ${t.priority=='3-一般'?'selected':''}>3-一般</option></select>
+                                <select id="st-${t.id}">
+                                    <option value="待處理" ${t.status=='待處理'?'selected':''}>待處理</option>
+                                    <option value="進行中" ${t.status=='進行中'?'selected':''}>進行中</option>
+                                    <option value="已解決" ${t.status=='已解決'?'selected':''}>已解決</option>
+                                    <option value="已退回" ${t.status=='已退回'?'selected':''}>已退回</option>
+                                </select>
+                                <select id="pr-${t.id}">
+                                    <option value="1-嚴重" ${t.priority=='1-嚴重'?'selected':''}>1-嚴重</option>
+                                    <option value="2-優先" ${t.priority=='2-優先'?'selected':''}>2-優先</option>
+                                    <option value="3-一般" ${t.priority=='3-一般'?'selected':''}>3-一般</option>
+                                </select>
                             </div>
                             <div class="editor-wrapper"><div id="ed-${t.id}"></div></div>
                             <button id="btn-${t.id}" onclick="adminReply('${t.id}','${t.email}','${t.title}')" style="width:100%; margin-top:15px">送出回覆並更新</button>
