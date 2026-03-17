@@ -68,7 +68,7 @@
         #stat-new { color: var(--primary); }
 
         /* 標籤視覺 */
-        .priority-badge { font-weight: 800; margin-right: 20px; }
+        .priority-badge { font-weight: 900; margin-right: 14px; display: inline-flex; align-items: center; line-height: 1; }
         .p-critical { color: var(--stat-critical); }
         .p-normal { color: var(--primary); }
         .resolved-badge { font-weight: 800; color: var(--stat-emerald); margin-right: 20px; }
@@ -110,9 +110,14 @@
         /* 可點擊案件列 */
         .ticket-row { cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; }
         .ticket-row:hover { transform: translateY(-1px); box-shadow: 0 8px 25px rgba(0,0,0,0.05); }
+        .ticket-row .ticket-line { display:flex; align-items:center; gap: 10px; min-width:0; }
+        .ticket-row .ticket-title { font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .ticket-row .ticket-status { color: var(--text-sub); font-weight: 900; }
+        .ticket-row .ticket-no { color: #94a3b8; font-weight: 900; flex-shrink: 0; }
 
         /* 對話 Modal */
         .modal-mask { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.55); display: none; z-index: 2000; align-items: center; justify-content: center; padding: 22px; }
+        #ticket-modal-mask { z-index: 2100; }
         .modal { width: 100%; max-width: 980px; max-height: 86vh; background: #fff; border-radius: 24px; box-shadow: 0 30px 80px rgba(0,0,0,0.25); overflow: hidden; display: flex; flex-direction: column; }
         .modal-header { padding: 18px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); gap: 12px; }
         .modal-title { font-weight: 900; font-size: 1.05rem; margin: 0; }
@@ -304,8 +309,9 @@
         const GAS_URL = "https://script.google.com/macros/s/AKfycbz5i3qIe1lZhsbzw0E6kJF85nef6-xi_cajjwWqS-HqVUYsxE_XA7GjQqOxTm7VVVJbpQ/exec";
         const qlModules = { toolbar: [['bold', 'italic'], [{list:'bullet'}], ['image']] };
         let allData = [];
-        let ticketIndex = {}; // id -> { id, email, title, status, priority, cycle, msgs: [{sender, content}] }
+        let ticketIndex = {}; // id -> { id, shortNo, email, title, status, priority, cycle, msgs: [{sender, content}] }
         let latestCycleValue = "";
+        let shortNoCounter = 0;
 
         let isAdmin = false;
         let modalUserQuill = null;
@@ -366,11 +372,13 @@
         function buildTicketIndex() {
             ticketIndex = {};
             if (!Array.isArray(allData) || allData.length < 2) return;
+            shortNoCounter = 0;
             latestCycleValue = allData[allData.length-1][10];
             allData.slice(1).forEach(row => {
                 const id = row[0];
                 if(!ticketIndex[id]) ticketIndex[id] = { 
                     id,
+                    shortNo: ++shortNoCounter,
                     email: row[2],
                     title: row[4],
                     status: row[7],
@@ -414,9 +422,10 @@
                     const pClass = String(t.priority).includes('嚴重') ? 'p-critical' : 'p-normal';
                     listArea.innerHTML += `<div class="card ticket-row" onclick="openTicketModal('${t.id}')"
                         style="display:flex; justify-content:space-between; align-items:center; padding:20px;">
-                        <div style="min-width:0;">
-                            <b class="priority-badge ${pClass}">${t.priority}</b>
-                            <b style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:inline-block; max-width: 640px;">[${t.status}] ${escapeHtml(t.title)}</b>
+                        <div class="ticket-line">
+                            <span class="ticket-no">#${t.shortNo}</span>
+                            <span class="priority-badge ${pClass}">${escapeHtml(t.priority)}</span>
+                            <span class="ticket-title"><span class="ticket-status">[${escapeHtml(t.status)}]</span> ${escapeHtml(t.title)}</span>
                         </div>
                         <i class="fas fa-chevron-right" style="color:#cbd5e1"></i>
                     </div>`;
@@ -433,9 +442,10 @@
                 weekResolved.forEach(t => {
                     resolvedArea.innerHTML += `<div class="card ticket-row" onclick="openTicketModal('${t.id}')"
                         style="display:flex; justify-content:space-between; align-items:center; padding:20px; opacity: 0.75; background: #fcfdfc;">
-                        <div style="min-width:0;">
+                        <div class="ticket-line">
+                            <span class="ticket-no">#${t.shortNo}</span>
                             <b class="resolved-badge"><i class="fas fa-check-circle"></i> 已解決</b>
-                            <span style="text-decoration: line-through; color: var(--text-sub); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:inline-block; max-width: 660px;">
+                            <span class="ticket-title" style="text-decoration: line-through; color: var(--text-sub); font-weight:800;">
                                 ${escapeHtml(t.title)}
                             </span>
                         </div>
@@ -467,11 +477,14 @@
         }
 
         function openTicketModal(id) {
+            // 若是從當前負載清單點進來，先關掉清單視窗，避免層級遮擋
+            if (document.getElementById('backlog-modal-mask').style.display === 'flex') closeBacklogModal();
+
             const t = ticketIndex[id];
             if (!t) return showToast("找不到案件資料");
 
             document.getElementById('ticket-modal-title').innerText = t.title || '(未命名案件)';
-            document.getElementById('ticket-modal-sub').innerText = `案件編號: ${t.id} · 回報者: ${t.email || '-'}`;
+            document.getElementById('ticket-modal-sub').innerText = `案件 #${t.shortNo} · 回報者: ${t.email || '-'}`;
 
             const meta = `
                 <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
@@ -591,9 +604,10 @@
                 return `
                     <div class="card ticket-row" onclick="openTicketModal('${t.id}')"
                         style="display:flex; justify-content:space-between; align-items:center; padding:18px 20px;">
-                        <div style="min-width:0;">
-                            <b class="priority-badge ${pClass}">${escapeHtml(t.priority)}</b>
-                            <b style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:inline-block; max-width: 640px;">[${escapeHtml(t.status)}] ${escapeHtml(t.title)}</b>
+                        <div class="ticket-line">
+                            <span class="ticket-no">#${t.shortNo}</span>
+                            <span class="priority-badge ${pClass}">${escapeHtml(t.priority)}</span>
+                            <span class="ticket-title"><span class="ticket-status">[${escapeHtml(t.status)}]</span> ${escapeHtml(t.title)}</span>
                         </div>
                         <i class="fas fa-chevron-right" style="color:#cbd5e1"></i>
                     </div>
@@ -617,12 +631,16 @@
             const btn = document.getElementById('submitBtn'); btn.classList.add('loading');
             try {
                 const content = await compressHTML(userQuill.root.innerHTML);
+                const emailRaw = document.getElementById('email').value.trim();
+                const emailLower = emailRaw.toLowerCase();
+                const defaultStatus = (emailLower === 'riku@hcatwn.com') ? '進行中' : '待處理';
                 const data = { 
-                    email: document.getElementById('email').value.trim(), 
+                    email: emailRaw, 
                     type: document.getElementById('type').value, 
                     title: document.getElementById('title').value.trim(), 
                     description: content,
-                    priority: "3-一般"
+                    priority: "3-一般",
+                    status: defaultStatus
                 };
                 await fetch(GAS_URL, { method: "POST", body: JSON.stringify(data) });
                 showToast("提交成功！");
