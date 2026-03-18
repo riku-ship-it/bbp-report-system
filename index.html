@@ -435,17 +435,54 @@
         }
 
         /* ── 需求3：週期選單 ── */
+
+        /* 前端自行計算當前週期（與 GAS 邏輯一致：週三 19:00 台灣時間為截止點） */
+        function getCurrentCycle() {
+            const now = new Date();
+            // 轉為台灣時間 UTC+8
+            const tw = new Date(now.getTime() + 8 * 60 * 60 * 1000);
+            const day  = tw.getUTCDay();    // 0=日,1=一,...,6=六
+            const hour = tw.getUTCHours();
+            const min  = tw.getUTCMinutes();
+
+            // 是否已過本週三 19:00
+            const pastCutoff = (day === 3 && (hour > 19 || (hour === 19 && min > 0)))
+                             || day === 4 || day === 5 || day === 6 || day === 0;
+
+            // 找本週期對應的「週三」日期
+            const base = new Date(tw);
+            const diffToWed = pastCutoff
+                ? (3 - day + 7) % 7 || 7   // 已過截止：找下一個週三
+                : 3 - day;                  // 未過截止：找本週三
+            base.setUTCDate(tw.getUTCDate() + diffToWed);
+
+            // 計算 ISO week number
+            const year = base.getUTCFullYear();
+            const jan4 = new Date(Date.UTC(year, 0, 4));
+            const jan4Day = jan4.getUTCDay() || 7;
+            const firstMonday = new Date(jan4);
+            firstMonday.setUTCDate(jan4.getUTCDate() - (jan4Day - 1));
+            const weekNum = Math.floor((base.getTime() - firstMonday.getTime()) / (7 * 24 * 60 * 60 * 1000)) + 1;
+
+            return `${year}-W${String(weekNum).padStart(2, '0')}`;
+        }
+
         function buildCycleSelector() {
             const cycleSet = new Set();
             Object.values(ticketIndex).forEach(t => { if (t.cycle) cycleSet.add(t.cycle); });
+
+            // 永遠把當前週期加進去，即使沒有案件也要出現
+            const currentCycle = getCurrentCycle();
+            cycleSet.add(currentCycle);
+
             allCycles = Array.from(cycleSet).sort().reverse();
 
             const sel = document.getElementById('cycle-select');
-            const prev = selectedCycle || latestCycleValue;
+            // 若使用者已手動切換週期則保留，否則預設為當前週期
+            const preferred = selectedCycle || currentCycle;
             sel.innerHTML = allCycles.map(c =>
-                `<option value="${escapeHtml(c)}" ${c === prev ? 'selected':''}>${escapeHtml(c)}</option>`
+                `<option value="${escapeHtml(c)}" ${c === preferred ? 'selected':''}>${escapeHtml(c)}</option>`
             ).join('');
-            if (!sel.value) sel.value = latestCycleValue;
             selectedCycle = sel.value;
         }
 
