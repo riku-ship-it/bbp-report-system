@@ -130,6 +130,36 @@
         .view { display: none; width: 100%; animation: fadeIn 0.4s ease-out; }
         .view.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* 急件篩選按鈕 */
+        .urgent-filter-bar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 16px; }
+        .urgent-filter-btn { padding: 7px 18px; border-radius: 50px; font-size: 0.82rem; font-weight: 800; cursor: pointer; border: 1.5px solid var(--border); background: #fff; color: var(--text-sub); transition: 0.2s; }
+        .urgent-filter-btn:hover { box-shadow: none; transform: none; background: var(--bg); }
+        .urgent-filter-btn.active { background: var(--primary-light); color: var(--primary); border-color: var(--primary); }
+        .urgent-filter-btn.btn-critical.active { background: rgba(239,68,68,0.08); color: #ef4444; border-color: rgba(239,68,68,0.4); }
+        .urgent-filter-btn.btn-priority.active { background: rgba(249,115,22,0.08); color: #f97316; border-color: rgba(249,115,22,0.4); }
+
+        /* 急件表格 */
+        .urgent-table { width: 100%; border-collapse: separate; border-spacing: 0; background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.03); }
+        .urgent-table thead tr { background: #f8fafc; }
+        .urgent-table th { padding: 12px 18px; font-size: 0.78rem; font-weight: 800; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.8px; text-align: left; border-bottom: 1px solid var(--border); white-space: nowrap; }
+        .urgent-table td { padding: 14px 18px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+        .urgent-table tbody tr:last-child td { border-bottom: none; }
+        .urgent-table tbody tr { cursor: pointer; transition: background 0.15s; }
+        .urgent-table tbody tr:hover { background: #f8fafc; }
+        .urgent-table .col-id { font-weight: 900; color: #94a3b8; white-space: nowrap; }
+        .urgent-table .col-title { font-weight: 700; color: var(--text-main); }
+
+        /* 嚴重度標籤 */
+        .sev-badge { display: inline-flex; align-items: center; gap: 5px; padding: 5px 11px; border-radius: 999px; font-size: 0.78rem; font-weight: 900; white-space: nowrap; }
+        .sev-critical { background: rgba(239,68,68,0.10); color: #ef4444; border: 1px solid rgba(239,68,68,0.25); }
+        .sev-priority { background: rgba(249,115,22,0.10); color: #f97316; border: 1px solid rgba(249,115,22,0.25); }
+
+        /* 狀態標籤 (表格內用) */
+        .status-badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 999px; font-size: 0.78rem; font-weight: 800; white-space: nowrap; background: #f1f5f9; color: var(--text-sub); }
+        .status-badge.inprogress { background: rgba(245,158,11,0.10); color: #d97706; }
+        .status-badge.pending { background: rgba(99,102,241,0.08); color: var(--primary); }
+        .status-badge.returned { background: rgba(239,68,68,0.08); color: #ef4444; }
+
         @media (max-width: 860px) {
             main { padding: 22px; }
             .stats-grid { grid-template-columns: 1fr; }
@@ -183,7 +213,14 @@
                         <h3>本週新增</h3><span class="value" id="stat-new">0</span>
                     </div>
                 </div>
-                <div class="section-title" style="margin-bottom:20px">🔥 急件關注</div>
+                <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px;">
+                    <div class="section-title">🔥 急件關注</div>
+                    <div class="urgent-filter-bar" style="margin-bottom:0;">
+                        <button class="urgent-filter-btn active" onclick="setUrgentFilter('全部',this)">全部</button>
+                        <button class="urgent-filter-btn btn-critical" onclick="setUrgentFilter('1-嚴重',this)">1-嚴重</button>
+                        <button class="urgent-filter-btn btn-priority" onclick="setUrgentFilter('2-優先',this)">2-優先</button>
+                    </div>
+                </div>
                 <div id="priority-list"></div>
                 <div class="section-title" style="margin-top:40px;margin-bottom:20px;color:var(--stat-emerald);">✅ 本週已解決成果</div>
                 <div id="resolved-list"></div>
@@ -383,6 +420,7 @@
         let modalUserQuill = null;
         let modalAdminQuill = null;
         let userQuill = null;
+        let urgentFilter = '全部';
 
         function syncAdminStateFromStorage() { isAdmin = sessionStorage.getItem('bbp_is_admin') === '1'; }
         syncAdminStateFromStorage();
@@ -556,15 +594,7 @@
                 ticketList.filter(t => t.cycle === cycle).length;
 
             // 急件（全域）
-            const listArea = document.getElementById('priority-list');
-            listArea.innerHTML = '';
-            ticketList
-                .filter(t => (t.status==='待處理'||t.status==='進行中'||t.status==='已退回') && (String(t.priority).includes('嚴重')||String(t.priority).includes('優先')))
-                .sort((a,b) => String(a.priority).localeCompare(String(b.priority)))
-                .slice(0,5)
-                .forEach(t => { listArea.innerHTML += ticketRowHtml(t); });
-            if (!listArea.innerHTML.trim())
-                listArea.innerHTML = `<div class="card" style="text-align:center;color:var(--text-sub);">目前沒有 1-嚴重 / 2-優先 的待處理案件</div>`;
+            renderUrgentTable(ticketList);
 
             // 本週已解決（選取週期）
             const resolvedArea = document.getElementById('resolved-list');
@@ -586,6 +616,66 @@
             } else {
                 resolvedArea.innerHTML = `<div style="text-align:center;padding:20px;color:var(--text-sub);font-size:0.9rem;">本週期尚無已解決案件</div>`;
             }
+        }
+
+        /* ── 急件篩選 ── */
+        function setUrgentFilter(filter, btn) {
+            urgentFilter = filter;
+            document.querySelectorAll('.urgent-filter-btn').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            renderUrgentTable(Object.values(ticketIndex));
+        }
+
+        function severityBadge(p) {
+            p = String(p || '');
+            if (p.includes('嚴重')) return `<span class="sev-badge sev-critical"><i class="fas fa-triangle-exclamation"></i>${escapeHtml(p)}</span>`;
+            if (p.includes('優先')) return `<span class="sev-badge sev-priority"><i class="fas fa-bolt"></i>${escapeHtml(p)}</span>`;
+            return `<span class="sev-badge">${escapeHtml(p)}</span>`;
+        }
+
+        function statusBadge(s) {
+            s = String(s || '');
+            let cls = '';
+            if (s === '進行中') cls = 'inprogress';
+            else if (s === '待處理') cls = 'pending';
+            else if (s === '已退回') cls = 'returned';
+            const icons = { '進行中': 'fa-spinner', '待處理': 'fa-inbox', '已退回': 'fa-rotate-left', '已解決': 'fa-check' };
+            const icon = icons[s] || 'fa-circle';
+            return `<span class="status-badge ${cls}"><i class="fas ${icon}"></i>${escapeHtml(s)}</span>`;
+        }
+
+        function renderUrgentTable(ticketList) {
+            const listArea = document.getElementById('priority-list');
+            let items = ticketList
+                .filter(t => (t.status==='待處理'||t.status==='進行中'||t.status==='已退回') && (String(t.priority).includes('嚴重')||String(t.priority).includes('優先')))
+                .sort((a,b) => String(a.priority).localeCompare(String(b.priority)));
+            if (urgentFilter !== '全部') {
+                items = items.filter(t => String(t.priority).startsWith(urgentFilter.charAt(0)));
+            }
+            if (!items.length) {
+                listArea.innerHTML = `<div class="card" style="text-align:center;color:var(--text-sub);">目前沒有符合條件的急件</div>`;
+                return;
+            }
+            listArea.innerHTML = `
+                <table class="urgent-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>嚴重度</th>
+                            <th>狀態</th>
+                            <th>標題</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${items.map(t => `
+                        <tr onclick="openTicketModalFromList('${t.id}')">
+                            <td class="col-id">#${t.shortNo}</td>
+                            <td>${severityBadge(t.priority)}</td>
+                            <td>${statusBadge(t.status)}</td>
+                            <td class="col-title">${escapeHtml(t.title)}</td>
+                        </tr>`).join('')}
+                    </tbody>
+                </table>`;
         }
 
         /* ── Pill ── */
