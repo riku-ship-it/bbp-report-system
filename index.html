@@ -68,7 +68,10 @@
         .p-normal { color: var(--primary); }
         .resolved-badge { font-weight: 800; color: var(--stat-emerald); margin-right: 20px; }
         label { font-size: 0.9rem; font-weight: 700; color: var(--text-sub); margin-bottom: 8px; display: block; }
-        input, select { width: 100%; padding: 14px; border: none; border-radius: 14px; font-size: 1rem; background: #f1f5f9; outline: none; transition: 0.2s; color: var(--text-main); }
+        input, select { width: 100%; padding: 14px; border: none; border-radius: 14px; font-size: 16px; background: #f1f5f9; outline: none; transition: 0.2s; color: var(--text-main); }
+        textarea { font-size: 16px; }
+        [contenteditable] { font-size: 16px; }
+        .ql-editor { font-size: 16px; }
         input:focus, select:focus { background: #fff; box-shadow: 0 0 0 3px var(--primary-light); }
         .editor-wrapper { border: none; border-radius: 16px; overflow: hidden; margin-top: 8px; background: #f1f5f9; }
         .ql-toolbar.ql-snow { border: none !important; border-bottom: 1px solid #e2e8f0 !important; background: #fcfdfe; }
@@ -81,7 +84,10 @@
         .collapsible-content { display: none; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border); }
         .card.expanded .collapsible-content { display: block; }
         .bubble { padding: 16px; border-radius: 18px; margin-bottom: 12px; border: 1.5px solid var(--border); background: #fff; }
-        .bubble img { max-width: 100%; border-radius: 12px; margin-top: 10px; display: block; }
+        .bubble img { max-width: 220px; max-height: 160px; border-radius: 6px; border: 1px solid #ccc; margin-top: 10px; display: block; cursor: pointer; object-fit: contain; }
+        #lightbox-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.78); display: none; z-index: 9999; align-items: center; justify-content: center; cursor: pointer; }
+        #lightbox-overlay.active { display: flex; }
+        #lightbox-overlay img { max-width: 90vw; max-height: 88vh; border-radius: 10px; object-fit: contain; cursor: pointer; }
         .bubble-admin { background: var(--primary-light); border-color: transparent; }
 
         /* 需求4：時間顯示 */
@@ -969,6 +975,28 @@
         });
 
         window.onload = fetchData;
+    </script>
+
+    <!-- Lightbox overlay -->
+    <div id="lightbox-overlay" onclick="closeLightbox()">
+        <img id="lightbox-img" src="" alt="" onclick="event.stopPropagation();closeLightbox();">
+    </div>
+    <script>
+        function openLightbox(src) {
+            var overlay = document.getElementById('lightbox-overlay');
+            document.getElementById('lightbox-img').src = src;
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeLightbox() {
+            document.getElementById('lightbox-overlay').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        document.addEventListener('click', function(e) {
+            if (e.target.matches('.bubble img')) {
+                openLightbox(e.target.src);
+            }
+        });
     </script>
 </body>
 </html>
