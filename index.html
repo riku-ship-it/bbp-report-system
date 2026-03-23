@@ -66,9 +66,7 @@
         .resolved-badge { font-weight: 800; color: var(--stat-emerald); margin-right: 20px; }
         label { font-size: 0.9rem; font-weight: 700; color: var(--text-sub); margin-bottom: 8px; display: block; }
         input, select { width: 100%; padding: 14px; border: none; border-radius: 14px; font-size: 16px; background: #f1f5f9; outline: none; transition: 0.2s; color: var(--text-main); }
-        textarea { font-size: 16px; }
-        [contenteditable] { font-size: 16px; }
-        .ql-editor { font-size: 16px; }
+        textarea,[contenteditable],.ql-editor{font-size:16px}
         input:focus, select:focus { background: #fff; box-shadow: 0 0 0 3px var(--primary-light); }
         .editor-wrapper { border: none; border-radius: 16px; overflow: hidden; margin-top: 8px; background: #f1f5f9; }
         .ql-toolbar.ql-snow { border: none !important; border-bottom: 1px solid #e2e8f0 !important; background: #fcfdfe; }
@@ -147,7 +145,7 @@
         .status-badge.pending { background: rgba(99,102,241,0.08); color: var(--primary); }
         .status-badge.returned { background: rgba(239,68,68,0.08); color: #ef4444; }
 
-        /* ── 知識產出樣式 ── */
+        .hidden{display:none}
         #knowledge-view { height: calc(100vh - 80px); display: none; flex-direction: column; }
         #knowledge-view.active { display: flex; }
         .k-topbar { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
@@ -167,10 +165,9 @@
         .k-panel-close:hover { background: var(--bg); transform: none; box-shadow: none; }
         .k-panel-body { flex: 1; overflow-y: auto; padding: 16px 18px; display: flex; flex-direction: column; gap: 14px; }
         .k-field-label { font-size: 0.78rem; font-weight: 700; color: var(--text-sub); margin-bottom: 5px; }
-        .k-textarea { width: 100%; border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px; font-size: 0.85rem; color: var(--text-main); background: #fff; outline: none; resize: none; font-family: 'Plus Jakarta Sans', sans-serif; line-height: 1.55; transition: 0.15s; }
-        .k-textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
-        .k-input { width: 100%; border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px; font-size: 0.85rem; color: var(--text-main); background: #fff; outline: none; font-family: 'Plus Jakarta Sans', sans-serif; transition: 0.15s; }
-        .k-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
+        .k-textarea,.k-input{width:100%;border:1px solid var(--border);border-radius:12px;padding:10px 12px;font-size:0.85rem;color:var(--text-main);background:#fff;outline:none;font-family:'Plus Jakarta Sans',sans-serif;transition:0.15s}
+        .k-textarea{resize:none;line-height:1.55}
+        .k-textarea:focus,.k-input:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-light)}
         .k-input::placeholder, .k-textarea::placeholder { color: #cbd5e1; }
         .k-url-row { display: flex; gap: 6px; }
         .k-url-go { padding: 10px 12px; background: var(--primary-light); color: var(--primary); border: none; border-radius: 10px; font-size: 0.8rem; font-weight: 700; cursor: pointer; white-space: nowrap; transition: 0.15s; flex-shrink: 0; }
@@ -326,7 +323,7 @@
                 var ex = examples[type]; if (!ex) return;
                 document.getElementById('type').value = ex.category;
                 document.getElementById('title').value = ex.title;
-                if (typeof userQuill !== 'undefined' && userQuill) userQuill.setText(ex.description);
+                if (typeof uq !== 'undefined' && uq) uq.setText(ex.description);
             }
             </script>
 
@@ -360,7 +357,7 @@
                     <div class="k-stat-pill"><div class="k-stat-dot" style="background:#10b981"></div><span class="k-stat-num" id="k-total">0</span><span class="k-stat-lbl">文件數</span></div>
                     <div class="k-stat-pill"><div class="k-stat-dot" style="background:#6366f1"></div><span class="k-stat-num" id="k-week">0</span><span class="k-stat-lbl">本週發布</span></div>
                     <div class="k-stat-pill"><div class="k-stat-dot" style="background:#3b82f6"></div><span class="k-stat-num" id="k-wip">0</span><span class="k-stat-lbl">進行中</span></div>
-                    <div id="k-admin-badge" style="display:none;">
+                    <div id="k-admin-badge" class="hidden">
                         <div class="k-stat-pill" style="background:#eef2ff;color:var(--primary);border:1px solid #c7d2fe;"><i class="fas fa-shield-halved" style="font-size:0.8rem;"></i><span style="font-size:0.82rem;font-weight:700;">管理模式</span></div>
                     </div>
                 </div>
@@ -378,7 +375,7 @@
                             <button class="k-panel-close" onclick="kClosePanel()"><i class="fas fa-xmark"></i></button>
                         </div>
                         <div class="k-panel-body">
-                            <div id="k-lock-msg" class="k-admin-lock" style="display:none;"><i class="fas fa-lock"></i> 僅管理員可編輯</div>
+                            <div id="k-lock-msg" class="k-admin-lock hidden"><i class="fas fa-lock"></i> 僅管理員可編輯</div>
                             <div>
                                 <div class="k-field-label">解決的問題</div>
                                 <textarea class="k-textarea" id="k-pprob" rows="3" placeholder="這份文件是為了解決什麼問題？" oninput="kSaveField()"></textarea>
@@ -426,8 +423,8 @@
                 <div class="modal-grid">
                     <div class="modal-panel" id="ticket-modal-meta"></div>
                     <div class="modal-panel" id="ticket-modal-thread"></div>
-                    <div class="modal-panel" id="ticket-modal-user-reply" style="display:none;"></div>
-                    <div class="modal-panel" id="ticket-modal-admin-actions" style="display:none;"></div>
+                    <div class="modal-panel hidden" id="ticket-modal-user-reply"></div>
+                    <div class="modal-panel hidden" id="ticket-modal-admin-actions"></div>
                 </div>
             </div>
         </div>
@@ -466,23 +463,23 @@
     <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
     <script>
         const GAS_URL = "https://script.google.com/macros/s/AKfycbz5i3qIe1lZhsbzw0E6kJF85nef6-xi_cajjwWqS-HqVUYsxE_XA7GjQqOxTm7VVVJbpQ/exec";
-        const qlModules = { toolbar: [['bold','italic'],[{list:'bullet'}],['image']] };
+        const qm = { toolbar: [['bold','italic'],[{list:'bullet'}],['image']] };
 
-        let allData = [];
-        let ticketIndex = {};
-        let allCycles = [];
-        let selectedCycle = "";
-        let latestCycleValue = "";
-        let shortNoCounter = 0;
-        let isAdmin = false;
-        let modalUserQuill = null;
-        let modalAdminQuill = null;
-        let userQuill = null;
-        let urgentFilter = '全部';
+        let ad = [];
+        let ti = {};
+        let ac = [];
+        let sc = "";
+        let lc = "";
+        let snc = 0;
+        let ia = false;
+        let muq = null;
+        let maq = null;
+        let uq = null;
+        let uf = '全部';
 
-        function syncAdminStateFromStorage() { isAdmin = sessionStorage.getItem('bbp_is_admin') === '1'; }
+        function syncAdminStateFromStorage() { ia = sessionStorage.getItem('bbp_is_admin') === '1'; }
         syncAdminStateFromStorage();
-        userQuill = new Quill('#editor-user', { theme:'snow', modules:qlModules });
+        uq = new Quill('#editor-user', { theme:'snow', modules:qm });
 
         function toggleSidebar() { document.body.classList.toggle('collapsed'); }
 
@@ -492,7 +489,7 @@
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
             if (el) el.classList.add('active');
             if (id === 'dash-view') fetchData();
-            if (id === 'admin-view') { syncAdminStateFromStorage(); if (!isAdmin) showView('login-view'); }
+            if (id === 'admin-view') { syncAdminStateFromStorage(); if (!ia) showView('login-view'); }
             if (id === 'knowledge-view') { syncAdminStateFromStorage(); kInit(); }
         }
 
@@ -535,29 +532,29 @@
         async function fetchData() {
             try {
                 const res = await fetch(GAS_URL);
-                allData = await res.json();
+                ad = await res.json();
                 buildTicketIndex();
                 buildCycleSelector();
                 renderDashboard();
-                if (document.getElementById('admin-view').classList.contains('active') && isAdmin) renderAdmin();
+                if (document.getElementById('admin-view').classList.contains('active') && ia) renderAdmin();
             } catch(e) { showToast("連線失敗"); }
         }
 
         function buildTicketIndex() {
-            ticketIndex = {};
-            if (!Array.isArray(allData) || allData.length < 2) return;
-            shortNoCounter = 0;
-            latestCycleValue = allData[allData.length-1][10];
-            allData.slice(1).forEach(row => {
+            ti = {};
+            if (!Array.isArray(ad) || ad.length < 2) return;
+            snc = 0;
+            lc = ad[ad.length-1][10];
+            ad.slice(1).forEach(row => {
                 const id = row[0];
-                if (!ticketIndex[id]) {
-                    ticketIndex[id] = { id, shortNo: ++shortNoCounter, createdAt: row[1], email: row[2], type: row[3], title: row[4], status: row[7], updatedAt: row[8], priority: row[9], cycle: row[10], msgs: [] };
+                if (!ti[id]) {
+                    ti[id] = { id, shortNo: ++snc, createdAt: row[1], email: row[2], type: row[3], title: row[4], status: row[7], updatedAt: row[8], priority: row[9], cycle: row[10], msgs: [] };
                 }
-                ticketIndex[id].msgs.push({ sender: row[6], content: row[5], time: row[8] });
-                ticketIndex[id].status    = row[7];
-                ticketIndex[id].updatedAt = row[8];
-                ticketIndex[id].priority  = row[9];
-                ticketIndex[id].cycle     = row[10];
+                ti[id].msgs.push({ sender: row[6], content: row[5], time: row[8] });
+                ti[id].status    = row[7];
+                ti[id].updatedAt = row[8];
+                ti[id].priority  = row[9];
+                ti[id].cycle     = row[10];
             });
         }
 
@@ -582,22 +579,22 @@
 
         function buildCycleSelector() {
             const cycleSet = new Set();
-            Object.values(ticketIndex).forEach(t => { if (t.cycle) cycleSet.add(t.cycle); });
+            Object.values(ti).forEach(t => { if (t.cycle) cycleSet.add(t.cycle); });
             const currentCycle = getCurrentCycle();
             cycleSet.add(currentCycle);
-            allCycles = Array.from(cycleSet).sort().reverse();
+            ac = Array.from(cycleSet).sort().reverse();
             const sel = document.getElementById('cycle-select');
-            const preferred = selectedCycle || currentCycle;
-            sel.innerHTML = allCycles.map(c => `<option value="${escapeHtml(c)}" ${c === preferred ? 'selected':''}>${escapeHtml(c)}</option>`).join('');
-            selectedCycle = sel.value;
+            const preferred = sc || currentCycle;
+            sel.innerHTML = ac.map(c => `<option value="${escapeHtml(c)}" ${c === preferred ? 'selected':''}>${escapeHtml(c)}</option>`).join('');
+            sc = sel.value;
         }
 
-        function onCycleChange() { selectedCycle = document.getElementById('cycle-select').value; renderDashboard(); }
+        function onCycleChange() { sc = document.getElementById('cycle-select').value; renderDashboard(); }
 
         function renderDashboard() {
-            if (!Array.isArray(allData) || allData.length < 2) return;
-            const ticketList = Object.values(ticketIndex);
-            const cycle = selectedCycle || latestCycleValue;
+            if (!Array.isArray(ad) || ad.length < 2) return;
+            const ticketList = Object.values(ti);
+            const cycle = sc || lc;
             document.getElementById('stat-pending').innerText = ticketList.filter(t => t.status === '待處理' || t.status === '進行中' || t.status === '已退回').length;
             document.getElementById('stat-resolved').innerText = ticketList.filter(t => t.status === '已解決' && t.cycle === cycle).length;
             document.getElementById('stat-new').innerText = ticketList.filter(t => t.cycle === cycle).length;
@@ -613,10 +610,10 @@
         }
 
         function setUrgentFilter(filter, btn) {
-            urgentFilter = filter;
+            uf = filter;
             document.querySelectorAll('.urgent-filter-btn').forEach(b => b.classList.remove('active'));
             if (btn) btn.classList.add('active');
-            renderUrgentTable(Object.values(ticketIndex));
+            renderUrgentTable(Object.values(ti));
         }
 
         function severityBadge(p) {
@@ -639,7 +636,7 @@
         function renderUrgentTable(ticketList) {
             const listArea = document.getElementById('priority-list');
             let items = ticketList.filter(t => (t.status==='待處理'||t.status==='進行中'||t.status==='已退回') && (String(t.priority).includes('嚴重')||String(t.priority).includes('優先'))).sort((a,b) => String(a.priority).localeCompare(String(b.priority)));
-            if (urgentFilter !== '全部') items = items.filter(t => String(t.priority).startsWith(urgentFilter.charAt(0)));
+            if (uf !== '全部') items = items.filter(t => String(t.priority).startsWith(uf.charAt(0)));
             if (!items.length) { listArea.innerHTML = `<div class="card" style="text-align:center;color:var(--text-sub);">目前沒有符合條件的急件</div>`; return; }
             listArea.innerHTML = `<table class="urgent-table"><thead><tr><th>ID</th><th>嚴重度</th><th>狀態</th><th>標題</th></tr></thead><tbody>${items.map(t=>`<tr onclick="openTicketModalFromList('${t.id}')"><td class="col-id">#${t.shortNo}</td><td>${severityBadge(t.priority)}</td><td>${statusBadge(t.status)}</td><td class="col-title">${escapeHtml(t.title)}</td></tr>`).join('')}</tbody></table>`;
         }
@@ -666,8 +663,8 @@
         function openTicketModalFromList(id) { closeBacklogModal(); closeResolvedModal(); closeNewModal(); openTicketModal(id); }
 
         function openResolvedModal() {
-            const cycle = selectedCycle || latestCycleValue;
-            const list = Object.values(ticketIndex).filter(t => t.status==='已解決' && t.cycle===cycle);
+            const cycle = sc || lc;
+            const list = Object.values(ti).filter(t => t.status==='已解決' && t.cycle===cycle);
             document.getElementById('resolved-modal-title').innerText = `本週進度 - 已解決案件`;
             document.getElementById('resolved-modal-sub').innerText = `週期 ${cycle}，共 ${list.length} 件`;
             document.getElementById('resolved-modal-list').innerHTML = list.length ? list.map(t => ticketRowHtml(t)).join('') : `<div class="card" style="text-align:center;color:var(--text-sub);">本週期尚無已解決案件</div>`;
@@ -677,8 +674,8 @@
         function closeResolvedModal() { document.getElementById('resolved-modal-mask').style.display = 'none'; document.body.style.overflow = ''; }
 
         function openNewModal() {
-            const cycle = selectedCycle || latestCycleValue;
-            const list = Object.values(ticketIndex).filter(t => t.cycle===cycle);
+            const cycle = sc || lc;
+            const list = Object.values(ti).filter(t => t.cycle===cycle);
             document.getElementById('new-modal-title').innerText = `本週新增 - 所有案件`;
             document.getElementById('new-modal-sub').innerText = `週期 ${cycle}，共 ${list.length} 件`;
             document.getElementById('new-modal-list').innerHTML = list.length ? list.map(t => ticketRowHtml(t)).join('') : `<div class="card" style="text-align:center;color:var(--text-sub);">本週期尚無案件</div>`;
@@ -689,7 +686,7 @@
 
         function openTicketModal(id) {
             if (document.getElementById('backlog-modal-mask').style.display === 'flex') closeBacklogModal();
-            const t = ticketIndex[id]; if (!t) return showToast("找不到案件資料");
+            const t = ti[id]; if (!t) return showToast("找不到案件資料");
             document.getElementById('ticket-modal-title').innerText = t.title || '(未命名案件)';
             document.getElementById('ticket-modal-sub').innerText = `案件 #${t.shortNo} · 回報者: ${t.email || '-'}`;
             document.getElementById('ticket-modal-meta').innerHTML = `<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">${statusPill(t.status)} ${priorityPill(t.priority)}<span class="pill"><i class="fas fa-calendar-week"></i>週期 ${escapeHtml(t.cycle)}</span></div><div class="ticket-time-bar"><span><i class="fas fa-clock"></i> 建立時間：${formatTime(t.createdAt)}</span><span><i class="fas fa-rotate"></i> 最後更新：${formatTime(t.updatedAt)}</span></div><div style="margin-top:10px;color:var(--text-sub);font-weight:700;font-size:0.9rem;">提示：一般使用者僅可查看；若案件為「已退回」，可在下方補充內容再送出。</div>`;
@@ -703,13 +700,13 @@
             const adminPanel = document.getElementById('ticket-modal-admin-actions');
             adminPanel.style.display = 'none'; adminPanel.innerHTML = '';
             syncAdminStateFromStorage();
-            if (isAdmin) {
+            if (ia) {
                 adminPanel.style.display = 'block';
                 adminPanel.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;"><div style="font-weight:900;">管理者操作</div><span style="color:var(--text-sub);font-weight:800;font-size:0.85rem;">可直接在儀表板回覆/更新狀態</span></div><div style="display:flex;gap:12px;margin-top:12px;flex-wrap:wrap;"><select id="modal-admin-status"><option value="待處理" ${t.status=='待處理'?'selected':''}>待處理</option><option value="進行中" ${t.status=='進行中'?'selected':''}>進行中</option><option value="已解決" ${t.status=='已解決'?'selected':''}>已解決</option><option value="已退回" ${t.status=='已退回'?'selected':''}>已退回</option></select><select id="modal-admin-priority"><option value="1-嚴重" ${t.priority=='1-嚴重'?'selected':''}>1-嚴重</option><option value="2-優先" ${t.priority=='2-優先'?'selected':''}>2-優先</option><option value="3-一般" ${t.priority=='3-一般'?'selected':''}>3-一般</option></select></div><div class="editor-wrapper" style="margin-top:12px;"><div id="modal-admin-editor"></div></div><div class="modal-actions"><button onclick="submitAdminUpdateFromDashboard('${t.id}')" style="min-width:220px;"><i class="fas fa-paper-plane"></i> 送出回覆並更新</button></div>`;
             }
             setTimeout(() => {
-                if (document.getElementById('modal-user-editor')) { document.getElementById('modal-user-editor').innerHTML = ''; modalUserQuill = new Quill('#modal-user-editor', { theme:'snow', modules:qlModules }); }
-                if (document.getElementById('modal-admin-editor')) { document.getElementById('modal-admin-editor').innerHTML = ''; modalAdminQuill = new Quill('#modal-admin-editor', { theme:'snow', modules:qlModules }); }
+                if (document.getElementById('modal-user-editor')) { document.getElementById('modal-user-editor').innerHTML = ''; muq = new Quill('#modal-user-editor', { theme:'snow', modules:qm }); }
+                if (document.getElementById('modal-admin-editor')) { document.getElementById('modal-admin-editor').innerHTML = ''; maq = new Quill('#modal-admin-editor', { theme:'snow', modules:qm }); }
             }, 0);
             document.getElementById('ticket-modal-mask').style.display = 'flex';
             document.body.style.overflow = 'hidden';
@@ -719,7 +716,7 @@
         function closeTicketModal() { document.getElementById('ticket-modal-mask').style.display='none'; document.body.style.overflow=''; }
 
         function openBacklogModal() {
-            const backlog = Object.values(ticketIndex).filter(t => t.status!=='已解決').sort((a,b) => String(a.priority).localeCompare(String(b.priority)));
+            const backlog = Object.values(ti).filter(t => t.status!=='已解決').sort((a,b) => String(a.priority).localeCompare(String(b.priority)));
             document.getElementById('backlog-modal-list').innerHTML = backlog.length ? backlog.map(t => ticketRowHtml(t)).join('') : `<div class="card" style="text-align:center;color:var(--text-sub);">目前沒有待處理案件</div>`;
             document.getElementById('backlog-modal-mask').style.display = 'flex';
             document.body.style.overflow = 'hidden';
@@ -730,12 +727,12 @@
             e.preventDefault();
             const btn = document.getElementById('submitBtn'); btn.disabled = true;
             try {
-                const content = await compressHTML(userQuill.root.innerHTML);
+                const content = await compressHTML(uq.root.innerHTML);
                 const emailRaw = document.getElementById('email').value.trim();
                 const defaultStatus = emailRaw.toLowerCase() === 'riku@hcatwn.com' ? '進行中' : '待處理';
                 await fetch(GAS_URL, { method:"POST", body: JSON.stringify({ email: emailRaw, type: document.getElementById('type').value, title: document.getElementById('title').value.trim(), description: content, priority: "3-一般", status: defaultStatus })});
                 showToast("提交成功！");
-                userQuill.setContents([]); e.target.reset();
+                uq.setContents([]); e.target.reset();
                 await fetchData(); showView('dash-view');
             } catch(e) { showToast("提交失敗"); }
             finally { btn.disabled = false; }
@@ -749,39 +746,39 @@
             await fetchData();
             btn.innerHTML = '<i class="fas fa-search"></i> 搜尋';
             const area = document.getElementById('user-result-list'); area.innerHTML = '';
-            const userTickets = Object.values(ticketIndex).filter(t => String(t.email||'').toLowerCase().trim() === email).reverse();
+            const userTickets = Object.values(ti).filter(t => String(t.email||'').toLowerCase().trim() === email).reverse();
             if (!userTickets.length) { area.innerHTML = `<div class="card" style="text-align:center;color:var(--text-sub);">查無案件，請確認 Email 是否正確</div>`; return; }
             userTickets.forEach(t => {
                 const card = document.createElement('div'); card.className = 'card';
                 const canReply = String(t.status) === '已退回';
                 card.innerHTML = `<div class="collapsible-header" onclick="this.parentElement.classList.toggle('expanded')"><div style="min-width:0;"><b style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:inline-block;max-width:720px;">${escapeHtml(t.title)}<small style="margin-left:10px;color:var(--primary)">[${escapeHtml(t.status)}]</small></b><div style="font-size:0.78rem;color:#94a3b8;font-weight:700;margin-top:3px;">建立：${formatTime(t.createdAt)} &nbsp;·&nbsp; 更新：${formatTime(t.updatedAt)}</div></div><i class="fas fa-chevron-down"></i></div><div class="collapsible-content">${t.msgs.map(m=>`<div class="bubble bubble-${m.sender==='管理者'?'admin':'user'}"><div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;"><b>${escapeHtml(m.sender)}:</b><span class="bubble-meta"><i class="fas fa-clock"></i> ${formatTime(m.time)}</span></div><div style="margin-top:6px;">${m.content}</div></div>`).join('')}${canReply?`<div style="margin-top:18px;font-weight:900;">補充說明（送回管理者）</div><div class="editor-wrapper" style="margin-top:10px;"><div id="status-ed-${t.id}"></div></div><div class="modal-actions" style="justify-content:flex-start;"><button onclick="submitUserReply('${t.id}','status-ed-${t.id}')" style="min-width:180px;"><i class="fas fa-paper-plane"></i> 送出補充</button></div>`:`<div style="margin-top:18px;color:var(--text-sub);font-weight:700;font-size:0.9rem;">此案件目前非「已退回」，因此無需補充送出。</div>`}</div>`;
                 area.appendChild(card);
-                if (canReply) new Quill(`#status-ed-${t.id}`, { theme:'snow', modules:qlModules });
+                if (canReply) new Quill(`#status-ed-${t.id}`, { theme:'snow', modules:qm });
             });
         }
 
         function checkAdminLogin() {
             if (document.getElementById('adminPassword').value === 'admin123') {
-                sessionStorage.setItem('bbp_is_admin','1'); isAdmin = true;
+                sessionStorage.setItem('bbp_is_admin','1'); ia = true;
                 showView('admin-view'); renderAdmin();
             } else showToast("密碼錯誤");
         }
-        function adminLogout() { sessionStorage.removeItem('bbp_is_admin'); isAdmin = false; showToast("已登出"); showView('dash-view'); }
+        function adminLogout() { sessionStorage.removeItem('bbp_is_admin'); ia = false; showToast("已登出"); showView('dash-view'); }
 
         function renderAdmin() {
-            syncAdminStateFromStorage(); if (!isAdmin) return;
+            syncAdminStateFromStorage(); if (!ia) return;
             const area = document.getElementById('admin-list');
             const sf = document.getElementById('filter-status').value;
             const pf = document.getElementById('filter-priority').value;
             area.innerHTML = '';
-            Object.values(ticketIndex).reverse().forEach(t => {
+            Object.values(ti).reverse().forEach(t => {
                 if (sf !== '全部' && t.status !== sf) return;
                 if (pf !== '全部' && t.priority !== pf) return;
                 const card = document.createElement('div'); card.className = 'card';
                 const pClass = String(t.priority).includes('嚴重') ? 'p-critical' : 'p-normal';
                 card.innerHTML = `<div class="collapsible-header" onclick="this.parentElement.classList.toggle('expanded')"><b style="min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:inline-block;max-width:660px;">${escapeHtml(t.title)} (${escapeHtml(t.email)})</b><b class="priority-badge ${pClass}" style="flex-shrink:0;">${escapeHtml(t.priority)}</b></div><div class="collapsible-content"><div style="font-size:0.78rem;color:#94a3b8;font-weight:700;margin-bottom:14px;">建立：${formatTime(t.createdAt)} &nbsp;·&nbsp; 最後更新：${formatTime(t.updatedAt)}</div><div style="margin-bottom:20px;">${t.msgs.map(m=>`<div class="bubble bubble-${m.sender==='管理者'?'admin':'user'}"><div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;"><b>${escapeHtml(m.sender)}:</b><span class="bubble-meta"><i class="fas fa-clock"></i> ${formatTime(m.time)}</span></div><div style="margin-top:6px;">${m.content}</div></div>`).join('')}</div><div style="display:flex;gap:12px;margin-bottom:15px;flex-wrap:wrap;"><select id="st-${t.id}"><option value="待處理" ${t.status=='待處理'?'selected':''}>待處理</option><option value="進行中" ${t.status=='進行中'?'selected':''}>進行中</option><option value="已解決" ${t.status=='已解決'?'selected':''}>已解決</option><option value="已退回" ${t.status=='已退回'?'selected':''}>已退回</option></select><select id="pr-${t.id}"><option value="1-嚴重" ${t.priority=='1-嚴重'?'selected':''}>1-嚴重</option><option value="2-優先" ${t.priority=='2-優先'?'selected':''}>2-優先</option><option value="3-一般" ${t.priority=='3-一般'?'selected':''}>3-一般</option></select></div><div class="editor-wrapper"><div id="ed-${t.id}"></div></div><button id="btn-${t.id}" onclick="adminReply('${t.id}','${escapeJs(t.email)}','${escapeJs(t.title)}')" style="width:100%;margin-top:15px;">送出回覆並更新</button></div>`;
                 area.appendChild(card);
-                new Quill(`#ed-${t.id}`, { theme:'snow', modules:qlModules });
+                new Quill(`#ed-${t.id}`, { theme:'snow', modules:qm });
             });
             if (!area.innerHTML.trim()) area.innerHTML = "<div class='card' style='text-align:center;color:var(--text-sub);'>此過濾條件下無相關案件</div>";
         }
@@ -797,8 +794,8 @@
         }
 
         async function submitAdminUpdateFromDashboard(id) {
-            const t = ticketIndex[id]; if (!t) return showToast("找不到案件資料");
-            syncAdminStateFromStorage(); if (!isAdmin) return showToast("僅管理者可操作");
+            const t = ti[id]; if (!t) return showToast("找不到案件資料");
+            syncAdminStateFromStorage(); if (!ia) return showToast("僅管理者可操作");
             try {
                 const content = await compressHTML(document.querySelector('#modal-admin-editor .ql-editor').innerHTML);
                 await fetch(GAS_URL, { method:"POST", body: JSON.stringify({ id: t.id, email: t.email, title: t.title, description: content, status: document.getElementById('modal-admin-status').value, priority: document.getElementById('modal-admin-priority').value, sender: "管理者" })});
@@ -807,7 +804,7 @@
         }
 
         async function submitUserReply(id, editorRootId) {
-            const t = ticketIndex[id]; if (!t) return showToast("找不到案件資料");
+            const t = ti[id]; if (!t) return showToast("找不到案件資料");
             if (String(t.status) !== '已退回') return showToast("此案件目前不需補充");
             try {
                 let editorHtml = '';
@@ -832,17 +829,14 @@
 
         window.onload = fetchData;
 
-        /* ══════════════════════════════════════
-           知識產出 — 技能樹邏輯
-        ══════════════════════════════════════ */
-        const K_STATUS = {
+        const KS = {
             idea:  { label:'想法',  color:'#94a3b8', bg:'#f1f5f9', cls:'active-idea' },
             draft: { label:'草稿',  color:'#f59e0b', bg:'#fefce8', cls:'active-draft' },
             wip:   { label:'進行中',color:'#3b82f6', bg:'#eff6ff', cls:'active-wip' },
             pub:   { label:'已發布',color:'#10b981', bg:'#f0fdf4', cls:'active-pub' },
         };
 
-        let kNodes = [
+        let kn = [
             { id:'root', title:'BBP 平台', prob:'', note:'', url:'', status:'pub', parent:null, x:340, y:260 },
             { id:'n1', title:'知識庫介紹（客戶用）', prob:'客戶無知識庫說明，顧問無法引導使用', note:'', url:'', status:'pub', parent:'root', x:175, y:140 },
             { id:'n2', title:'BBP 教學手冊', prob:'顧問不了解 BBP，無法獨立操作平台', note:'含電子版', url:'https://riku-ship-it.github.io/bbp-manual.io/', status:'pub', parent:'root', x:175, y:310 },
@@ -851,40 +845,40 @@
             { id:'n5', title:'初階操作影片說明', prob:'顧問不知道實際操作細節，影片不夠完整', note:'', url:'', status:'draft', parent:'n2', x:275, y:430 },
             { id:'n6', title:'知識庫操作職務說明', prob:'統計值職務說明未補齊，影響新人 onboarding', note:'', url:'', status:'draft', parent:'n3', x:520, y:300 },
         ];
-        let kSelected = null;
-        let kDrag = null, kDragOff = { x:0, y:0 };
-        let kPan = false, kPanStart = { x:0, y:0 }, kViewOff = { x:0, y:0 };
-        let kNextId = kNodes.length + 1;
-        let kInitDone = false;
+        let ks = null;
+        let kd = null, kdo = { x:0, y:0 };
+        let kp = false, kps = { x:0, y:0 }, kv = { x:0, y:0 };
+        let kni = kn.length + 1;
+        let kid = false;
 
         function kInit() {
-            if (!kInitDone) { kInitDone = true; kBindCanvas(); }
+            if (!kid) { kid = true; kBindCanvas(); }
             kRender();
             kUpdateStats();
         }
 
         function kUpdateStats() {
-            const nonRoot = kNodes.filter(n => n.id !== 'root');
+            const nonRoot = kn.filter(n => n.id !== 'root');
             document.getElementById('k-total').textContent = nonRoot.length;
             const cycle = getCurrentCycle();
             const weekPub = nonRoot.filter(n => n.status === 'pub' && n._pubCycle === cycle).length;
             document.getElementById('k-week').textContent = weekPub;
             document.getElementById('k-wip').textContent = nonRoot.filter(n => n.status === 'wip').length;
             syncAdminStateFromStorage();
-            document.getElementById('k-admin-badge').style.display = isAdmin ? 'block' : 'none';
+            document.getElementById('k-admin-badge').style.display = ia ? 'block' : 'none';
         }
 
         function kRender() {
             const svg = document.getElementById('k-svg');
             svg.innerHTML = '';
             const edgeG = document.createElementNS('http://www.w3.org/2000/svg','g');
-            kNodes.forEach(n => {
+            kn.forEach(n => {
                 if (!n.parent) return;
-                const p = kNodes.find(x => x.id === n.parent); if (!p) return;
-                const px = p.x + kViewOff.x, py = p.y + kViewOff.y;
-                const nx = n.x + kViewOff.x, ny = n.y + kViewOff.y;
+                const p = kn.find(x => x.id === n.parent); if (!p) return;
+                const px = p.x + kv.x, py = p.y + kv.y;
+                const nx = n.x + kv.x, ny = n.y + kv.y;
                 const mx = (px+nx)/2, my = (py+ny)/2 - 16;
-                const st = K_STATUS[n.status] || K_STATUS.idea;
+                const st = KS[n.status] || KS.idea;
                 const path = document.createElementNS('http://www.w3.org/2000/svg','path');
                 path.setAttribute('d', `M${px} ${py} Q${mx} ${my} ${nx} ${ny}`);
                 path.setAttribute('fill','none');
@@ -897,12 +891,12 @@
             svg.appendChild(edgeG);
 
             const nodeG = document.createElementNS('http://www.w3.org/2000/svg','g');
-            kNodes.forEach(n => {
-                const st = K_STATUS[n.status] || K_STATUS.idea;
+            kn.forEach(n => {
+                const st = KS[n.status] || KS.idea;
                 const isRoot = n.id === 'root';
-                const isSel = kSelected === n.id;
+                const isSel = ks === n.id;
                 const r = isRoot ? 30 : 22;
-                const nx = n.x + kViewOff.x, ny = n.y + kViewOff.y;
+                const nx = n.x + kv.x, ny = n.y + kv.y;
                 const g = document.createElementNS('http://www.w3.org/2000/svg','g');
                 g.setAttribute('transform', `translate(${nx},${ny})`);
                 g.style.cursor = 'pointer';
@@ -957,7 +951,7 @@
                 g.addEventListener('mousedown', e => {
                     e.stopPropagation();
                     const cr = document.getElementById('k-canvas').getBoundingClientRect();
-                    kDrag = n; kDragOff.x = e.clientX - cr.left - n.x - kViewOff.x; kDragOff.y = e.clientY - cr.top - n.y - kViewOff.y;
+                    kd = n; kdo.x = e.clientX - cr.left - n.x - kv.x; kdo.y = e.clientY - cr.top - n.y - kv.y;
                 });
                 g.addEventListener('click', e => { e.stopPropagation(); kSelectNode(n); });
                 nodeG.appendChild(g);
@@ -966,26 +960,26 @@
         }
 
         function kSelectNode(n) {
-            kSelected = kSelected === n.id ? null : n.id;
+            ks = ks === n.id ? null : n.id;
             kRender();
             const panel = document.getElementById('k-panel');
-            if (!kSelected) { panel.classList.remove('open'); return; }
+            if (!ks) { panel.classList.remove('open'); return; }
             panel.classList.add('open');
-            const st = K_STATUS[n.status] || K_STATUS.idea;
+            const st = KS[n.status] || KS.idea;
             document.getElementById('k-sdot').style.background = st.color;
             document.getElementById('k-ptitle').value = n.title;
             document.getElementById('k-pprob').value = n.prob || '';
             document.getElementById('k-pnote').value = n.note || '';
             document.getElementById('k-purl').value = n.url || '';
             syncAdminStateFromStorage();
-            const isEditable = isAdmin && n.id !== 'root';
+            const isEditable = ia && n.id !== 'root';
             const lockMsg = document.getElementById('k-lock-msg');
-            lockMsg.style.display = !isAdmin ? 'flex' : 'none';
+            lockMsg.style.display = !ia ? 'flex' : 'none';
             ['k-ptitle','k-pprob','k-pnote','k-purl'].forEach(id => { document.getElementById(id).readOnly = !isEditable; });
-            document.getElementById('k-btn-add-child').style.display = isAdmin ? 'flex' : 'none';
-            document.getElementById('k-btn-del').style.display = (isAdmin && n.id !== 'root') ? 'flex' : 'none';
+            document.getElementById('k-btn-add-child').style.display = ia ? 'flex' : 'none';
+            document.getElementById('k-btn-del').style.display = (ia && n.id !== 'root') ? 'flex' : 'none';
             const sg = document.getElementById('k-status-grid'); sg.innerHTML = '';
-            Object.entries(K_STATUS).forEach(([k, v]) => {
+            Object.entries(KS).forEach(([k, v]) => {
                 const btn = document.createElement('button');
                 btn.className = `k-status-btn${n.status === k ? ' ' + v.cls : ''}`;
                 btn.textContent = v.label;
@@ -997,10 +991,10 @@
         }
 
         function kSaveField() {
-            if (!kSelected) return;
-            const n = kNodes.find(x => x.id === kSelected); if (!n) return;
+            if (!ks) return;
+            const n = kn.find(x => x.id === ks); if (!n) return;
             syncAdminStateFromStorage();
-            if (!isAdmin) return;
+            if (!ia) return;
             n.title = document.getElementById('k-ptitle').value;
             n.prob  = document.getElementById('k-pprob').value;
             n.note  = document.getElementById('k-pnote').value;
@@ -1009,7 +1003,7 @@
         }
 
         function kSetStatus(k) {
-            const n = kNodes.find(x => x.id === kSelected); if (!n) return;
+            const n = kn.find(x => x.id === ks); if (!n) return;
             const wasNotPub = n.status !== 'pub';
             n.status = k;
             if (k === 'pub' && wasNotPub) n._pubCycle = getCurrentCycle();
@@ -1021,27 +1015,27 @@
             if (url) window.open(url, '_blank');
         }
 
-        function kClosePanel() { kSelected = null; document.getElementById('k-panel').classList.remove('open'); kRender(); }
+        function kClosePanel() { ks = null; document.getElementById('k-panel').classList.remove('open'); kRender(); }
 
         function kAddChild(parentNode) {
-            syncAdminStateFromStorage(); if (!isAdmin) return showToast('請先登入管理員才能新增');
+            syncAdminStateFromStorage(); if (!ia) return showToast('請先登入管理員才能新增');
             const angle = (Math.random() * 180 + 90) * Math.PI / 180;
-            const id = 'n' + (kNextId++);
-            kNodes.push({ id, title:'新節點', prob:'', note:'', url:'', status:'idea', parent: parentNode.id, x: parentNode.x + Math.cos(angle)*115, y: parentNode.y + Math.sin(angle)*115 });
+            const id = 'n' + (kni++);
+            kn.push({ id, title:'新節點', prob:'', note:'', url:'', status:'idea', parent: parentNode.id, x: parentNode.x + Math.cos(angle)*115, y: parentNode.y + Math.sin(angle)*115 });
             kRender(); kUpdateStats();
-            const newN = kNodes.find(x => x.id === id);
-            kSelected = id; kRender(); kSelectNode(newN);
+            const newN = kn.find(x => x.id === id);
+            ks = id; kRender(); kSelectNode(newN);
             setTimeout(() => { const t = document.getElementById('k-ptitle'); if (t) { t.focus(); t.select(); } }, 100);
         }
 
         function kAddChildFromPanel() {
-            const n = kNodes.find(x => x.id === kSelected); if (n) kAddChild(n);
+            const n = kn.find(x => x.id === ks); if (n) kAddChild(n);
         }
 
         function kDeleteNode() {
-            syncAdminStateFromStorage(); if (!isAdmin || !kSelected || kSelected === 'root') return;
-            kNodes = kNodes.filter(n => n.id !== kSelected && n.parent !== kSelected);
-            kSelected = null;
+            syncAdminStateFromStorage(); if (!ia || !ks || ks === 'root') return;
+            kn = kn.filter(n => n.id !== ks && n.parent !== ks);
+            ks = null;
             document.getElementById('k-panel').classList.remove('open');
             kRender(); kUpdateStats();
         }
@@ -1049,21 +1043,21 @@
         function kBindCanvas() {
             const canvas = document.getElementById('k-canvas');
             canvas.addEventListener('mousedown', e => {
-                if (!kDrag) { kPan = true; kPanStart.x = e.clientX - kViewOff.x; kPanStart.y = e.clientY - kViewOff.y; }
+                if (!kd) { kp = true; kps.x = e.clientX - kv.x; kps.y = e.clientY - kv.y; }
             });
             document.addEventListener('mousemove', e => {
-                if (kDrag) {
+                if (kd) {
                     const cr = canvas.getBoundingClientRect();
-                    kDrag.x = e.clientX - cr.left - kDragOff.x - kViewOff.x;
-                    kDrag.y = e.clientY - cr.top  - kDragOff.y - kViewOff.y;
+                    kd.x = e.clientX - cr.left - kdo.x - kv.x;
+                    kd.y = e.clientY - cr.top  - kdo.y - kv.y;
                     kRender();
-                } else if (kPan) {
-                    kViewOff.x = e.clientX - kPanStart.x;
-                    kViewOff.y = e.clientY - kPanStart.y;
+                } else if (kp) {
+                    kv.x = e.clientX - kps.x;
+                    kv.y = e.clientY - kps.y;
                     kRender();
                 }
             });
-            document.addEventListener('mouseup', () => { kDrag = null; kPan = false; });
+            document.addEventListener('mouseup', () => { kd = null; kp = false; });
             canvas.addEventListener('click', e => {
                 if (e.target === canvas || e.target.tagName === 'svg') kClosePanel();
             });
