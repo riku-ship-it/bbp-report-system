@@ -46,13 +46,10 @@
         .card { background: white; border-radius: 24px; padding: 30px; border: none; box-shadow: 0 4px 20px rgba(0,0,0,0.03); margin-bottom: 15px; }
         .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; gap: 12px; flex-wrap: wrap; }
         .section-title { font-size: 1.5rem; font-weight: 800; margin: 0; display: flex; align-items: center; gap: 10px; }
-
-        /* 需求3：週期選擇器 */
         .cycle-selector-wrap { display: flex; align-items: center; gap: 8px; background: white; padding: 6px 6px 6px 14px; border-radius: 50px; border: 1px solid var(--border); }
         .cycle-selector-label { font-size: 0.78rem; font-weight: 700; color: var(--text-sub); white-space: nowrap; }
         #cycle-select { font-size: 0.82rem; font-weight: 700; color: var(--primary); background: var(--primary-light); padding: 6px 12px; border-radius: 50px; border: none; cursor: pointer; outline: none; transition: 0.2s; width: auto; min-width: 120px; }
         #cycle-select:focus { box-shadow: 0 0 0 3px var(--primary-light); }
-
         .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 35px; }
         .stat-card { background: white; padding: 25px; border-radius: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.02); position: relative; }
         .stat-card.stat-clickable { cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
@@ -89,12 +86,9 @@
         #lightbox-overlay.active { display: flex; }
         #lightbox-overlay img { max-width: 90vw; max-height: 88vh; border-radius: 10px; object-fit: contain; cursor: pointer; }
         .bubble-admin { background: var(--primary-light); border-color: transparent; }
-
-        /* 需求4：時間顯示 */
         .bubble-meta { font-size: 0.78rem; color: #94a3b8; font-weight: 700; }
         .ticket-time-bar { display: flex; gap: 18px; flex-wrap: wrap; margin-top: 12px; padding: 10px 14px; background: #f8fafc; border-radius: 12px; font-size: 0.8rem; font-weight: 700; color: var(--text-sub); }
         .ticket-time-bar span { display: flex; align-items: center; gap: 6px; }
-
         .admin-filter-bar { display: grid; grid-template-columns: auto 1fr 1fr; gap: 12px; margin-bottom: 20px; align-items: center; background: white; padding: 14px 18px; border-radius: 18px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
         .admin-filter-bar .filter-title { font-weight: 800; color: var(--text-main); font-size: 0.9rem; display: inline-flex; align-items: center; gap: 10px; white-space: nowrap; }
         .admin-filter-bar select { background: #f8fafc; }
@@ -130,15 +124,12 @@
         .view { display: none; width: 100%; animation: fadeIn 0.4s ease-out; }
         .view.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        /* 急件篩選按鈕 */
         .urgent-filter-bar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 16px; }
         .urgent-filter-btn { padding: 7px 18px; border-radius: 50px; font-size: 0.82rem; font-weight: 800; cursor: pointer; border: 1.5px solid var(--border); background: #fff; color: var(--text-sub); transition: 0.2s; }
         .urgent-filter-btn:hover { box-shadow: none; transform: none; background: var(--bg); }
         .urgent-filter-btn.active { background: var(--primary-light); color: var(--primary); border-color: var(--primary); }
         .urgent-filter-btn.btn-critical.active { background: rgba(239,68,68,0.08); color: #ef4444; border-color: rgba(239,68,68,0.4); }
         .urgent-filter-btn.btn-priority.active { background: rgba(249,115,22,0.08); color: #f97316; border-color: rgba(249,115,22,0.4); }
-
-        /* 急件表格 */
         .urgent-table { width: 100%; border-collapse: separate; border-spacing: 0; background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.03); }
         .urgent-table thead tr { background: #f8fafc; }
         .urgent-table th { padding: 12px 18px; font-size: 0.78rem; font-weight: 800; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.8px; text-align: left; border-bottom: 1px solid var(--border); white-space: nowrap; }
@@ -148,17 +139,56 @@
         .urgent-table tbody tr:hover { background: #f8fafc; }
         .urgent-table .col-id { font-weight: 900; color: #94a3b8; white-space: nowrap; }
         .urgent-table .col-title { font-weight: 700; color: var(--text-main); }
-
-        /* 嚴重度標籤 */
         .sev-badge { display: inline-flex; align-items: center; gap: 5px; padding: 5px 11px; border-radius: 999px; font-size: 0.78rem; font-weight: 900; white-space: nowrap; }
         .sev-critical { background: rgba(239,68,68,0.10); color: #ef4444; border: 1px solid rgba(239,68,68,0.25); }
         .sev-priority { background: rgba(249,115,22,0.10); color: #f97316; border: 1px solid rgba(249,115,22,0.25); }
-
-        /* 狀態標籤 (表格內用) */
         .status-badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 999px; font-size: 0.78rem; font-weight: 800; white-space: nowrap; background: #f1f5f9; color: var(--text-sub); }
         .status-badge.inprogress { background: rgba(245,158,11,0.10); color: #d97706; }
         .status-badge.pending { background: rgba(99,102,241,0.08); color: var(--primary); }
         .status-badge.returned { background: rgba(239,68,68,0.08); color: #ef4444; }
+
+        /* ── 知識產出樣式 ── */
+        #knowledge-view { height: calc(100vh - 80px); display: none; flex-direction: column; }
+        #knowledge-view.active { display: flex; }
+        .k-topbar { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
+        .k-stat-pill { display: flex; align-items: center; gap: 8px; background: white; padding: 10px 18px; border-radius: 50px; box-shadow: 0 2px 10px rgba(0,0,0,0.04); font-size: 0.82rem; font-weight: 700; }
+        .k-stat-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+        .k-stat-num { font-size: 1.1rem; font-weight: 800; }
+        .k-stat-lbl { color: var(--text-sub); }
+        .k-board { flex: 1; display: flex; position: relative; background: white; border-radius: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); overflow: hidden; }
+        .k-canvas { flex: 1; position: relative; overflow: hidden; cursor: default; }
+        #k-svg { width: 100%; height: 100%; display: block; user-select: none; }
+        .k-panel { width: 280px; border-left: 1px solid var(--border); background: #fcfdfe; display: flex; flex-direction: column; transform: translateX(100%); transition: transform 0.25s cubic-bezier(0.4,0,0.2,1); position: absolute; right: 0; top: 0; bottom: 0; z-index: 10; }
+        .k-panel.open { transform: translateX(0); }
+        .k-panel-header { padding: 16px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+        .k-sdot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+        .k-panel-title { flex: 1; border: none; outline: none; font-size: 0.95rem; font-weight: 700; color: var(--text-main); background: transparent; font-family: 'Plus Jakarta Sans', sans-serif; }
+        .k-panel-close { width: 28px; height: 28px; border-radius: 8px; border: 1px solid var(--border); background: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; color: var(--text-sub); padding: 0; flex-shrink: 0; transition: 0.15s; }
+        .k-panel-close:hover { background: var(--bg); transform: none; box-shadow: none; }
+        .k-panel-body { flex: 1; overflow-y: auto; padding: 16px 18px; display: flex; flex-direction: column; gap: 14px; }
+        .k-field-label { font-size: 0.78rem; font-weight: 700; color: var(--text-sub); margin-bottom: 5px; }
+        .k-textarea { width: 100%; border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px; font-size: 0.85rem; color: var(--text-main); background: #fff; outline: none; resize: none; font-family: 'Plus Jakarta Sans', sans-serif; line-height: 1.55; transition: 0.15s; }
+        .k-textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
+        .k-input { width: 100%; border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px; font-size: 0.85rem; color: var(--text-main); background: #fff; outline: none; font-family: 'Plus Jakarta Sans', sans-serif; transition: 0.15s; }
+        .k-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
+        .k-input::placeholder, .k-textarea::placeholder { color: #cbd5e1; }
+        .k-url-row { display: flex; gap: 6px; }
+        .k-url-go { padding: 10px 12px; background: var(--primary-light); color: var(--primary); border: none; border-radius: 10px; font-size: 0.8rem; font-weight: 700; cursor: pointer; white-space: nowrap; transition: 0.15s; flex-shrink: 0; }
+        .k-url-go:hover { background: var(--primary); color: white; transform: none; box-shadow: none; }
+        .k-status-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+        .k-status-btn { padding: 8px 10px; border-radius: 10px; border: 1.5px solid var(--border); background: #fff; font-size: 0.78rem; font-weight: 700; cursor: pointer; text-align: center; transition: 0.15s; color: var(--text-sub); }
+        .k-status-btn:hover { transform: none; box-shadow: none; border-color: #cbd5e1; }
+        .k-status-btn.active-idea { background: #f1f5f9; border-color: #94a3b8; color: #64748b; }
+        .k-status-btn.active-draft { background: #fefce8; border-color: #fbbf24; color: #92400e; }
+        .k-status-btn.active-wip { background: #eff6ff; border-color: #60a5fa; color: #1e40af; }
+        .k-status-btn.active-pub { background: #f0fdf4; border-color: #4ade80; color: #166534; }
+        .k-panel-footer { padding: 14px 18px; border-top: 1px solid var(--border); display: flex; gap: 8px; }
+        .k-btn-add { flex: 1; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 12px; font-size: 0.85rem; font-weight: 700; cursor: pointer; transition: 0.2s; }
+        .k-btn-add:hover { background: #4f46e5; transform: none; box-shadow: none; }
+        .k-btn-del { padding: 12px 14px; border: 1px solid var(--border); border-radius: 12px; background: #fff; font-size: 0.85rem; color: var(--text-sub); cursor: pointer; transition: 0.15s; }
+        .k-btn-del:hover { background: #fef2f2; color: var(--stat-critical); border-color: rgba(239,68,68,0.3); transform: none; box-shadow: none; }
+        .k-hint { position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%); font-size: 0.78rem; color: var(--text-sub); background: white; padding: 6px 16px; border-radius: 50px; border: 1px solid var(--border); pointer-events: none; white-space: nowrap; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+        .k-admin-lock { display: flex; align-items: center; gap: 8px; padding: 10px 16px; background: #fefce8; border-radius: 12px; font-size: 0.82rem; font-weight: 700; color: #92400e; border: 1px solid #fbbf24; margin-bottom: 4px; }
 
         @media (max-width: 860px) {
             main { padding: 22px; }
@@ -181,6 +211,7 @@
             <div class="nav-item active" onclick="showView('dash-view',this)"><i class="fas fa-th-large"></i><span>總覽儀表板</span></div>
             <div class="nav-item" onclick="showView('report-view',this)"><i class="fas fa-plus-circle"></i><span>新增案件回報</span></div>
             <div class="nav-item" onclick="showView('status-view',this)"><i class="fas fa-search"></i><span>案件進度查詢</span></div>
+            <div class="nav-item" onclick="showView('knowledge-view',this)"><i class="fas fa-sitemap"></i><span>知識產出</span></div>
         </div>
         <div class="admin-footer">
             <div class="nav-item" onclick="showView('login-view',this)"><i class="fas fa-user-shield"></i><span>管理者後台</span></div>
@@ -194,7 +225,6 @@
             <div id="dash-view" class="view active">
                 <div class="header-row">
                     <div class="section-title">營運數據概況</div>
-                    <!-- 需求3：週期切換 -->
                     <div class="cycle-selector-wrap">
                         <span class="cycle-selector-label"><i class="fas fa-calendar-week"></i> 報表週期</span>
                         <select id="cycle-select" onchange="onCycleChange()"><option value="">載入中...</option></select>
@@ -204,11 +234,9 @@
                     <div class="stat-card stat-clickable" onclick="openBacklogModal()">
                         <h3>當前負載</h3><span class="value" id="stat-pending">0</span>
                     </div>
-                    <!-- 需求1：本週進度可點擊 -->
                     <div class="stat-card stat-clickable" onclick="openResolvedModal()">
                         <h3>本週進度</h3><span class="value" id="stat-resolved">0</span>
                     </div>
-                    <!-- 需求1：本週新增可點擊 -->
                     <div class="stat-card stat-clickable" onclick="openNewModal()">
                         <h3>本週新增</h3><span class="value" id="stat-new">0</span>
                     </div>
@@ -257,7 +285,6 @@
             <div id="report-view" class="view">
                 <div class="section-title">建立新案件</div>
                 <div class="card">
-                    <!-- 範例快速套用區塊 -->
                     <div style="margin-bottom:20px;">
                         <div style="font-size:0.85rem;font-weight:700;color:var(--text-sub);margin-bottom:10px;">範例快速套用</div>
                         <div style="display:flex;gap:10px;flex-wrap:wrap;">
@@ -292,29 +319,14 @@
             <script>
             function applyExample(type) {
                 var examples = {
-                    bug: {
-                        category: 'BUG 回報',
-                        title: '點擊儲存後頁面白屏',
-                        description: '在設定頁面修改資料後點擊儲存，畫面變為空白，資料未保存。重現步驟：1. 前往設定 2. 修改欄位 3. 點擊儲存。瀏覽器：Chrome / macOS'
-                    },
-                    feature: {
-                        category: '功能建議',
-                        title: '希望新增案件匯出 CSV 功能',
-                        description: '目前只能網頁瀏覽，希望能下載 CSV 供團隊在 Excel 追蹤分析'
-                    },
-                    translation: {
-                        category: '翻譯修正',
-                        title: '設定頁面中文翻譯有誤',
-                        description: '設定頁面的『儲存』按鈕顯示為『保存』，與其他頁面用詞不一致，建議統一。所在位置：設定 > 個人資料'
-                    }
+                    bug: { category: 'BUG 回報', title: '點擊儲存後頁面白屏', description: '在設定頁面修改資料後點擊儲存，畫面變為空白，資料未保存。重現步驟：1. 前往設定 2. 修改欄位 3. 點擊儲存。瀏覽器：Chrome / macOS' },
+                    feature: { category: '功能建議', title: '希望新增案件匯出 CSV 功能', description: '目前只能網頁瀏覽，希望能下載 CSV 供團隊在 Excel 追蹤分析' },
+                    translation: { category: '翻譯修正', title: '設定頁面中文翻譯有誤', description: '設定頁面的『儲存』按鈕顯示為『保存』，與其他頁面用詞不一致，建議統一。所在位置：設定 > 個人資料' }
                 };
-                var ex = examples[type];
-                if (!ex) return;
+                var ex = examples[type]; if (!ex) return;
                 document.getElementById('type').value = ex.category;
                 document.getElementById('title').value = ex.title;
-                if (typeof userQuill !== 'undefined' && userQuill) {
-                    userQuill.setText(ex.description);
-                }
+                if (typeof userQuill !== 'undefined' && userQuill) userQuill.setText(ex.description);
             }
             </script>
 
@@ -337,7 +349,65 @@
                     <button onclick="checkAdminLogin()" style="width:100%"><i class="fas fa-key"></i> 進入後台</button>
                 </div>
             </div>
+
+        </div><!-- /container -->
+
+        <!-- 知識產出（全寬，不在 .container 內） -->
+        <div id="knowledge-view" class="view" style="width:100%;max-width:100%;padding:0;">
+            <div style="padding: 0 40px;">
+                <div class="k-topbar">
+                    <div class="section-title" style="flex:1;"><i class="fas fa-sitemap" style="color:var(--primary)"></i> 知識產出</div>
+                    <div class="k-stat-pill"><div class="k-stat-dot" style="background:#10b981"></div><span class="k-stat-num" id="k-total">0</span><span class="k-stat-lbl">文件數</span></div>
+                    <div class="k-stat-pill"><div class="k-stat-dot" style="background:#6366f1"></div><span class="k-stat-num" id="k-week">0</span><span class="k-stat-lbl">本週發布</span></div>
+                    <div class="k-stat-pill"><div class="k-stat-dot" style="background:#3b82f6"></div><span class="k-stat-num" id="k-wip">0</span><span class="k-stat-lbl">進行中</span></div>
+                    <div id="k-admin-badge" style="display:none;">
+                        <div class="k-stat-pill" style="background:#eef2ff;color:var(--primary);border:1px solid #c7d2fe;"><i class="fas fa-shield-halved" style="font-size:0.8rem;"></i><span style="font-size:0.82rem;font-weight:700;">管理模式</span></div>
+                    </div>
+                </div>
+            </div>
+            <div style="padding:0 40px;flex:1;display:flex;min-height:0;">
+                <div class="k-board" style="flex:1;">
+                    <div class="k-canvas" id="k-canvas">
+                        <svg id="k-svg"></svg>
+                        <div class="k-hint" id="k-hint">點選節點查看詳情 · 點「+」往外新增</div>
+                    </div>
+                    <div class="k-panel" id="k-panel">
+                        <div class="k-panel-header">
+                            <div class="k-sdot" id="k-sdot"></div>
+                            <input class="k-panel-title" id="k-ptitle" placeholder="節點標題..." oninput="kSaveField()">
+                            <button class="k-panel-close" onclick="kClosePanel()"><i class="fas fa-xmark"></i></button>
+                        </div>
+                        <div class="k-panel-body">
+                            <div id="k-lock-msg" class="k-admin-lock" style="display:none;"><i class="fas fa-lock"></i> 僅管理員可編輯</div>
+                            <div>
+                                <div class="k-field-label">解決的問題</div>
+                                <textarea class="k-textarea" id="k-pprob" rows="3" placeholder="這份文件是為了解決什麼問題？" oninput="kSaveField()"></textarea>
+                            </div>
+                            <div>
+                                <div class="k-field-label">備注</div>
+                                <textarea class="k-textarea" id="k-pnote" rows="2" placeholder="補充說明、想法..." oninput="kSaveField()"></textarea>
+                            </div>
+                            <div>
+                                <div class="k-field-label">附件網址</div>
+                                <div class="k-url-row">
+                                    <input class="k-input" id="k-purl" placeholder="https://..." oninput="kSaveField()" style="padding:10px 12px;">
+                                    <button class="k-url-go" onclick="kOpenUrl()">開啟 →</button>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="k-field-label">狀態</div>
+                                <div class="k-status-grid" id="k-status-grid"></div>
+                            </div>
+                        </div>
+                        <div class="k-panel-footer">
+                            <button class="k-btn-add" onclick="kAddChildFromPanel()" id="k-btn-add-child"><i class="fas fa-plus"></i> 新增子節點</button>
+                            <button class="k-btn-del" onclick="kDeleteNode()" id="k-btn-del"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
+
     </main>
 
     <div id="toast"></div>
@@ -363,42 +433,30 @@
         </div>
     </div>
 
-    <!-- Backlog modal（當前負載） -->
     <div class="modal-mask" id="backlog-modal-mask" onclick="if(event.target.id==='backlog-modal-mask')closeBacklogModal()">
         <div class="modal">
             <div class="modal-header">
-                <div>
-                    <div class="modal-title">當前負載 - 待處理／進行中／已退回</div>
-                    <div class="modal-sub">點擊任一案件可查看對話</div>
-                </div>
+                <div><div class="modal-title">當前負載 - 待處理／進行中／已退回</div><div class="modal-sub">點擊任一案件可查看對話</div></div>
                 <button class="modal-close" onclick="closeBacklogModal()"><i class="fas fa-xmark"></i></button>
             </div>
             <div class="modal-body"><div id="backlog-modal-list"></div></div>
         </div>
     </div>
 
-    <!-- 需求1：本週進度 modal -->
     <div class="modal-mask" id="resolved-modal-mask" onclick="if(event.target.id==='resolved-modal-mask')closeResolvedModal()">
         <div class="modal">
             <div class="modal-header">
-                <div>
-                    <div class="modal-title" id="resolved-modal-title">本週進度 - 已解決案件</div>
-                    <div class="modal-sub" id="resolved-modal-sub"></div>
-                </div>
+                <div><div class="modal-title" id="resolved-modal-title">本週進度 - 已解決案件</div><div class="modal-sub" id="resolved-modal-sub"></div></div>
                 <button class="modal-close" onclick="closeResolvedModal()"><i class="fas fa-xmark"></i></button>
             </div>
             <div class="modal-body"><div id="resolved-modal-list"></div></div>
         </div>
     </div>
 
-    <!-- 需求1：本週新增 modal -->
     <div class="modal-mask" id="new-modal-mask" onclick="if(event.target.id==='new-modal-mask')closeNewModal()">
         <div class="modal">
             <div class="modal-header">
-                <div>
-                    <div class="modal-title" id="new-modal-title">本週新增 - 所有案件</div>
-                    <div class="modal-sub" id="new-modal-sub"></div>
-                </div>
+                <div><div class="modal-title" id="new-modal-title">本週新增 - 所有案件</div><div class="modal-sub" id="new-modal-sub"></div></div>
                 <button class="modal-close" onclick="closeNewModal()"><i class="fas fa-xmark"></i></button>
             </div>
             <div class="modal-body"><div id="new-modal-list"></div></div>
@@ -426,7 +484,6 @@
         syncAdminStateFromStorage();
         userQuill = new Quill('#editor-user', { theme:'snow', modules:qlModules });
 
-        /* ── 工具 ── */
         function toggleSidebar() { document.body.classList.toggle('collapsed'); }
 
         function showView(id, el) {
@@ -436,6 +493,7 @@
             if (el) el.classList.add('active');
             if (id === 'dash-view') fetchData();
             if (id === 'admin-view') { syncAdminStateFromStorage(); if (!isAdmin) showView('login-view'); }
+            if (id === 'knowledge-view') { syncAdminStateFromStorage(); kInit(); }
         }
 
         function showToast(msg) {
@@ -451,7 +509,6 @@
             return String(str ?? '').replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/\n/g,' ').replace(/\r/g,' ');
         }
 
-        /* 需求4：時間格式化 */
         function formatTime(raw) {
             if (!raw) return '—';
             const d = new Date(raw);
@@ -475,7 +532,6 @@
             return div.innerHTML;
         }
 
-        /* ── 資料 ── */
         async function fetchData() {
             try {
                 const res = await fetch(GAS_URL);
@@ -495,22 +551,9 @@
             allData.slice(1).forEach(row => {
                 const id = row[0];
                 if (!ticketIndex[id]) {
-                    ticketIndex[id] = {
-                        id,
-                        shortNo: ++shortNoCounter,
-                        createdAt: row[1],   // B：建立時間
-                        email:     row[2],
-                        type:      row[3],
-                        title:     row[4],
-                        status:    row[7],
-                        updatedAt: row[8],   // I：更新時間
-                        priority:  row[9],
-                        cycle:     row[10],
-                        msgs: []
-                    };
+                    ticketIndex[id] = { id, shortNo: ++shortNoCounter, createdAt: row[1], email: row[2], type: row[3], title: row[4], status: row[7], updatedAt: row[8], priority: row[9], cycle: row[10], msgs: [] };
                 }
                 ticketIndex[id].msgs.push({ sender: row[6], content: row[5], time: row[8] });
-                // 以最新行更新狀態
                 ticketIndex[id].status    = row[7];
                 ticketIndex[id].updatedAt = row[8];
                 ticketIndex[id].priority  = row[9];
@@ -518,107 +561,57 @@
             });
         }
 
-        /* ── 需求3：週期選單 ── */
-
-        /* 前端自行計算當前週期（與 GAS 邏輯一致：週三 19:00 台灣時間為截止點） */
         function getCurrentCycle() {
             const now = new Date();
-            // 轉為台灣時間 UTC+8
             const tw = new Date(now.getTime() + 8 * 60 * 60 * 1000);
-            const day  = tw.getUTCDay();    // 0=日,1=一,...,6=六
+            const day  = tw.getUTCDay();
             const hour = tw.getUTCHours();
             const min  = tw.getUTCMinutes();
-
-            // 是否已過本週三 19:00
-            const pastCutoff = (day === 3 && (hour > 19 || (hour === 19 && min > 0)))
-                             || day === 4 || day === 5 || day === 6 || day === 0;
-
-            // 找本週期對應的「週三」日期
+            const pastCutoff = (day === 3 && (hour > 19 || (hour === 19 && min > 0))) || day === 4 || day === 5 || day === 6 || day === 0;
             const base = new Date(tw);
-            const diffToWed = pastCutoff
-                ? (3 - day + 7) % 7 || 7   // 已過截止：找下一個週三
-                : 3 - day;                  // 未過截止：找本週三
+            const diffToWed = pastCutoff ? (3 - day + 7) % 7 || 7 : 3 - day;
             base.setUTCDate(tw.getUTCDate() + diffToWed);
-
-            // 計算 ISO week number
             const year = base.getUTCFullYear();
             const jan4 = new Date(Date.UTC(year, 0, 4));
             const jan4Day = jan4.getUTCDay() || 7;
             const firstMonday = new Date(jan4);
             firstMonday.setUTCDate(jan4.getUTCDate() - (jan4Day - 1));
             const weekNum = Math.floor((base.getTime() - firstMonday.getTime()) / (7 * 24 * 60 * 60 * 1000)) + 1;
-
             return `${year}-W${String(weekNum).padStart(2, '0')}`;
         }
 
         function buildCycleSelector() {
             const cycleSet = new Set();
             Object.values(ticketIndex).forEach(t => { if (t.cycle) cycleSet.add(t.cycle); });
-
-            // 永遠把當前週期加進去，即使沒有案件也要出現
             const currentCycle = getCurrentCycle();
             cycleSet.add(currentCycle);
-
             allCycles = Array.from(cycleSet).sort().reverse();
-
             const sel = document.getElementById('cycle-select');
-            // 若使用者已手動切換週期則保留，否則預設為當前週期
             const preferred = selectedCycle || currentCycle;
-            sel.innerHTML = allCycles.map(c =>
-                `<option value="${escapeHtml(c)}" ${c === preferred ? 'selected':''}>${escapeHtml(c)}</option>`
-            ).join('');
+            sel.innerHTML = allCycles.map(c => `<option value="${escapeHtml(c)}" ${c === preferred ? 'selected':''}>${escapeHtml(c)}</option>`).join('');
             selectedCycle = sel.value;
         }
 
-        function onCycleChange() {
-            selectedCycle = document.getElementById('cycle-select').value;
-            renderDashboard();
-        }
+        function onCycleChange() { selectedCycle = document.getElementById('cycle-select').value; renderDashboard(); }
 
-        /* ── 儀表板 ── */
         function renderDashboard() {
             if (!Array.isArray(allData) || allData.length < 2) return;
             const ticketList = Object.values(ticketIndex);
             const cycle = selectedCycle || latestCycleValue;
-
-            // 當前負載（全域，不受週期影響）
-            document.getElementById('stat-pending').innerText =
-                ticketList.filter(t => t.status === '待處理' || t.status === '進行中' || t.status === '已退回').length;
-
-            // 本週進度（選取週期已解決）
-            document.getElementById('stat-resolved').innerText =
-                ticketList.filter(t => t.status === '已解決' && t.cycle === cycle).length;
-
-            // 本週新增（選取週期所有案件）
-            document.getElementById('stat-new').innerText =
-                ticketList.filter(t => t.cycle === cycle).length;
-
-            // 急件（全域）
+            document.getElementById('stat-pending').innerText = ticketList.filter(t => t.status === '待處理' || t.status === '進行中' || t.status === '已退回').length;
+            document.getElementById('stat-resolved').innerText = ticketList.filter(t => t.status === '已解決' && t.cycle === cycle).length;
+            document.getElementById('stat-new').innerText = ticketList.filter(t => t.cycle === cycle).length;
             renderUrgentTable(ticketList);
-
-            // 本週已解決（選取週期）
             const resolvedArea = document.getElementById('resolved-list');
             resolvedArea.innerHTML = '';
             const weekResolved = ticketList.filter(t => t.status==='已解決' && t.cycle===cycle);
             if (weekResolved.length) {
-                weekResolved.forEach(t => {
-                    resolvedArea.innerHTML += `
-                        <div class="card ticket-row" onclick="openTicketModal('${t.id}')"
-                            style="display:flex;justify-content:space-between;align-items:center;padding:20px;opacity:0.75;background:#fcfdfc;">
-                            <div class="ticket-line">
-                                <span class="ticket-no">#${t.shortNo}</span>
-                                <b class="resolved-badge"><i class="fas fa-check-circle"></i> 已解決</b>
-                                <span class="ticket-title" style="text-decoration:line-through;color:var(--text-sub);font-weight:800;">${escapeHtml(t.title)}</span>
-                            </div>
-                            <i class="fas fa-chevron-right" style="color:#cbd5e1"></i>
-                        </div>`;
-                });
+                weekResolved.forEach(t => { resolvedArea.innerHTML += `<div class="card ticket-row" onclick="openTicketModal('${t.id}')" style="display:flex;justify-content:space-between;align-items:center;padding:20px;opacity:0.75;background:#fcfdfc;"><div class="ticket-line"><span class="ticket-no">#${t.shortNo}</span><b class="resolved-badge"><i class="fas fa-check-circle"></i> 已解決</b><span class="ticket-title" style="text-decoration:line-through;color:var(--text-sub);font-weight:800;">${escapeHtml(t.title)}</span></div><i class="fas fa-chevron-right" style="color:#cbd5e1"></i></div>`; });
             } else {
                 resolvedArea.innerHTML = `<div style="text-align:center;padding:20px;color:var(--text-sub);font-size:0.9rem;">本週期尚無已解決案件</div>`;
             }
         }
 
-        /* ── 急件篩選 ── */
         function setUrgentFilter(filter, btn) {
             urgentFilter = filter;
             document.querySelectorAll('.urgent-filter-btn').forEach(b => b.classList.remove('active'));
@@ -640,45 +633,17 @@
             else if (s === '待處理') cls = 'pending';
             else if (s === '已退回') cls = 'returned';
             const icons = { '進行中': 'fa-spinner', '待處理': 'fa-inbox', '已退回': 'fa-rotate-left', '已解決': 'fa-check' };
-            const icon = icons[s] || 'fa-circle';
-            return `<span class="status-badge ${cls}"><i class="fas ${icon}"></i>${escapeHtml(s)}</span>`;
+            return `<span class="status-badge ${cls}"><i class="fas ${icons[s]||'fa-circle'}"></i>${escapeHtml(s)}</span>`;
         }
 
         function renderUrgentTable(ticketList) {
             const listArea = document.getElementById('priority-list');
-            let items = ticketList
-                .filter(t => (t.status==='待處理'||t.status==='進行中'||t.status==='已退回') && (String(t.priority).includes('嚴重')||String(t.priority).includes('優先')))
-                .sort((a,b) => String(a.priority).localeCompare(String(b.priority)));
-            if (urgentFilter !== '全部') {
-                items = items.filter(t => String(t.priority).startsWith(urgentFilter.charAt(0)));
-            }
-            if (!items.length) {
-                listArea.innerHTML = `<div class="card" style="text-align:center;color:var(--text-sub);">目前沒有符合條件的急件</div>`;
-                return;
-            }
-            listArea.innerHTML = `
-                <table class="urgent-table">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>嚴重度</th>
-                            <th>狀態</th>
-                            <th>標題</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${items.map(t => `
-                        <tr onclick="openTicketModalFromList('${t.id}')">
-                            <td class="col-id">#${t.shortNo}</td>
-                            <td>${severityBadge(t.priority)}</td>
-                            <td>${statusBadge(t.status)}</td>
-                            <td class="col-title">${escapeHtml(t.title)}</td>
-                        </tr>`).join('')}
-                    </tbody>
-                </table>`;
+            let items = ticketList.filter(t => (t.status==='待處理'||t.status==='進行中'||t.status==='已退回') && (String(t.priority).includes('嚴重')||String(t.priority).includes('優先'))).sort((a,b) => String(a.priority).localeCompare(String(b.priority)));
+            if (urgentFilter !== '全部') items = items.filter(t => String(t.priority).startsWith(urgentFilter.charAt(0)));
+            if (!items.length) { listArea.innerHTML = `<div class="card" style="text-align:center;color:var(--text-sub);">目前沒有符合條件的急件</div>`; return; }
+            listArea.innerHTML = `<table class="urgent-table"><thead><tr><th>ID</th><th>嚴重度</th><th>狀態</th><th>標題</th></tr></thead><tbody>${items.map(t=>`<tr onclick="openTicketModalFromList('${t.id}')"><td class="col-id">#${t.shortNo}</td><td>${severityBadge(t.priority)}</td><td>${statusBadge(t.status)}</td><td class="col-title">${escapeHtml(t.title)}</td></tr>`).join('')}</tbody></table>`;
         }
 
-        /* ── Pill ── */
         function statusPill(s) {
             s = String(s||'');
             if (s==='已解決') return `<span class="pill ok"><i class="fas fa-check"></i>${s}</span>`;
@@ -693,152 +658,59 @@
             return `<span class="pill"><i class="fas fa-flag"></i>${escapeHtml(p)}</span>`;
         }
 
-        /* 通用案件列 */
         function ticketRowHtml(t) {
             const pClass = String(t.priority).includes('嚴重') ? 'p-critical' : 'p-normal';
-            return `
-                <div class="card ticket-row" onclick="openTicketModalFromList('${t.id}')"
-                    style="display:flex;justify-content:space-between;align-items:center;padding:18px 20px;">
-                    <div class="ticket-line">
-                        <span class="ticket-no">#${t.shortNo}</span>
-                        <span class="priority-badge ${pClass}">${escapeHtml(t.priority)}</span>
-                        <span class="ticket-title"><span class="ticket-status">[${escapeHtml(t.status)}]</span> ${escapeHtml(t.title)}</span>
-                    </div>
-                    <i class="fas fa-chevron-right" style="color:#cbd5e1"></i>
-                </div>`;
+            return `<div class="card ticket-row" onclick="openTicketModalFromList('${t.id}')" style="display:flex;justify-content:space-between;align-items:center;padding:18px 20px;"><div class="ticket-line"><span class="ticket-no">#${t.shortNo}</span><span class="priority-badge ${pClass}">${escapeHtml(t.priority)}</span><span class="ticket-title"><span class="ticket-status">[${escapeHtml(t.status)}]</span> ${escapeHtml(t.title)}</span></div><i class="fas fa-chevron-right" style="color:#cbd5e1"></i></div>`;
         }
 
-        function openTicketModalFromList(id) {
-            closeBacklogModal(); closeResolvedModal(); closeNewModal();
-            openTicketModal(id);
-        }
+        function openTicketModalFromList(id) { closeBacklogModal(); closeResolvedModal(); closeNewModal(); openTicketModal(id); }
 
-        /* ── 需求1：本週進度 Modal ── */
         function openResolvedModal() {
             const cycle = selectedCycle || latestCycleValue;
             const list = Object.values(ticketIndex).filter(t => t.status==='已解決' && t.cycle===cycle);
             document.getElementById('resolved-modal-title').innerText = `本週進度 - 已解決案件`;
             document.getElementById('resolved-modal-sub').innerText = `週期 ${cycle}，共 ${list.length} 件`;
-            document.getElementById('resolved-modal-list').innerHTML = list.length
-                ? list.map(t => ticketRowHtml(t)).join('')
-                : `<div class="card" style="text-align:center;color:var(--text-sub);">本週期尚無已解決案件</div>`;
+            document.getElementById('resolved-modal-list').innerHTML = list.length ? list.map(t => ticketRowHtml(t)).join('') : `<div class="card" style="text-align:center;color:var(--text-sub);">本週期尚無已解決案件</div>`;
             document.getElementById('resolved-modal-mask').style.display = 'flex';
             document.body.style.overflow = 'hidden';
         }
-        function closeResolvedModal() {
-            document.getElementById('resolved-modal-mask').style.display = 'none';
-            document.body.style.overflow = '';
-        }
+        function closeResolvedModal() { document.getElementById('resolved-modal-mask').style.display = 'none'; document.body.style.overflow = ''; }
 
-        /* ── 需求1：本週新增 Modal ── */
         function openNewModal() {
             const cycle = selectedCycle || latestCycleValue;
             const list = Object.values(ticketIndex).filter(t => t.cycle===cycle);
             document.getElementById('new-modal-title').innerText = `本週新增 - 所有案件`;
             document.getElementById('new-modal-sub').innerText = `週期 ${cycle}，共 ${list.length} 件`;
-            document.getElementById('new-modal-list').innerHTML = list.length
-                ? list.map(t => ticketRowHtml(t)).join('')
-                : `<div class="card" style="text-align:center;color:var(--text-sub);">本週期尚無案件</div>`;
+            document.getElementById('new-modal-list').innerHTML = list.length ? list.map(t => ticketRowHtml(t)).join('') : `<div class="card" style="text-align:center;color:var(--text-sub);">本週期尚無案件</div>`;
             document.getElementById('new-modal-mask').style.display = 'flex';
             document.body.style.overflow = 'hidden';
         }
-        function closeNewModal() {
-            document.getElementById('new-modal-mask').style.display = 'none';
-            document.body.style.overflow = '';
-        }
+        function closeNewModal() { document.getElementById('new-modal-mask').style.display = 'none'; document.body.style.overflow = ''; }
 
-        /* ── Ticket Modal ── */
         function openTicketModal(id) {
             if (document.getElementById('backlog-modal-mask').style.display === 'flex') closeBacklogModal();
-            const t = ticketIndex[id];
-            if (!t) return showToast("找不到案件資料");
-
+            const t = ticketIndex[id]; if (!t) return showToast("找不到案件資料");
             document.getElementById('ticket-modal-title').innerText = t.title || '(未命名案件)';
             document.getElementById('ticket-modal-sub').innerText = `案件 #${t.shortNo} · 回報者: ${t.email || '-'}`;
-
-            // 需求4：建立時間 & 更新時間
-            document.getElementById('ticket-modal-meta').innerHTML = `
-                <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-                    ${statusPill(t.status)} ${priorityPill(t.priority)}
-                    <span class="pill"><i class="fas fa-calendar-week"></i>週期 ${escapeHtml(t.cycle)}</span>
-                </div>
-                <div class="ticket-time-bar">
-                    <span><i class="fas fa-clock"></i> 建立時間：${formatTime(t.createdAt)}</span>
-                    <span><i class="fas fa-rotate"></i> 最後更新：${formatTime(t.updatedAt)}</span>
-                </div>
-                <div style="margin-top:10px;color:var(--text-sub);font-weight:700;font-size:0.9rem;">
-                    提示：一般使用者僅可查看；若案件為「已退回」，可在下方補充內容再送出。
-                </div>`;
-
-            // 需求4：每則對話顯示時間
-            document.getElementById('ticket-modal-thread').innerHTML = `
-                <div style="font-weight:900;margin-bottom:10px;">對話內容</div>
-                ${t.msgs.map(m => `
-                    <div class="bubble bubble-${m.sender==='管理者'?'admin':'user'}">
-                        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
-                            <b>${escapeHtml(m.sender||'')}</b>
-                            <span class="bubble-meta"><i class="fas fa-clock"></i> ${formatTime(m.time)}</span>
-                        </div>
-                        <div style="margin-top:6px;">${m.content||''}</div>
-                    </div>`).join('')}`;
-
-            // 使用者補充（已退回）
+            document.getElementById('ticket-modal-meta').innerHTML = `<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">${statusPill(t.status)} ${priorityPill(t.priority)}<span class="pill"><i class="fas fa-calendar-week"></i>週期 ${escapeHtml(t.cycle)}</span></div><div class="ticket-time-bar"><span><i class="fas fa-clock"></i> 建立時間：${formatTime(t.createdAt)}</span><span><i class="fas fa-rotate"></i> 最後更新：${formatTime(t.updatedAt)}</span></div><div style="margin-top:10px;color:var(--text-sub);font-weight:700;font-size:0.9rem;">提示：一般使用者僅可查看；若案件為「已退回」，可在下方補充內容再送出。</div>`;
+            document.getElementById('ticket-modal-thread').innerHTML = `<div style="font-weight:900;margin-bottom:10px;">對話內容</div>${t.msgs.map(m=>`<div class="bubble bubble-${m.sender==='管理者'?'admin':'user'}"><div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;"><b>${escapeHtml(m.sender||'')}</b><span class="bubble-meta"><i class="fas fa-clock"></i> ${formatTime(m.time)}</span></div><div style="margin-top:6px;">${m.content||''}</div></div>`).join('')}`;
             const userReplyPanel = document.getElementById('ticket-modal-user-reply');
             userReplyPanel.style.display = 'none'; userReplyPanel.innerHTML = '';
             if (String(t.status) === '已退回') {
                 userReplyPanel.style.display = 'block';
-                userReplyPanel.innerHTML = `
-                    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
-                        <div style="font-weight:900;">補充說明（送回管理者）</div>
-                        <span style="color:var(--text-sub);font-weight:800;font-size:0.85rem;">送出後狀態會回到「待處理」</span>
-                    </div>
-                    <div class="editor-wrapper" style="margin-top:12px;"><div id="modal-user-editor"></div></div>
-                    <div class="modal-actions">
-                        <button onclick="submitUserReply('${t.id}')" style="min-width:180px;"><i class="fas fa-paper-plane"></i> 送出補充</button>
-                    </div>`;
+                userReplyPanel.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;"><div style="font-weight:900;">補充說明（送回管理者）</div><span style="color:var(--text-sub);font-weight:800;font-size:0.85rem;">送出後狀態會回到「待處理」</span></div><div class="editor-wrapper" style="margin-top:12px;"><div id="modal-user-editor"></div></div><div class="modal-actions"><button onclick="submitUserReply('${t.id}')" style="min-width:180px;"><i class="fas fa-paper-plane"></i> 送出補充</button></div>`;
             }
-
-            // 管理者操作
             const adminPanel = document.getElementById('ticket-modal-admin-actions');
             adminPanel.style.display = 'none'; adminPanel.innerHTML = '';
             syncAdminStateFromStorage();
             if (isAdmin) {
                 adminPanel.style.display = 'block';
-                adminPanel.innerHTML = `
-                    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
-                        <div style="font-weight:900;">管理者操作</div>
-                        <span style="color:var(--text-sub);font-weight:800;font-size:0.85rem;">可直接在儀表板回覆/更新狀態</span>
-                    </div>
-                    <div style="display:flex;gap:12px;margin-top:12px;flex-wrap:wrap;">
-                        <select id="modal-admin-status">
-                            <option value="待處理" ${t.status=='待處理'?'selected':''}>待處理</option>
-                            <option value="進行中" ${t.status=='進行中'?'selected':''}>進行中</option>
-                            <option value="已解決" ${t.status=='已解決'?'selected':''}>已解決</option>
-                            <option value="已退回" ${t.status=='已退回'?'selected':''}>已退回</option>
-                        </select>
-                        <select id="modal-admin-priority">
-                            <option value="1-嚴重" ${t.priority=='1-嚴重'?'selected':''}>1-嚴重</option>
-                            <option value="2-優先" ${t.priority=='2-優先'?'selected':''}>2-優先</option>
-                            <option value="3-一般" ${t.priority=='3-一般'?'selected':''}>3-一般</option>
-                        </select>
-                    </div>
-                    <div class="editor-wrapper" style="margin-top:12px;"><div id="modal-admin-editor"></div></div>
-                    <div class="modal-actions">
-                        <button onclick="submitAdminUpdateFromDashboard('${t.id}')" style="min-width:220px;"><i class="fas fa-paper-plane"></i> 送出回覆並更新</button>
-                    </div>`;
+                adminPanel.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;"><div style="font-weight:900;">管理者操作</div><span style="color:var(--text-sub);font-weight:800;font-size:0.85rem;">可直接在儀表板回覆/更新狀態</span></div><div style="display:flex;gap:12px;margin-top:12px;flex-wrap:wrap;"><select id="modal-admin-status"><option value="待處理" ${t.status=='待處理'?'selected':''}>待處理</option><option value="進行中" ${t.status=='進行中'?'selected':''}>進行中</option><option value="已解決" ${t.status=='已解決'?'selected':''}>已解決</option><option value="已退回" ${t.status=='已退回'?'selected':''}>已退回</option></select><select id="modal-admin-priority"><option value="1-嚴重" ${t.priority=='1-嚴重'?'selected':''}>1-嚴重</option><option value="2-優先" ${t.priority=='2-優先'?'selected':''}>2-優先</option><option value="3-一般" ${t.priority=='3-一般'?'selected':''}>3-一般</option></select></div><div class="editor-wrapper" style="margin-top:12px;"><div id="modal-admin-editor"></div></div><div class="modal-actions"><button onclick="submitAdminUpdateFromDashboard('${t.id}')" style="min-width:220px;"><i class="fas fa-paper-plane"></i> 送出回覆並更新</button></div>`;
             }
-
             setTimeout(() => {
-                if (document.getElementById('modal-user-editor')) {
-                    document.getElementById('modal-user-editor').innerHTML = '';
-                    modalUserQuill = new Quill('#modal-user-editor', { theme:'snow', modules:qlModules });
-                }
-                if (document.getElementById('modal-admin-editor')) {
-                    document.getElementById('modal-admin-editor').innerHTML = '';
-                    modalAdminQuill = new Quill('#modal-admin-editor', { theme:'snow', modules:qlModules });
-                }
+                if (document.getElementById('modal-user-editor')) { document.getElementById('modal-user-editor').innerHTML = ''; modalUserQuill = new Quill('#modal-user-editor', { theme:'snow', modules:qlModules }); }
+                if (document.getElementById('modal-admin-editor')) { document.getElementById('modal-admin-editor').innerHTML = ''; modalAdminQuill = new Quill('#modal-admin-editor', { theme:'snow', modules:qlModules }); }
             }, 0);
-
             document.getElementById('ticket-modal-mask').style.display = 'flex';
             document.body.style.overflow = 'hidden';
         }
@@ -846,20 +718,14 @@
         function closeTicketModalIfMask(e) { if (e.target.id==='ticket-modal-mask') closeTicketModal(); }
         function closeTicketModal() { document.getElementById('ticket-modal-mask').style.display='none'; document.body.style.overflow=''; }
 
-        /* ── Backlog Modal ── */
         function openBacklogModal() {
-            const backlog = Object.values(ticketIndex)
-                .filter(t => t.status!=='已解決')
-                .sort((a,b) => String(a.priority).localeCompare(String(b.priority)));
-            const list = document.getElementById('backlog-modal-list');
-            list.innerHTML = backlog.length ? backlog.map(t => ticketRowHtml(t)).join('')
-                : `<div class="card" style="text-align:center;color:var(--text-sub);">目前沒有待處理案件</div>`;
+            const backlog = Object.values(ticketIndex).filter(t => t.status!=='已解決').sort((a,b) => String(a.priority).localeCompare(String(b.priority)));
+            document.getElementById('backlog-modal-list').innerHTML = backlog.length ? backlog.map(t => ticketRowHtml(t)).join('') : `<div class="card" style="text-align:center;color:var(--text-sub);">目前沒有待處理案件</div>`;
             document.getElementById('backlog-modal-mask').style.display = 'flex';
             document.body.style.overflow = 'hidden';
         }
         function closeBacklogModal() { document.getElementById('backlog-modal-mask').style.display='none'; document.body.style.overflow=''; }
 
-        /* ── 表單提交 ── */
         document.getElementById('reportForm').onsubmit = async (e) => {
             e.preventDefault();
             const btn = document.getElementById('submitBtn'); btn.disabled = true;
@@ -867,14 +733,7 @@
                 const content = await compressHTML(userQuill.root.innerHTML);
                 const emailRaw = document.getElementById('email').value.trim();
                 const defaultStatus = emailRaw.toLowerCase() === 'riku@hcatwn.com' ? '進行中' : '待處理';
-                await fetch(GAS_URL, { method:"POST", body: JSON.stringify({
-                    email: emailRaw,
-                    type: document.getElementById('type').value,
-                    title: document.getElementById('title').value.trim(),
-                    description: content,
-                    priority: "3-一般",
-                    status: defaultStatus
-                })});
+                await fetch(GAS_URL, { method:"POST", body: JSON.stringify({ email: emailRaw, type: document.getElementById('type').value, title: document.getElementById('title').value.trim(), description: content, priority: "3-一般", status: defaultStatus })});
                 showToast("提交成功！");
                 userQuill.setContents([]); e.target.reset();
                 await fetchData(); showView('dash-view');
@@ -882,7 +741,6 @@
             finally { btn.disabled = false; }
         };
 
-        /* ── 案件查詢 ── */
         async function searchUserTickets() {
             const email = document.getElementById('searchEmail').value.trim().toLowerCase();
             if (!email) return showToast("請輸入 Email");
@@ -891,66 +749,24 @@
             await fetchData();
             btn.innerHTML = '<i class="fas fa-search"></i> 搜尋';
             const area = document.getElementById('user-result-list'); area.innerHTML = '';
-            const userTickets = Object.values(ticketIndex)
-                .filter(t => String(t.email||'').toLowerCase().trim() === email).reverse();
-
-            if (!userTickets.length) {
-                area.innerHTML = `<div class="card" style="text-align:center;color:var(--text-sub);">查無案件，請確認 Email 是否正確</div>`;
-                return;
-            }
+            const userTickets = Object.values(ticketIndex).filter(t => String(t.email||'').toLowerCase().trim() === email).reverse();
+            if (!userTickets.length) { area.innerHTML = `<div class="card" style="text-align:center;color:var(--text-sub);">查無案件，請確認 Email 是否正確</div>`; return; }
             userTickets.forEach(t => {
                 const card = document.createElement('div'); card.className = 'card';
                 const canReply = String(t.status) === '已退回';
-                card.innerHTML = `
-                    <div class="collapsible-header" onclick="this.parentElement.classList.toggle('expanded')">
-                        <div style="min-width:0;">
-                            <b style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:inline-block;max-width:720px;">
-                                ${escapeHtml(t.title)}
-                                <small style="margin-left:10px;color:var(--primary)">[${escapeHtml(t.status)}]</small>
-                            </b>
-                            <div style="font-size:0.78rem;color:#94a3b8;font-weight:700;margin-top:3px;">
-                                建立：${formatTime(t.createdAt)} &nbsp;·&nbsp; 更新：${formatTime(t.updatedAt)}
-                            </div>
-                        </div>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="collapsible-content">
-                        ${t.msgs.map(m=>`
-                            <div class="bubble bubble-${m.sender==='管理者'?'admin':'user'}">
-                                <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
-                                    <b>${escapeHtml(m.sender)}:</b>
-                                    <span class="bubble-meta"><i class="fas fa-clock"></i> ${formatTime(m.time)}</span>
-                                </div>
-                                <div style="margin-top:6px;">${m.content}</div>
-                            </div>`).join('')}
-                        ${canReply ? `
-                            <div style="margin-top:18px;font-weight:900;">補充說明（送回管理者）</div>
-                            <div class="editor-wrapper" style="margin-top:10px;"><div id="status-ed-${t.id}"></div></div>
-                            <div class="modal-actions" style="justify-content:flex-start;">
-                                <button onclick="submitUserReply('${t.id}','status-ed-${t.id}')" style="min-width:180px;">
-                                    <i class="fas fa-paper-plane"></i> 送出補充
-                                </button>
-                            </div>` : `
-                            <div style="margin-top:18px;color:var(--text-sub);font-weight:700;font-size:0.9rem;">
-                                此案件目前非「已退回」，因此無需補充送出。
-                            </div>`}
-                    </div>`;
+                card.innerHTML = `<div class="collapsible-header" onclick="this.parentElement.classList.toggle('expanded')"><div style="min-width:0;"><b style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:inline-block;max-width:720px;">${escapeHtml(t.title)}<small style="margin-left:10px;color:var(--primary)">[${escapeHtml(t.status)}]</small></b><div style="font-size:0.78rem;color:#94a3b8;font-weight:700;margin-top:3px;">建立：${formatTime(t.createdAt)} &nbsp;·&nbsp; 更新：${formatTime(t.updatedAt)}</div></div><i class="fas fa-chevron-down"></i></div><div class="collapsible-content">${t.msgs.map(m=>`<div class="bubble bubble-${m.sender==='管理者'?'admin':'user'}"><div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;"><b>${escapeHtml(m.sender)}:</b><span class="bubble-meta"><i class="fas fa-clock"></i> ${formatTime(m.time)}</span></div><div style="margin-top:6px;">${m.content}</div></div>`).join('')}${canReply?`<div style="margin-top:18px;font-weight:900;">補充說明（送回管理者）</div><div class="editor-wrapper" style="margin-top:10px;"><div id="status-ed-${t.id}"></div></div><div class="modal-actions" style="justify-content:flex-start;"><button onclick="submitUserReply('${t.id}','status-ed-${t.id}')" style="min-width:180px;"><i class="fas fa-paper-plane"></i> 送出補充</button></div>`:`<div style="margin-top:18px;color:var(--text-sub);font-weight:700;font-size:0.9rem;">此案件目前非「已退回」，因此無需補充送出。</div>`}</div>`;
                 area.appendChild(card);
                 if (canReply) new Quill(`#status-ed-${t.id}`, { theme:'snow', modules:qlModules });
             });
         }
 
-        /* ── 管理者 ── */
         function checkAdminLogin() {
             if (document.getElementById('adminPassword').value === 'admin123') {
                 sessionStorage.setItem('bbp_is_admin','1'); isAdmin = true;
                 showView('admin-view'); renderAdmin();
             } else showToast("密碼錯誤");
         }
-        function adminLogout() {
-            sessionStorage.removeItem('bbp_is_admin'); isAdmin = false;
-            showToast("已登出"); showView('dash-view');
-        }
+        function adminLogout() { sessionStorage.removeItem('bbp_is_admin'); isAdmin = false; showToast("已登出"); showView('dash-view'); }
 
         function renderAdmin() {
             syncAdminStateFromStorage(); if (!isAdmin) return;
@@ -963,60 +779,18 @@
                 if (pf !== '全部' && t.priority !== pf) return;
                 const card = document.createElement('div'); card.className = 'card';
                 const pClass = String(t.priority).includes('嚴重') ? 'p-critical' : 'p-normal';
-                card.innerHTML = `
-                    <div class="collapsible-header" onclick="this.parentElement.classList.toggle('expanded')">
-                        <b style="min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:inline-block;max-width:660px;">
-                            ${escapeHtml(t.title)} (${escapeHtml(t.email)})
-                        </b>
-                        <b class="priority-badge ${pClass}" style="flex-shrink:0;">${escapeHtml(t.priority)}</b>
-                    </div>
-                    <div class="collapsible-content">
-                        <div style="font-size:0.78rem;color:#94a3b8;font-weight:700;margin-bottom:14px;">
-                            建立：${formatTime(t.createdAt)} &nbsp;·&nbsp; 最後更新：${formatTime(t.updatedAt)}
-                        </div>
-                        <div style="margin-bottom:20px;">
-                            ${t.msgs.map(m=>`
-                                <div class="bubble bubble-${m.sender==='管理者'?'admin':'user'}">
-                                    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
-                                        <b>${escapeHtml(m.sender)}:</b>
-                                        <span class="bubble-meta"><i class="fas fa-clock"></i> ${formatTime(m.time)}</span>
-                                    </div>
-                                    <div style="margin-top:6px;">${m.content}</div>
-                                </div>`).join('')}
-                        </div>
-                        <div style="display:flex;gap:12px;margin-bottom:15px;flex-wrap:wrap;">
-                            <select id="st-${t.id}">
-                                <option value="待處理" ${t.status=='待處理'?'selected':''}>待處理</option>
-                                <option value="進行中" ${t.status=='進行中'?'selected':''}>進行中</option>
-                                <option value="已解決" ${t.status=='已解決'?'selected':''}>已解決</option>
-                                <option value="已退回" ${t.status=='已退回'?'selected':''}>已退回</option>
-                            </select>
-                            <select id="pr-${t.id}">
-                                <option value="1-嚴重" ${t.priority=='1-嚴重'?'selected':''}>1-嚴重</option>
-                                <option value="2-優先" ${t.priority=='2-優先'?'selected':''}>2-優先</option>
-                                <option value="3-一般" ${t.priority=='3-一般'?'selected':''}>3-一般</option>
-                            </select>
-                        </div>
-                        <div class="editor-wrapper"><div id="ed-${t.id}"></div></div>
-                        <button id="btn-${t.id}" onclick="adminReply('${t.id}','${escapeJs(t.email)}','${escapeJs(t.title)}')" style="width:100%;margin-top:15px;">送出回覆並更新</button>
-                    </div>`;
+                card.innerHTML = `<div class="collapsible-header" onclick="this.parentElement.classList.toggle('expanded')"><b style="min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:inline-block;max-width:660px;">${escapeHtml(t.title)} (${escapeHtml(t.email)})</b><b class="priority-badge ${pClass}" style="flex-shrink:0;">${escapeHtml(t.priority)}</b></div><div class="collapsible-content"><div style="font-size:0.78rem;color:#94a3b8;font-weight:700;margin-bottom:14px;">建立：${formatTime(t.createdAt)} &nbsp;·&nbsp; 最後更新：${formatTime(t.updatedAt)}</div><div style="margin-bottom:20px;">${t.msgs.map(m=>`<div class="bubble bubble-${m.sender==='管理者'?'admin':'user'}"><div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;"><b>${escapeHtml(m.sender)}:</b><span class="bubble-meta"><i class="fas fa-clock"></i> ${formatTime(m.time)}</span></div><div style="margin-top:6px;">${m.content}</div></div>`).join('')}</div><div style="display:flex;gap:12px;margin-bottom:15px;flex-wrap:wrap;"><select id="st-${t.id}"><option value="待處理" ${t.status=='待處理'?'selected':''}>待處理</option><option value="進行中" ${t.status=='進行中'?'selected':''}>進行中</option><option value="已解決" ${t.status=='已解決'?'selected':''}>已解決</option><option value="已退回" ${t.status=='已退回'?'selected':''}>已退回</option></select><select id="pr-${t.id}"><option value="1-嚴重" ${t.priority=='1-嚴重'?'selected':''}>1-嚴重</option><option value="2-優先" ${t.priority=='2-優先'?'selected':''}>2-優先</option><option value="3-一般" ${t.priority=='3-一般'?'selected':''}>3-一般</option></select></div><div class="editor-wrapper"><div id="ed-${t.id}"></div></div><button id="btn-${t.id}" onclick="adminReply('${t.id}','${escapeJs(t.email)}','${escapeJs(t.title)}')" style="width:100%;margin-top:15px;">送出回覆並更新</button></div>`;
                 area.appendChild(card);
                 new Quill(`#ed-${t.id}`, { theme:'snow', modules:qlModules });
             });
-            if (!area.innerHTML.trim())
-                area.innerHTML = "<div class='card' style='text-align:center;color:var(--text-sub);'>此過濾條件下無相關案件</div>";
+            if (!area.innerHTML.trim()) area.innerHTML = "<div class='card' style='text-align:center;color:var(--text-sub);'>此過濾條件下無相關案件</div>";
         }
 
         async function adminReply(id, email, title) {
             const btn = document.getElementById('btn-'+id); btn.disabled = true;
             try {
                 const content = await compressHTML(document.querySelector(`#ed-${id} .ql-editor`).innerHTML);
-                await fetch(GAS_URL, { method:"POST", body: JSON.stringify({
-                    id, email, title, description: content,
-                    status: document.getElementById('st-'+id).value,
-                    priority: document.getElementById('pr-'+id).value,
-                    sender: "管理者"
-                })});
+                await fetch(GAS_URL, { method:"POST", body: JSON.stringify({ id, email, title, description: content, status: document.getElementById('st-'+id).value, priority: document.getElementById('pr-'+id).value, sender: "管理者" })});
                 showToast("更新成功！"); await fetchData(); renderAdmin();
             } catch(e) { showToast("更新失敗"); }
             finally { btn.disabled = false; }
@@ -1027,12 +801,7 @@
             syncAdminStateFromStorage(); if (!isAdmin) return showToast("僅管理者可操作");
             try {
                 const content = await compressHTML(document.querySelector('#modal-admin-editor .ql-editor').innerHTML);
-                await fetch(GAS_URL, { method:"POST", body: JSON.stringify({
-                    id: t.id, email: t.email, title: t.title, description: content,
-                    status: document.getElementById('modal-admin-status').value,
-                    priority: document.getElementById('modal-admin-priority').value,
-                    sender: "管理者"
-                })});
+                await fetch(GAS_URL, { method:"POST", body: JSON.stringify({ id: t.id, email: t.email, title: t.title, description: content, status: document.getElementById('modal-admin-status').value, priority: document.getElementById('modal-admin-priority').value, sender: "管理者" })});
                 showToast("更新成功！"); await fetchData(); openTicketModal(id);
             } catch(e) { showToast("更新失敗"); }
         }
@@ -1046,10 +815,7 @@
                 else if (document.querySelector('#modal-user-editor .ql-editor')) editorHtml = document.querySelector('#modal-user-editor .ql-editor').innerHTML;
                 else return showToast("找不到編輯器");
                 const content = await compressHTML(editorHtml);
-                await fetch(GAS_URL, { method:"POST", body: JSON.stringify({
-                    id: t.id, email: t.email, title: t.title, description: content,
-                    status: "待處理", priority: t.priority, sender: "使用者"
-                })});
+                await fetch(GAS_URL, { method:"POST", body: JSON.stringify({ id: t.id, email: t.email, title: t.title, description: content, status: "待處理", priority: t.priority, sender: "使用者" })});
                 showToast("已送出補充！"); await fetchData();
                 if (document.getElementById('ticket-modal-mask').style.display==='flex') openTicketModal(id);
                 if (document.getElementById('status-view').classList.contains('active')) searchUserTickets();
@@ -1065,28 +831,252 @@
         });
 
         window.onload = fetchData;
+
+        /* ══════════════════════════════════════
+           知識產出 — 技能樹邏輯
+        ══════════════════════════════════════ */
+        const K_STATUS = {
+            idea:  { label:'想法',  color:'#94a3b8', bg:'#f1f5f9', cls:'active-idea' },
+            draft: { label:'草稿',  color:'#f59e0b', bg:'#fefce8', cls:'active-draft' },
+            wip:   { label:'進行中',color:'#3b82f6', bg:'#eff6ff', cls:'active-wip' },
+            pub:   { label:'已發布',color:'#10b981', bg:'#f0fdf4', cls:'active-pub' },
+        };
+
+        let kNodes = [
+            { id:'root', title:'BBP 平台', prob:'', note:'', url:'', status:'pub', parent:null, x:340, y:260 },
+            { id:'n1', title:'知識庫介紹（客戶用）', prob:'客戶無知識庫說明，顧問無法引導使用', note:'', url:'', status:'pub', parent:'root', x:175, y:140 },
+            { id:'n2', title:'BBP 教學手冊', prob:'顧問不了解 BBP，無法獨立操作平台', note:'含電子版', url:'https://riku-ship-it.github.io/bbp-manual.io/', status:'pub', parent:'root', x:175, y:310 },
+            { id:'n3', title:'組織圖職務說明', prob:'D1 交接文件不清楚，無法掌握 BBP 職責', note:'', url:'', status:'pub', parent:'root', x:500, y:140 },
+            { id:'n4', title:'任務模組切換說明', prob:'模組切換位置調整後，使用者找不到入口', note:'', url:'', status:'wip', parent:'n2', x:95, y:430 },
+            { id:'n5', title:'初階操作影片說明', prob:'顧問不知道實際操作細節，影片不夠完整', note:'', url:'', status:'draft', parent:'n2', x:275, y:430 },
+            { id:'n6', title:'知識庫操作職務說明', prob:'統計值職務說明未補齊，影響新人 onboarding', note:'', url:'', status:'draft', parent:'n3', x:520, y:300 },
+        ];
+        let kSelected = null;
+        let kDrag = null, kDragOff = { x:0, y:0 };
+        let kPan = false, kPanStart = { x:0, y:0 }, kViewOff = { x:0, y:0 };
+        let kNextId = kNodes.length + 1;
+        let kInitDone = false;
+
+        function kInit() {
+            if (!kInitDone) { kInitDone = true; kBindCanvas(); }
+            kRender();
+            kUpdateStats();
+        }
+
+        function kUpdateStats() {
+            const nonRoot = kNodes.filter(n => n.id !== 'root');
+            document.getElementById('k-total').textContent = nonRoot.length;
+            const cycle = getCurrentCycle();
+            const weekPub = nonRoot.filter(n => n.status === 'pub' && n._pubCycle === cycle).length;
+            document.getElementById('k-week').textContent = weekPub;
+            document.getElementById('k-wip').textContent = nonRoot.filter(n => n.status === 'wip').length;
+            syncAdminStateFromStorage();
+            document.getElementById('k-admin-badge').style.display = isAdmin ? 'block' : 'none';
+        }
+
+        function kRender() {
+            const svg = document.getElementById('k-svg');
+            svg.innerHTML = '';
+            const edgeG = document.createElementNS('http://www.w3.org/2000/svg','g');
+            kNodes.forEach(n => {
+                if (!n.parent) return;
+                const p = kNodes.find(x => x.id === n.parent); if (!p) return;
+                const px = p.x + kViewOff.x, py = p.y + kViewOff.y;
+                const nx = n.x + kViewOff.x, ny = n.y + kViewOff.y;
+                const mx = (px+nx)/2, my = (py+ny)/2 - 16;
+                const st = K_STATUS[n.status] || K_STATUS.idea;
+                const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+                path.setAttribute('d', `M${px} ${py} Q${mx} ${my} ${nx} ${ny}`);
+                path.setAttribute('fill','none');
+                path.setAttribute('stroke', n.status === 'idea' ? '#e2e8f0' : st.color);
+                path.setAttribute('stroke-width', n.status === 'idea' ? '1' : '1.5');
+                if (n.status === 'idea') path.setAttribute('stroke-dasharray','4 4');
+                path.setAttribute('opacity','0.5');
+                edgeG.appendChild(path);
+            });
+            svg.appendChild(edgeG);
+
+            const nodeG = document.createElementNS('http://www.w3.org/2000/svg','g');
+            kNodes.forEach(n => {
+                const st = K_STATUS[n.status] || K_STATUS.idea;
+                const isRoot = n.id === 'root';
+                const isSel = kSelected === n.id;
+                const r = isRoot ? 30 : 22;
+                const nx = n.x + kViewOff.x, ny = n.y + kViewOff.y;
+                const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+                g.setAttribute('transform', `translate(${nx},${ny})`);
+                g.style.cursor = 'pointer';
+
+                if (isSel) {
+                    const ring = document.createElementNS('http://www.w3.org/2000/svg','circle');
+                    ring.setAttribute('r', r+8); ring.setAttribute('fill','none');
+                    ring.setAttribute('stroke', st.color); ring.setAttribute('stroke-width','2');
+                    ring.setAttribute('opacity','0.25');
+                    g.appendChild(ring);
+                }
+                if (n.status === 'pub' || isRoot) {
+                    const glow = document.createElementNS('http://www.w3.org/2000/svg','circle');
+                    glow.setAttribute('r', r+5); glow.setAttribute('fill', st.color); glow.setAttribute('opacity','0.1');
+                    g.appendChild(glow);
+                }
+                const circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
+                circle.setAttribute('r', r); circle.setAttribute('fill', st.bg);
+                circle.setAttribute('stroke', st.color); circle.setAttribute('stroke-width', isSel ? '2' : '1.5');
+                g.appendChild(circle);
+
+                const lines = n.title.split('');
+                let ls = [], cur = '';
+                lines.forEach(ch => { cur += ch; if (cur.length >= (isRoot ? 5 : 6)) { ls.push(cur); cur = ''; } });
+                if (cur) ls.push(cur);
+                if (ls.length > 2) ls = [ls[0], ls[1].slice(0,4)+'…'];
+                ls.forEach((l, i) => {
+                    const t = document.createElementNS('http://www.w3.org/2000/svg','text');
+                    t.setAttribute('text-anchor','middle'); t.setAttribute('dominant-baseline','central');
+                    t.setAttribute('y', ls.length > 1 ? (i - 0.5) * 13 : 0);
+                    t.setAttribute('font-size', isRoot ? '11' : '10');
+                    t.setAttribute('font-weight','700'); t.setAttribute('fill', st.color);
+                    t.textContent = l; g.appendChild(t);
+                });
+
+                if (!isRoot) {
+                    const plusG = document.createElementNS('http://www.w3.org/2000/svg','g');
+                    plusG.setAttribute('transform',`translate(${r},-${r})`);
+                    plusG.style.cursor = 'pointer';
+                    const pb = document.createElementNS('http://www.w3.org/2000/svg','circle');
+                    pb.setAttribute('r','9'); pb.setAttribute('fill','white');
+                    pb.setAttribute('stroke', st.color); pb.setAttribute('stroke-width','1.5');
+                    const pt = document.createElementNS('http://www.w3.org/2000/svg','text');
+                    pt.setAttribute('text-anchor','middle'); pt.setAttribute('dominant-baseline','central');
+                    pt.setAttribute('font-size','13'); pt.setAttribute('fill', st.color); pt.setAttribute('font-weight','400');
+                    pt.textContent = '+';
+                    plusG.appendChild(pb); plusG.appendChild(pt);
+                    plusG.addEventListener('click', e => { e.stopPropagation(); kAddChild(n); });
+                    g.appendChild(plusG);
+                }
+
+                g.addEventListener('mousedown', e => {
+                    e.stopPropagation();
+                    const cr = document.getElementById('k-canvas').getBoundingClientRect();
+                    kDrag = n; kDragOff.x = e.clientX - cr.left - n.x - kViewOff.x; kDragOff.y = e.clientY - cr.top - n.y - kViewOff.y;
+                });
+                g.addEventListener('click', e => { e.stopPropagation(); kSelectNode(n); });
+                nodeG.appendChild(g);
+            });
+            svg.appendChild(nodeG);
+        }
+
+        function kSelectNode(n) {
+            kSelected = kSelected === n.id ? null : n.id;
+            kRender();
+            const panel = document.getElementById('k-panel');
+            if (!kSelected) { panel.classList.remove('open'); return; }
+            panel.classList.add('open');
+            const st = K_STATUS[n.status] || K_STATUS.idea;
+            document.getElementById('k-sdot').style.background = st.color;
+            document.getElementById('k-ptitle').value = n.title;
+            document.getElementById('k-pprob').value = n.prob || '';
+            document.getElementById('k-pnote').value = n.note || '';
+            document.getElementById('k-purl').value = n.url || '';
+            syncAdminStateFromStorage();
+            const isEditable = isAdmin && n.id !== 'root';
+            const lockMsg = document.getElementById('k-lock-msg');
+            lockMsg.style.display = !isAdmin ? 'flex' : 'none';
+            ['k-ptitle','k-pprob','k-pnote','k-purl'].forEach(id => { document.getElementById(id).readOnly = !isEditable; });
+            document.getElementById('k-btn-add-child').style.display = isAdmin ? 'flex' : 'none';
+            document.getElementById('k-btn-del').style.display = (isAdmin && n.id !== 'root') ? 'flex' : 'none';
+            const sg = document.getElementById('k-status-grid'); sg.innerHTML = '';
+            Object.entries(K_STATUS).forEach(([k, v]) => {
+                const btn = document.createElement('button');
+                btn.className = `k-status-btn${n.status === k ? ' ' + v.cls : ''}`;
+                btn.textContent = v.label;
+                btn.disabled = !isEditable;
+                btn.style.opacity = !isEditable ? '0.6' : '1';
+                btn.onclick = () => { if (!isEditable) return; kSetStatus(k); };
+                sg.appendChild(btn);
+            });
+        }
+
+        function kSaveField() {
+            if (!kSelected) return;
+            const n = kNodes.find(x => x.id === kSelected); if (!n) return;
+            syncAdminStateFromStorage();
+            if (!isAdmin) return;
+            n.title = document.getElementById('k-ptitle').value;
+            n.prob  = document.getElementById('k-pprob').value;
+            n.note  = document.getElementById('k-pnote').value;
+            n.url   = document.getElementById('k-purl').value;
+            kRender(); kUpdateStats();
+        }
+
+        function kSetStatus(k) {
+            const n = kNodes.find(x => x.id === kSelected); if (!n) return;
+            const wasNotPub = n.status !== 'pub';
+            n.status = k;
+            if (k === 'pub' && wasNotPub) n._pubCycle = getCurrentCycle();
+            kRender(); kUpdateStats(); kSelectNode(n);
+        }
+
+        function kOpenUrl() {
+            const url = document.getElementById('k-purl').value.trim();
+            if (url) window.open(url, '_blank');
+        }
+
+        function kClosePanel() { kSelected = null; document.getElementById('k-panel').classList.remove('open'); kRender(); }
+
+        function kAddChild(parentNode) {
+            syncAdminStateFromStorage(); if (!isAdmin) return showToast('請先登入管理員才能新增');
+            const angle = (Math.random() * 180 + 90) * Math.PI / 180;
+            const id = 'n' + (kNextId++);
+            kNodes.push({ id, title:'新節點', prob:'', note:'', url:'', status:'idea', parent: parentNode.id, x: parentNode.x + Math.cos(angle)*115, y: parentNode.y + Math.sin(angle)*115 });
+            kRender(); kUpdateStats();
+            const newN = kNodes.find(x => x.id === id);
+            kSelected = id; kRender(); kSelectNode(newN);
+            setTimeout(() => { const t = document.getElementById('k-ptitle'); if (t) { t.focus(); t.select(); } }, 100);
+        }
+
+        function kAddChildFromPanel() {
+            const n = kNodes.find(x => x.id === kSelected); if (n) kAddChild(n);
+        }
+
+        function kDeleteNode() {
+            syncAdminStateFromStorage(); if (!isAdmin || !kSelected || kSelected === 'root') return;
+            kNodes = kNodes.filter(n => n.id !== kSelected && n.parent !== kSelected);
+            kSelected = null;
+            document.getElementById('k-panel').classList.remove('open');
+            kRender(); kUpdateStats();
+        }
+
+        function kBindCanvas() {
+            const canvas = document.getElementById('k-canvas');
+            canvas.addEventListener('mousedown', e => {
+                if (!kDrag) { kPan = true; kPanStart.x = e.clientX - kViewOff.x; kPanStart.y = e.clientY - kViewOff.y; }
+            });
+            document.addEventListener('mousemove', e => {
+                if (kDrag) {
+                    const cr = canvas.getBoundingClientRect();
+                    kDrag.x = e.clientX - cr.left - kDragOff.x - kViewOff.x;
+                    kDrag.y = e.clientY - cr.top  - kDragOff.y - kViewOff.y;
+                    kRender();
+                } else if (kPan) {
+                    kViewOff.x = e.clientX - kPanStart.x;
+                    kViewOff.y = e.clientY - kPanStart.y;
+                    kRender();
+                }
+            });
+            document.addEventListener('mouseup', () => { kDrag = null; kPan = false; });
+            canvas.addEventListener('click', e => {
+                if (e.target === canvas || e.target.tagName === 'svg') kClosePanel();
+            });
+        }
     </script>
 
-    <!-- Lightbox overlay -->
     <div id="lightbox-overlay" onclick="closeLightbox()">
         <img id="lightbox-img" src="" alt="" onclick="event.stopPropagation();closeLightbox();">
     </div>
     <script>
-        function openLightbox(src) {
-            var overlay = document.getElementById('lightbox-overlay');
-            document.getElementById('lightbox-img').src = src;
-            overlay.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-        function closeLightbox() {
-            document.getElementById('lightbox-overlay').classList.remove('active');
-            document.body.style.overflow = '';
-        }
-        document.addEventListener('click', function(e) {
-            if (e.target.matches('.bubble img')) {
-                openLightbox(e.target.src);
-            }
-        });
+        function openLightbox(src) { document.getElementById('lightbox-img').src = src; document.getElementById('lightbox-overlay').classList.add('active'); document.body.style.overflow = 'hidden'; }
+        function closeLightbox() { document.getElementById('lightbox-overlay').classList.remove('active'); document.body.style.overflow = ''; }
+        document.addEventListener('click', function(e) { if (e.target.matches('.bubble img')) openLightbox(e.target.src); });
     </script>
 </body>
 </html>
