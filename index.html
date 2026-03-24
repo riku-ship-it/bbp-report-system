@@ -182,6 +182,9 @@
         .k-panel-footer { padding: 14px 18px; border-top: 1px solid var(--border); display: flex; gap: 8px; }
         .k-btn-add { flex: 1; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 12px; font-size: 0.85rem; font-weight: 700; cursor: pointer; transition: 0.2s; }
         .k-btn-add:hover { background: #4f46e5; transform: none; box-shadow: none; }
+        .k-btn-save { padding: 12px 16px; border: none; border-radius: 12px; background: #10b981; color: white; font-size: 0.85rem; font-weight: 700; cursor: pointer; transition: 0.15s; }
+        .k-btn-save:hover { background: #059669; transform: none; box-shadow: none; }
+        .k-btn-save:disabled { opacity: 0.6; cursor: not-allowed; }
         .k-btn-del { padding: 12px 14px; border: 1px solid var(--border); border-radius: 12px; background: #fff; font-size: 0.85rem; color: var(--text-sub); cursor: pointer; transition: 0.15s; }
         .k-btn-del:hover { background: #fef2f2; color: var(--stat-critical); border-color: rgba(239,68,68,0.3); transform: none; box-shadow: none; }
         .k-hint { position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%); font-size: 0.78rem; color: var(--text-sub); background: white; padding: 6px 16px; border-radius: 50px; border: 1px solid var(--border); pointer-events: none; white-space: nowrap; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
@@ -208,7 +211,7 @@
             <div class="nav-item active" onclick="showView('dash-view',this)"><i class="fas fa-th-large"></i><span>總覽儀表板</span></div>
             <div class="nav-item" onclick="showView('report-view',this)"><i class="fas fa-plus-circle"></i><span>新增案件回報</span></div>
             <div class="nav-item" onclick="showView('status-view',this)"><i class="fas fa-search"></i><span>案件進度查詢</span></div>
-            <div class="nav-item" onclick="showView('knowledge-view',this)"><i class="fas fa-sitemap"></i><span>知識產出</span></div>
+            <div class="nav-item" onclick="showView('knowledge-view',this)"><i class="fas fa-lightbulb"></i><span>知識產出</span></div>
         </div>
         <div class="admin-footer">
             <div class="nav-item" onclick="showView('login-view',this)"><i class="fas fa-user-shield"></i><span>管理者後台</span></div>
@@ -353,7 +356,7 @@
         <div id="knowledge-view" class="view" style="width:100%;max-width:100%;padding:0;">
             <div style="padding: 0 40px;">
                 <div class="k-topbar">
-                    <div class="section-title" style="flex:1;"><i class="fas fa-sitemap" style="color:var(--primary)"></i> 知識產出</div>
+                    <div class="section-title" style="flex:1;"><i class="fas fa-lightbulb" style="color:var(--primary)"></i> 知識產出</div>
                     <div class="k-stat-pill"><div class="k-stat-dot" style="background:#10b981"></div><span class="k-stat-num" id="k-total">0</span><span class="k-stat-lbl">文件數</span></div>
                     <div class="k-stat-pill"><div class="k-stat-dot" style="background:#6366f1"></div><span class="k-stat-num" id="k-week">0</span><span class="k-stat-lbl">本週發布</span></div>
                     <div class="k-stat-pill"><div class="k-stat-dot" style="background:#3b82f6"></div><span class="k-stat-num" id="k-wip">0</span><span class="k-stat-lbl">進行中</span></div>
@@ -398,6 +401,7 @@
                         </div>
                         <div class="k-panel-footer">
                             <button class="k-btn-add" onclick="kAddChildFromPanel()" id="k-btn-add-child"><i class="fas fa-plus"></i> 新增子節點</button>
+                            <button class="k-btn-save" onclick="kSaveToSheet()" id="k-btn-save"><i class="fas fa-floppy-disk"></i> 儲存</button>
                             <button class="k-btn-del" onclick="kDeleteNode()" id="k-btn-del"><i class="fas fa-trash"></i></button>
                         </div>
                     </div>
@@ -838,12 +842,6 @@
 
         let kn = [
             { id:'root', title:'BBP 平台', prob:'', note:'', url:'', status:'pub', parent:null, x:340, y:260 },
-            { id:'n1', title:'知識庫介紹（客戶用）', prob:'客戶無知識庫說明，顧問無法引導使用', note:'', url:'', status:'pub', parent:'root', x:175, y:140 },
-            { id:'n2', title:'BBP 教學手冊', prob:'顧問不了解 BBP，無法獨立操作平台', note:'含電子版', url:'https://riku-ship-it.github.io/bbp-manual.io/', status:'pub', parent:'root', x:175, y:310 },
-            { id:'n3', title:'組織圖職務說明', prob:'D1 交接文件不清楚，無法掌握 BBP 職責', note:'', url:'', status:'pub', parent:'root', x:500, y:140 },
-            { id:'n4', title:'任務模組切換說明', prob:'模組切換位置調整後，使用者找不到入口', note:'', url:'', status:'wip', parent:'n2', x:95, y:430 },
-            { id:'n5', title:'初階操作影片說明', prob:'顧問不知道實際操作細節，影片不夠完整', note:'', url:'', status:'draft', parent:'n2', x:275, y:430 },
-            { id:'n6', title:'知識庫操作職務說明', prob:'統計值職務說明未補齊，影響新人 onboarding', note:'', url:'', status:'draft', parent:'n3', x:520, y:300 },
         ];
         let ks = null;
         let kd = null, kdo = { x:0, y:0 };
@@ -987,6 +985,7 @@
             lockMsg.style.display = !isAdmin ? 'flex' : 'none';
             ['k-ptitle','k-pprob','k-pnote','k-purl'].forEach(id => { document.getElementById(id).readOnly = !isEditable; });
             document.getElementById('k-btn-add-child').style.display = isAdmin ? 'flex' : 'none';
+            document.getElementById('k-btn-save').style.display = (isAdmin && n.id !== 'root') ? 'flex' : 'none';
             document.getElementById('k-btn-del').style.display = (isAdmin && n.id !== 'root') ? 'flex' : 'none';
             const sg = document.getElementById('k-status-grid'); sg.innerHTML = '';
             Object.entries(KS).forEach(([k, v]) => {
@@ -1016,8 +1015,33 @@
             const n = kn.find(x => x.id === ks); if (!n) return;
             const wasNotPub = n.status !== 'pub';
             n.status = k;
-            if (k === 'pub' && wasNotPub) n._pubCycle = getCurrentCycle();
+            if (k === 'pub' && wasNotPub) { n._pubCycle = getCurrentCycle(); n._pubTime = new Date().toISOString(); }
             kRender(); kUpdateStats(); kSelectNode(n);
+        }
+
+        async function kSaveToSheet() {
+            if (!ks || ks === 'root') return;
+            syncAdminStateFromStorage(); if (!ia) return showToast('請先登入管理員才能儲存');
+            const n = kn.find(x => x.id === ks); if (!n) return;
+            kSaveField();
+            const btn = document.getElementById('k-btn-save');
+            btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 儲存中...';
+            try {
+                const payload = {
+                    action: 'knowledge',
+                    id: n.id,
+                    createdAt: n.createdAt || '',
+                    title: n.title,
+                    prob: n.prob || '',
+                    note: n.note || '',
+                    url: n.url || '',
+                    status: n.status,
+                };
+                if (n.status === 'pub') payload.publishedAt = n._pubTime || new Date().toISOString();
+                await fetch(GAS_URL, { method:'POST', body: JSON.stringify(payload) });
+                showToast('已儲存至試算表');
+            } catch(e) { showToast('儲存失敗，請稍後再試'); }
+            btn.disabled = false; btn.innerHTML = '<i class="fas fa-floppy-disk"></i> 儲存';
         }
 
         function kOpenUrl() {
@@ -1031,7 +1055,7 @@
             syncAdminStateFromStorage(); if (!ia) return showToast('請先登入管理員才能新增');
             const angle = (Math.random() * 180 + 90) * Math.PI / 180;
             const id = 'n' + (kni++);
-            kn.push({ id, title:'新節點', prob:'', note:'', url:'', status:'idea', parent: parentNode.id, x: parentNode.x + Math.cos(angle)*115, y: parentNode.y + Math.sin(angle)*115 });
+            kn.push({ id, title:'新節點', prob:'', note:'', url:'', status:'idea', parent: parentNode.id, x: parentNode.x + Math.cos(angle)*115, y: parentNode.y + Math.sin(angle)*115, createdAt: new Date().toISOString() });
             kUpdateStats();
             const newN = kn.find(x => x.id === id);
             ks = null; kSelectNode(newN);
