@@ -548,7 +548,7 @@
             ad.slice(1).forEach(row => {
                 const id = row[0];
                 if (!ti[id]) {
-                    ti[id] = { id, shortNo: ++snc, createdAt: row[1], email: row[2], type: row[3], title: row[4], status: row[7], updatedAt: row[8], priority: row[9], cycle: row[10], msgs: [] };
+                    ti[id] = { id, shortNo: ++snc, createdAt: row[1], email: row[2], type: row[3], title: row[4], status: row[7], updatedAt: row[8], priority: row[9], cycle: row[10], createdCycle: row[10], msgs: [] };
                 }
                 ti[id].msgs.push({ sender: row[6], content: row[5], time: row[8] });
                 ti[id].status    = row[7];
@@ -597,7 +597,7 @@
             const cycle = sc || lc;
             document.getElementById('stat-pending').innerText = ticketList.filter(t => t.status === '待處理' || t.status === '進行中' || t.status === '已退回').length;
             document.getElementById('stat-resolved').innerText = ticketList.filter(t => t.status === '已解決' && t.cycle === cycle).length;
-            document.getElementById('stat-new').innerText = ticketList.filter(t => t.cycle === cycle).length;
+            document.getElementById('stat-new').innerText = ticketList.filter(t => t.createdCycle === cycle).length;
             renderUrgentTable(ticketList);
             const resolvedArea = document.getElementById('resolved-list');
             resolvedArea.innerHTML = '';
@@ -675,7 +675,7 @@
 
         function openNewModal() {
             const cycle = sc || lc;
-            const list = Object.values(ti).filter(t => t.cycle===cycle);
+            const list = Object.values(ti).filter(t => t.createdCycle===cycle);
             document.getElementById('new-modal-title').innerText = `本週新增 - 所有案件`;
             document.getElementById('new-modal-sub').innerText = `週期 ${cycle}，共 ${list.length} 件`;
             document.getElementById('new-modal-list').innerHTML = list.length ? list.map(t => ticketRowHtml(t)).join('') : `<div class="card" style="text-align:center;color:var(--text-sub);">本週期尚無案件</div>`;
