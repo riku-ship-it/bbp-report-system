@@ -852,7 +852,16 @@
         let kid = false;
 
         function kInit() {
-            if (!kid) { kid = true; kBindCanvas(); }
+            if (!kid) {
+                kid = true;
+                kBindCanvas();
+                const canvas = document.getElementById('k-canvas');
+                const root = kn.find(n => n.id === 'root');
+                if (root && canvas.clientWidth && canvas.clientHeight) {
+                    kv.x = Math.round(canvas.clientWidth / 2 - root.x);
+                    kv.y = Math.round(canvas.clientHeight / 2 - root.y);
+                }
+            }
             kRender();
             kUpdateStats();
         }
@@ -971,13 +980,14 @@
             document.getElementById('k-pprob').value = n.prob || '';
             document.getElementById('k-pnote').value = n.note || '';
             document.getElementById('k-purl').value = n.url || '';
-            syncAdminStateFromStorage();
-            const isEditable = ia && n.id !== 'root';
+            const isAdmin = sessionStorage.getItem('bbp_is_admin') === '1';
+            ia = isAdmin;
+            const isEditable = isAdmin && n.id !== 'root';
             const lockMsg = document.getElementById('k-lock-msg');
-            lockMsg.style.display = !ia ? 'flex' : 'none';
+            lockMsg.style.display = !isAdmin ? 'flex' : 'none';
             ['k-ptitle','k-pprob','k-pnote','k-purl'].forEach(id => { document.getElementById(id).readOnly = !isEditable; });
-            document.getElementById('k-btn-add-child').style.display = ia ? 'flex' : 'none';
-            document.getElementById('k-btn-del').style.display = (ia && n.id !== 'root') ? 'flex' : 'none';
+            document.getElementById('k-btn-add-child').style.display = isAdmin ? 'flex' : 'none';
+            document.getElementById('k-btn-del').style.display = (isAdmin && n.id !== 'root') ? 'flex' : 'none';
             const sg = document.getElementById('k-status-grid'); sg.innerHTML = '';
             Object.entries(KS).forEach(([k, v]) => {
                 const btn = document.createElement('button');
@@ -1022,9 +1032,9 @@
             const angle = (Math.random() * 180 + 90) * Math.PI / 180;
             const id = 'n' + (kni++);
             kn.push({ id, title:'新節點', prob:'', note:'', url:'', status:'idea', parent: parentNode.id, x: parentNode.x + Math.cos(angle)*115, y: parentNode.y + Math.sin(angle)*115 });
-            kRender(); kUpdateStats();
+            kUpdateStats();
             const newN = kn.find(x => x.id === id);
-            ks = id; kRender(); kSelectNode(newN);
+            ks = null; kSelectNode(newN);
             setTimeout(() => { const t = document.getElementById('k-ptitle'); if (t) { t.focus(); t.select(); } }, 100);
         }
 
