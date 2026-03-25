@@ -642,7 +642,7 @@
             let items = ticketList.filter(t => (t.status==='待處理'||t.status==='進行中'||t.status==='已退回') && (String(t.priority).includes('嚴重')||String(t.priority).includes('優先'))).sort((a,b) => String(a.priority).localeCompare(String(b.priority)));
             if (uf !== '全部') items = items.filter(t => String(t.priority).startsWith(uf.charAt(0)));
             if (!items.length) { listArea.innerHTML = `<div class="card" style="text-align:center;color:var(--text-sub);">目前沒有符合條件的急件</div>`; return; }
-            listArea.innerHTML = `<table class="urgent-table"><thead><tr><th>ID</th><th>嚴重度</th><th>狀態</th><th>標題</th></tr></thead><tbody>${items.map(t=>`<tr onclick="openTicketModalFromList('${t.id}')"><td class="col-id">#${t.shortNo}</td><td>${severityBadge(t.priority)}</td><td>${statusBadge(t.status)}</td><td class="col-title">${escapeHtml(t.title)}</td></tr>`).join('')}</tbody></table>`;
+            listArea.innerHTML = `<table class="urgent-table"><thead><tr><th>回報人</th><th>嚴重度</th><th>狀態</th><th>標題</th></tr></thead><tbody>${items.map(t=>`<tr onclick="openTicketModalFromList('${t.id}')"><td class="col-id">${escapeHtml(t.email||'-')}</td><td>${severityBadge(t.priority)}</td><td>${statusBadge(t.status)}</td><td class="col-title">${escapeHtml(t.title)}</td></tr>`).join('')}</tbody></table>`;
         }
 
         function statusPill(s) {
@@ -661,7 +661,7 @@
 
         function ticketRowHtml(t) {
             const pClass = String(t.priority).includes('嚴重') ? 'p-critical' : 'p-normal';
-            return `<div class="card ticket-row" onclick="openTicketModalFromList('${t.id}')" style="display:flex;justify-content:space-between;align-items:center;padding:18px 20px;"><div class="ticket-line"><span class="ticket-no">#${t.shortNo}</span><span class="priority-badge ${pClass}">${escapeHtml(t.priority)}</span><span class="ticket-title"><span class="ticket-status">[${escapeHtml(t.status)}]</span> ${escapeHtml(t.title)}</span></div><i class="fas fa-chevron-right" style="color:#cbd5e1"></i></div>`;
+            return `<div class="card ticket-row" onclick="openTicketModalFromList('${t.id}')" style="display:flex;justify-content:space-between;align-items:center;padding:18px 20px;"><div class="ticket-line"><span class="ticket-no">#${t.shortNo}</span><span class="priority-badge ${pClass}">${escapeHtml(t.priority)}</span><span class="ticket-title"><span class="ticket-status">[${escapeHtml(t.status)}]</span> ${escapeHtml(t.title)}</span><span style="margin-left:10px;color:var(--text-sub);font-size:0.85em;">回報：${escapeHtml(t.email||'-')}</span></div><i class="fas fa-chevron-right" style="color:#cbd5e1"></i></div>`;
         }
 
         function openTicketModalFromList(id) { closeBacklogModal(); closeResolvedModal(); closeNewModal(); openTicketModal(id); }
