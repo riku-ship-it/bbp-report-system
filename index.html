@@ -294,7 +294,7 @@
                         </div>
                     </div>
                     <form id="reportForm">
-                        <label>聯絡 Email</label><input type="email" id="email" required placeholder="例：john@hcatwn.com（可於左側案件進度做查詢）">
+                        <label>聯絡人名稱</label><input type="text" id="email" required placeholder="例：Riku（可於左側案件進度做查詢）">
                         <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:20px 0;">
                             <div><label>案件分類</label>
                                 <select id="type">
@@ -334,7 +334,7 @@
             <div id="status-view" class="view">
                 <div class="section-title">案件進度查詢</div>
                 <div class="card search-card">
-                    <input type="email" id="searchEmail" placeholder="輸入回報時的 Email">
+                    <input type="text" id="searchEmail" placeholder="輸入回報時的名稱">
                     <button id="searchBtn" onclick="searchUserTickets()"><i class="fas fa-search"></i> 搜尋</button>
                 </div>
                 <div id="user-result-list"></div>
@@ -733,7 +733,7 @@
             try {
                 const content = await compressHTML(uq.root.innerHTML);
                 const emailRaw = document.getElementById('email').value.trim();
-                const defaultStatus = emailRaw.toLowerCase() === 'riku@hcatwn.com' ? '進行中' : '待處理';
+                const defaultStatus = emailRaw.toLowerCase() === 'riku' ? '進行中' : '待處理';
                 await fetch(GAS_URL, { method:"POST", body: JSON.stringify({ email: emailRaw, type: document.getElementById('type').value, title: document.getElementById('title').value.trim(), description: content, priority: "3-一般", status: defaultStatus })});
                 showToast("提交成功！");
                 uq.setContents([]); e.target.reset();
@@ -743,15 +743,15 @@
         };
 
         async function searchUserTickets() {
-            const email = document.getElementById('searchEmail').value.trim().toLowerCase();
-            if (!email) return showToast("請輸入 Email");
+            const name = document.getElementById('searchEmail').value.trim().toLowerCase();
+            if (!name) return showToast("請輸入名稱");
             const btn = document.getElementById('searchBtn');
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
             await fetchData();
             btn.innerHTML = '<i class="fas fa-search"></i> 搜尋';
             const area = document.getElementById('user-result-list'); area.innerHTML = '';
-            const userTickets = Object.values(ti).filter(t => String(t.email||'').toLowerCase().trim() === email).reverse();
-            if (!userTickets.length) { area.innerHTML = `<div class="card" style="text-align:center;color:var(--text-sub);">查無案件，請確認 Email 是否正確</div>`; return; }
+            const userTickets = Object.values(ti).filter(t => String(t.email||'').toLowerCase().trim() === name).reverse();
+            if (!userTickets.length) { area.innerHTML = `<div class="card" style="text-align:center;color:var(--text-sub);">查無案件，請確認名稱是否正確</div>`; return; }
             userTickets.forEach(t => {
                 const card = document.createElement('div'); card.className = 'card';
                 const canReply = String(t.status) === '已退回';
