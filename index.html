@@ -661,7 +661,7 @@
 
         function ticketRowHtml(t) {
             const pClass = String(t.priority).includes('嚴重') ? 'p-critical' : 'p-normal';
-            return `<div class="card ticket-row" onclick="openTicketModalFromList('${t.id}')" style="display:flex;justify-content:space-between;align-items:center;padding:18px 20px;"><div class="ticket-line"><span class="ticket-no">#${t.shortNo}</span><span class="priority-badge ${pClass}">${escapeHtml(t.priority)}</span><span class="ticket-title"><span class="ticket-status">[${escapeHtml(t.status)}]</span> ${escapeHtml(t.title)}</span><span style="margin-left:10px;color:var(--text-sub);font-size:0.85em;">回報：${escapeHtml(t.email||'-')}</span></div><i class="fas fa-chevron-right" style="color:#cbd5e1"></i></div>`;
+            return `<div class="card ticket-row" onclick="openTicketModalFromList('${t.id}')" style="display:flex;justify-content:space-between;align-items:center;padding:18px 20px;"><div class="ticket-line"><span class="ticket-no">#${t.shortNo}</span><span class="priority-badge ${pClass}">${escapeHtml(t.priority)}</span><span class="ticket-title"><span class="ticket-status">[${escapeHtml(t.status)}]</span> ${escapeHtml(t.title)}</span></div><div style="display:flex;align-items:center;gap:8px;flex-shrink:0;"><span style="color:var(--text-sub);font-size:0.85em;">回報：${escapeHtml(t.email||'-')}</span><i class="fas fa-chevron-right" style="color:#cbd5e1"></i></div></div>`;
         }
 
         function openTicketModalFromList(id) { closeBacklogModal(); closeResolvedModal(); closeNewModal(); openTicketModal(id); }
