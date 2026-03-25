@@ -734,7 +734,8 @@
                 const content = await compressHTML(uq.root.innerHTML);
                 const emailRaw = document.getElementById('email').value.trim();
                 const defaultStatus = emailRaw.toLowerCase() === 'riku' ? '進行中' : '待處理';
-                await fetch(GAS_URL, { method:"POST", body: JSON.stringify({ email: emailRaw, type: document.getElementById('type').value, title: document.getElementById('title').value.trim(), description: content, priority: "3-一般", status: defaultStatus })});
+                const skipNotify = emailRaw.toLowerCase() === 'riku';
+                await fetch(GAS_URL, { method:"POST", body: JSON.stringify({ email: emailRaw, type: document.getElementById('type').value, title: document.getElementById('title').value.trim(), description: content, priority: "3-一般", status: defaultStatus, skipNotify: skipNotify })});
                 showToast("提交成功！");
                 uq.setContents([]); e.target.reset();
                 await fetchData(); showView('dash-view');
