@@ -140,10 +140,11 @@
         .sev-badge { display: inline-flex; align-items: center; gap: 5px; padding: 5px 11px; border-radius: 999px; font-size: 0.78rem; font-weight: 900; white-space: nowrap; }
         .sev-critical { background: rgba(239,68,68,0.10); color: #ef4444; border: 1px solid rgba(239,68,68,0.25); }
         .sev-priority { background: rgba(249,115,22,0.10); color: #f97316; border: 1px solid rgba(249,115,22,0.25); }
-        .status-badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 999px; font-size: 0.78rem; font-weight: 800; white-space: nowrap; background: #f1f5f9; color: var(--text-sub); }
+        .status-badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 999px; font-size: 0.78rem; font-weight: 800; white-space: nowrap; background: #f1f5f9; color: var(--text-sub); flex-shrink: 0; }
         .status-badge.inprogress { background: rgba(245,158,11,0.10); color: #d97706; }
         .status-badge.pending { background: rgba(99,102,241,0.08); color: var(--primary); }
         .status-badge.returned { background: rgba(239,68,68,0.08); color: #ef4444; }
+        .status-badge.resolved { background: rgba(16,185,129,0.10); color: #10b981; }
 
         .hidden{display:none}
         #knowledge-view { height: calc(100vh - 80px); display: none; flex-direction: column; }
@@ -633,6 +634,7 @@
             if (s === '進行中') cls = 'inprogress';
             else if (s === '待處理') cls = 'pending';
             else if (s === '已退回') cls = 'returned';
+            else if (s === '已解決') cls = 'resolved';
             const icons = { '進行中': 'fa-spinner', '待處理': 'fa-inbox', '已退回': 'fa-rotate-left', '已解決': 'fa-check' };
             return `<span class="status-badge ${cls}"><i class="fas ${icons[s]||'fa-circle'}"></i>${escapeHtml(s)}</span>`;
         }
@@ -762,7 +764,7 @@
             userTickets.forEach(t => {
                 const card = document.createElement('div'); card.className = 'card';
                 const canReply = String(t.status) === '已退回';
-                card.innerHTML = `<div class="collapsible-header" onclick="this.parentElement.classList.toggle('expanded')"><div style="min-width:0;"><b style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:inline-block;max-width:720px;">${escapeHtml(t.title)}<small style="margin-left:10px;color:var(--primary)">[${escapeHtml(t.status)}]</small></b><div style="font-size:0.78rem;color:#94a3b8;font-weight:700;margin-top:3px;">建立：${formatTime(t.createdAt)} &nbsp;·&nbsp; 更新：${formatTime(t.updatedAt)}</div></div><i class="fas fa-chevron-down"></i></div><div class="collapsible-content">${t.msgs.map(m=>`<div class="bubble bubble-${m.sender==='管理者'?'admin':'user'}"><div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;"><b>${escapeHtml(m.sender)}:</b><span class="bubble-meta"><i class="fas fa-clock"></i> ${formatTime(m.time)}</span></div><div style="margin-top:6px;">${m.content}</div></div>`).join('')}${canReply?`<div style="margin-top:18px;font-weight:900;">補充說明（送回管理者）</div><div class="editor-wrapper" style="margin-top:10px;"><div id="status-ed-${t.id}"></div></div><div class="modal-actions" style="justify-content:flex-start;"><button onclick="submitUserReply('${t.id}','status-ed-${t.id}')" style="min-width:180px;"><i class="fas fa-paper-plane"></i> 送出補充</button></div>`:`<div style="margin-top:18px;color:var(--text-sub);font-weight:700;font-size:0.9rem;">此案件目前非「已退回」，因此無需補充送出。</div>`}</div>`;
+                card.innerHTML = `<div class="collapsible-header" onclick="this.parentElement.classList.toggle('expanded')"><div style="min-width:0;"><b style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:inline-block;max-width:720px;">${escapeHtml(t.title)}</b><div style="font-size:0.78rem;color:#94a3b8;font-weight:700;margin-top:3px;">建立：${formatTime(t.createdAt)} &nbsp;·&nbsp; 更新：${formatTime(t.updatedAt)}</div></div>${statusBadge(t.status)}<i class="fas fa-chevron-down"></i></div><div class="collapsible-content">${t.msgs.map(m=>`<div class="bubble bubble-${m.sender==='管理者'?'admin':'user'}"><div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;"><b>${escapeHtml(m.sender)}:</b><span class="bubble-meta"><i class="fas fa-clock"></i> ${formatTime(m.time)}</span></div><div style="margin-top:6px;">${m.content}</div></div>`).join('')}${canReply?`<div style="margin-top:18px;font-weight:900;">補充說明（送回管理者）</div><div class="editor-wrapper" style="margin-top:10px;"><div id="status-ed-${t.id}"></div></div><div class="modal-actions" style="justify-content:flex-start;"><button onclick="submitUserReply('${t.id}','status-ed-${t.id}')" style="min-width:180px;"><i class="fas fa-paper-plane"></i> 送出補充</button></div>`:`<div style="margin-top:18px;color:var(--text-sub);font-weight:700;font-size:0.9rem;">此案件目前非「已退回」，因此無需補充送出。</div>`}</div>`;
                 area.appendChild(card);
                 if (canReply) new Quill(`#status-ed-${t.id}`, { theme:'snow', modules:qm });
             });
