@@ -756,8 +756,7 @@
             const userTickets = Object.values(ti).filter(t => {
                 if (String(t.email||'').toLowerCase().trim() === name) return true;
                 if (String(t.title||'').toLowerCase().includes(name)) return true;
-                if (String(t.type||'').toLowerCase().includes(name)) return true;
-                if ((t.msgs||[]).some(m => String(m.content||'').toLowerCase().includes(name))) return true;
+                if (String(((t.msgs||[])[0]||{}).content||'').toLowerCase().includes(name)) return true;
                 return false;
             }).reverse();
             if (!userTickets.length) { area.innerHTML = `<div class="card" style="text-align:center;color:var(--text-sub);">查無相關案件，請確認名稱或關鍵字是否正確</div>`; return; }
