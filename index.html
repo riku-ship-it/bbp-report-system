@@ -334,7 +334,7 @@
             <div id="status-view" class="view">
                 <div class="section-title">案件進度查詢</div>
                 <div class="card search-card">
-                    <input type="text" id="searchEmail" placeholder="輸入回報時的名稱">
+                    <input type="text" id="searchEmail" placeholder="輸入回報者名稱或關鍵字（如 OIC）">
                     <button id="searchBtn" onclick="searchUserTickets()"><i class="fas fa-search"></i> 搜尋</button>
                 </div>
                 <div id="user-result-list"></div>
@@ -751,8 +751,14 @@
             await fetchData();
             btn.innerHTML = '<i class="fas fa-search"></i> 搜尋';
             const area = document.getElementById('user-result-list'); area.innerHTML = '';
-            const userTickets = Object.values(ti).filter(t => String(t.email||'').toLowerCase().trim() === name).reverse();
-            if (!userTickets.length) { area.innerHTML = `<div class="card" style="text-align:center;color:var(--text-sub);">查無案件，請確認名稱是否正確</div>`; return; }
+            const userTickets = Object.values(ti).filter(t => {
+                if (String(t.email||'').toLowerCase().trim() === name) return true;
+                if (String(t.title||'').toLowerCase().includes(name)) return true;
+                if (String(t.type||'').toLowerCase().includes(name)) return true;
+                if ((t.msgs||[]).some(m => String(m.content||'').toLowerCase().includes(name))) return true;
+                return false;
+            }).reverse();
+            if (!userTickets.length) { area.innerHTML = `<div class="card" style="text-align:center;color:var(--text-sub);">查無相關案件，請確認名稱或關鍵字是否正確</div>`; return; }
             userTickets.forEach(t => {
                 const card = document.createElement('div'); card.className = 'card';
                 const canReply = String(t.status) === '已退回';
