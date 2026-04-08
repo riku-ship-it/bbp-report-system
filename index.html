@@ -802,7 +802,7 @@
         const KS = {
             idea:  { label:'想法',  color:'#94a3b8', bg:'#f1f5f9', cls:'active-idea' },
             draft: { label:'草稿',  color:'#f59e0b', bg:'#fefce8', cls:'active-draft' },
-            wip:   { label:'進行中',color:'#3b82f6', bg:'#eff6ff', cls:'active-wip' },
+            wip:   { label:'測試中',color:'#3b82f6', bg:'#eff6ff', cls:'active-wip' },
             pub:   { label:'已發布',color:'#10b981', bg:'#f0fdf4', cls:'active-pub' },
         };
 
@@ -823,7 +823,7 @@
 
         // ── 新增：中文狀態 → 英文代碼（與 GAS normalizeKnowledgeStatus 相反）──
         function normalizeStatusFromChinese(s) {
-            const map = { '想法':'idea', '草稿':'draft', '進行中':'wip', '已發布':'pub' };
+            const map = { '想法':'idea', '草稿':'draft', '測試中':'wip', '已發布':'pub' };
             return map[s] || 'idea';
         }
 
